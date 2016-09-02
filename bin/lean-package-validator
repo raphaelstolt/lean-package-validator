@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+
+<?php
+
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require __DIR__ . '/../vendor/autoload.php';
+} else {
+    require __DIR__ . '/vendor/autoload.php';
+}
+
+define('WORKING_DIRECTORY', getcwd());
+define('VERSION', '1.0.0');
+
+use Stolt\LeanPackage\Commands\ValidateCommand;
+use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Archive;
+use Stolt\LeanPackage\Archive\Validator;
+use Symfony\Component\Console\Application;
+
+$archive = new Archive(
+    WORKING_DIRECTORY,
+    basename(WORKING_DIRECTORY)
+);
+$validateCommand = new ValidateCommand(
+    new Analyser,
+    new Validator($archive)
+);
+
+$application = new Application('Lean package validator', VERSION);
+$application->add($validateCommand);
+$application->run();
