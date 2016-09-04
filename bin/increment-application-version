@@ -3,7 +3,7 @@
 
 $binFile = __DIR__ . DIRECTORY_SEPARATOR . 'lean-package-validator';
 
-$options = getopt("v:", ["version:"]);
+$options = getopt('v:', ['version:']);
 
 if ($options === []) {
     echo 'No version set. Provide one via --version|-v.' . PHP_EOL;
