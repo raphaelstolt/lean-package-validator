@@ -51,6 +51,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      * @group travis-ci-exclude
+     * @group travis-ci-exclude-56
      */
     public function isGitCommandAvailableReturnsTrueOnExistingCommand()
     {
@@ -127,6 +128,7 @@ class ArchiveTest extends TestCase
 
     /**
      * @test
+     * @group travis-ci-exclude-56
      */
     public function compareArchiveReturnsExpectedFoundUnexpectedArtifacts()
     {
@@ -147,6 +149,7 @@ class ArchiveTest extends TestCase
 
     /**
      * @test
+     * @group travis-ci-exclude-56
      */
     public function compareArchiveReturnsNoFoundUnexpectedArtifactsOnLeanArchive()
     {
