@@ -10,7 +10,7 @@ The LeanPackageValidator is an utility tool that validates a project/micro-packa
 The LeanPackageValidator CLI should be installed globally through composer.
 
 ``` bash
-composer global require --dev stolt/lean-package-validator
+composer global require stolt/lean-package-validator
 ```
 
 It can also be installed locally to a project which allows the utilisation via [Composer scripts](https://getcomposer.org/doc/articles/scripts.md).
