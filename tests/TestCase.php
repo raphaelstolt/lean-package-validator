@@ -16,16 +16,16 @@ class TestCase extends PHPUnit
     protected function setUpTemporaryDirectory()
     {
         if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-            ini_set('sys_temp_dir', '/tmp');
-            $this->temporaryDirectory = '/tmp';
+            ini_set('sys_temp_dir', '/tmp/lpv');
+            $this->temporaryDirectory = '/tmp/lpv';
         } else {
             $this->temporaryDirectory = sys_get_temp_dir()
                 . DIRECTORY_SEPARATOR
                 . 'lpv';
+        }
 
-            if (!file_exists($this->temporaryDirectory)) {
-                mkdir($this->temporaryDirectory);
-            }
+        if (!file_exists($this->temporaryDirectory)) {
+            mkdir($this->temporaryDirectory);
         }
     }
 
