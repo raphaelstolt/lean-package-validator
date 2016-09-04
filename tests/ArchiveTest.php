@@ -50,6 +50,7 @@ class ArchiveTest extends TestCase
 
     /**
      * @test
+     * @group travis-ci-exclude
      */
     public function isGitCommandAvailableReturnsTrueOnExistingCommand()
     {
