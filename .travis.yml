@@ -2,7 +2,7 @@ language: php
 
 env:
   global:
-    - exclude-group=travis-ci-exclude
+    - excludegroup=travis-ci-exclude
 
 matrix:
   include:
@@ -10,7 +10,7 @@ matrix:
     - php: nightly
     - php: 7.0
     - php: 5.6
-      env: exclude-group=travis-ci-exclude-56
+      env: excludegroup=travis-ci-exclude-56
 
   fast_finish: true
   allow_failures:
@@ -18,10 +18,10 @@ matrix:
     - php: hhvm
 
 before_script:
-  - if [ $TRAVIS_PHP_VERSION != "hhvm" && $TRAVIS_PHP_VERSION != "nightly"]; then phpenv config-rm xdebug.ini ; fi
+  - if [ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != 'nightly']; then phpenv config-rm xdebug.ini; fi
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction
 
 script:
-  - if [[ $exclude-group = travis-ci-exclude ]]; echo 'composer test -- --exclude-group travis-ci-exclude'; fi
-  - if [[ $exclude-group = travis-ci-exclude-56 ]]; echo 'composer test -- --exclude-group travis-ci-exclude-56'; fi
+  - if [[ $excludegroup = travis-ci-exclude ]]; then composer test -- --exclude-group travis-ci-exclude; fi
+  - if [[ $excludegroup = travis-ci-exclude-56 ]]; then composer test -- --exclude-group travis-ci-exclude-56; fi
