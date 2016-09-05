@@ -490,12 +490,13 @@ CONTENT;
 
     /**
      * @test
+     * @group glob
      */
     public function defaultExportIgnoresGlobPatternIsOverwritable()
     {
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
-            ->setGlobPattern('{*.txt}*');
+            ->setGlobPattern('{*.txt,*.yml}*');
 
         $artifactFilenamesMatchingGlob = [
             'Z.txt',
