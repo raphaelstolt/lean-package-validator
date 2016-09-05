@@ -196,7 +196,10 @@ class Analyser
             if ($this->hasGitattributesFile()) {
                 $exportIgnoreContent = rtrim($content);
                 $content = $this->getPresentNonExportIgnoresContent();
-                $content .= $this->preferredEol . $exportIgnoreContent;
+                if ($this->lastContentLineHasEol($content) === false) {
+                    $content.= $this->preferredEol;
+                }
+                $content .= $exportIgnoreContent;
             } else {
                 $content = "* text=auto eol=lf"
                     . str_repeat($this->preferredEol, 2)
@@ -207,6 +210,22 @@ class Analyser
         }
 
         return '';
+    }
+
+    /**
+     * Check if last line of content has an end of line sequence.
+     *
+     * @param  string $content The content to detect the eol in.
+     *
+     * @return boolean
+     */
+    private function lastContentLineHasEol($content)
+    {
+        if (substr($content, -1) !== $this->preferredEol) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
