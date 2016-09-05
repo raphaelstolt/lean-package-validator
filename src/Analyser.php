@@ -35,6 +35,13 @@ class Analyser
     private $globPattern;
 
     /**
+     * The preferred end of line sequence
+     *
+     * @var string
+     */
+    private $preferredEol = "\n";
+
+    /**
      * Initialize.
      */
     public function __construct()
@@ -183,15 +190,17 @@ class Analyser
         sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if (count($postfixlessExportIgnores) > 0) {
-            $content = implode(" export-ignore\n", $postfixlessExportIgnores)
-                . " export-ignore\n";
+            $content = implode(" export-ignore" . $this->preferredEol, $postfixlessExportIgnores)
+                . " export-ignore" . $this->preferredEol;
 
             if ($this->hasGitattributesFile()) {
                 $exportIgnoreContent = rtrim($content);
                 $content = $this->getPresentNonExportIgnoresContent();
-                $content .= "\n" . $exportIgnoreContent;
+                $content .= $this->preferredEol . $exportIgnoreContent;
             } else {
-                $content = "* text=auto eol=lf\n\n" . $content;
+                $content = "* text=auto eol=lf"
+                    . str_repeat($this->preferredEol, 2)
+                    . $content;
             }
 
             return $content;
@@ -231,8 +240,31 @@ class Analyser
     }
 
     /**
-     * TODO: Keep newline as is.
+     * Detect most frequently used end of line sequence.
      *
+     * @param  string $content The content to detect the eol in.
+     *
+     * @return string
+     */
+    private function detectEol($content)
+    {
+        $maxCount = 0;
+        $preferredEol = $this->preferredEol;
+        $eols = ["\n", "\r", "\n\r", "\r\n"];
+
+        foreach ($eols as $eol) {
+            if (($count = substr_count($content, $eol)) >= $maxCount) {
+                $maxCount = $count;
+                $preferredEol = $eol;
+            }
+        }
+
+        $this->preferredEol = $preferredEol;
+
+        return $preferredEol;
+    }
+
+    /**
      * Get the present non export-ignore entries of
      * the .gitattributes file.
      *
@@ -245,6 +277,7 @@ class Analyser
         }
 
         $gitattributesContent = file_get_contents($this->gitattributesFile);
+        $eol = $this->detectEol($gitattributesContent);
 
         $gitattributesLines = preg_split(
             '/\\r\\n|\\r|\\n/',
@@ -258,7 +291,7 @@ class Analyser
             }
         });
 
-        return implode("\n", $nonExportIgnoreLines);
+        return implode($eol, $nonExportIgnoreLines);
     }
 
     /**
