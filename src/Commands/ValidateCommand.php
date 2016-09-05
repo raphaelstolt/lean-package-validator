@@ -98,6 +98,21 @@ class ValidateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $directory = $input->getArgument('directory');
+
+        if ($directory !== WORKING_DIRECTORY) {
+            try {
+                $this->analyser->setDirectory($directory);
+            } catch (\RuntimeException $e) {
+                $warning = "Warning: The provided directory "
+                    . "'$directory' does not exist or is not a directory.";
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+
+                return 1;
+            }
+        }
+
         $createGitattributesFile = $input->getOption('create');
         $overwriteGitattributesFile = $input->getOption('overwrite');
         $validateArchive = $input->getOption('validate-git-archive');

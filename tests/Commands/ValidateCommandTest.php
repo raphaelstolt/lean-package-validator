@@ -483,6 +483,31 @@ CONTENT;
     }
 
     /**
+     * @test
+     */
+    public function invalidDirectoryAgumentReturnsExpectedStatusCode()
+    {
+        $nonExistentDirectoryOrFile = WORKING_DIRECTORY
+            . DIRECTORY_SEPARATOR
+            . 'non-existent-directory-or-file';
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => $nonExistentDirectoryOrFile,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: The provided directory '{$nonExistentDirectoryOrFile}' does not exist or is not a directory.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
      * @return \Symfony\Component\Console\Application
      */
     protected function getApplicationWithMockedAnalyser(MockInterface $mockedAnalyser)

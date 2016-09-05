@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.0.3 `2016-09-05`
+- Fix `directory` argument usage and validation.
+
 #### v1.0.2 `2016-09-05`
 - Additional validation of glob patterns injected via the `--glob-pattern` option. Closes [#2](https://github.com/raphaelstolt/lean-package-validator/issues/2).
 
