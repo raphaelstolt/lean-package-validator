@@ -252,7 +252,7 @@ CONTENT;
 
     /**
      * @test
-     * @group globf
+     * @group glob
      */
     public function usageOfInvalidGlobFailsValidation()
     {
