@@ -5,6 +5,7 @@ namespace Stolt\LeanPackage\Tests;
 use Mockery;
 use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 
 class AnalyserTest extends TestCase
 {
@@ -514,5 +515,64 @@ CONTENT;
             $artifactFilenamesMatchingGlob,
             $actualExportIgnores
         );
+    }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function emptyGlobPatternThrowsExpectedException()
+    {
+        $this->expectException(InvalidGlobPattern::class);
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPattern('');
+    }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function invalidGlobPatternBracesThrowsExpectedException()
+    {
+        $this->expectException(InvalidGlobPattern::class);
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPattern('[fdofodsppfosdp]');
+    }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function wildcardAfterBracesIsNotRaisingAnException()
+    {
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPattern('{*.ymk, test.php}*');
+    }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function emptyGlobPatternBracesContentThrowsExpectedException()
+    {
+        $this->expectException(InvalidGlobPattern::class);
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPattern('{ }');
+    }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function singleGlobPatternThrowsExpectedException()
+    {
+        $this->expectException(InvalidGlobPattern::class);
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPattern('{*.go}');
     }
 }

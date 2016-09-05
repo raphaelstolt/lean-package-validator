@@ -39,7 +39,7 @@ The `--overwrite|-o` option overwrites an existing `.gitattributes` file when th
 lean-package-validator validate [<directory>] --overwrite
 ```
 
-The `--glob-pattern` option allows you to overwrite the default pattern\* used to match common repository artifacts. As shown this utility could thereby also be used for projects (i.e. Python) outside of the PHP ecosystem.
+The `--glob-pattern` option allows you to overwrite the default pattern\* used to match common repository artifacts. The amount of pattern in the grouping braces is expected to be `>1`. As shown next this utility could thereby also be used for projects (i.e. Python) outside of the PHP ecosystem.
 
 ``` bash
 lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod],dist/}'

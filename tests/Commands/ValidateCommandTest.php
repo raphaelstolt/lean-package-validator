@@ -204,6 +204,7 @@ CONTENT;
 
     /**
      * @test
+     * @group glob
      */
     public function optionalGlobPatternIsApplied()
     {
@@ -242,6 +243,30 @@ mock.pyc export-ignore
 testrunner.py export-ignore
 
 Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @group globf
+     */
+    public function usageOfInvalidGlobFailsValidation()
+    {
+        $failingGlobPattern = '{single-pattern*}';
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--glob-pattern' => $failingGlobPattern,
+        ]);
+
+$expectedDisplay = <<<CONTENT
+Warning: The provided glob pattern '{$failingGlobPattern}' is considered invalid.
 
 CONTENT;
 

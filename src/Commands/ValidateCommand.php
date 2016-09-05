@@ -4,6 +4,7 @@ namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
+use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Generator;
 use Stolt\LeanPackage\Archive\Validator;
 use Symfony\Component\Console\Command\Command;
@@ -103,7 +104,16 @@ class ValidateCommand extends Command
         $globPattern = $input->getOption('glob-pattern');
 
         if ($globPattern) {
-            $this->analyser->setGlobPattern($globPattern);
+            try {
+                $this->analyser->setGlobPattern($globPattern);
+            } catch (InvalidGlobPattern $e) {
+                $warning = "Warning: The provided glob pattern "
+                    . "'$globPattern' is considered invalid.";
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+
+                return 1;
+            }
         }
 
         if (!$this->analyser->hasGitattributesFile()) {

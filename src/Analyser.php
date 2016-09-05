@@ -2,6 +2,8 @@
 
 namespace Stolt\LeanPackage;
 
+use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
+
 class Analyser
 {
     /**
@@ -60,18 +62,54 @@ class Analyser
 
         $this->globPattern = '{' . implode(',', $globPatterns) . '}*';
     }
-//TODO: Add glob validation
+
+    /**
+     * Guard the set glob pattern.
+     *
+     * @throws Stolt\LeanPackag\Exceptions\InvalidGlobPattern
+     * @return void
+     */
+    private function guardGlobPattern()
+    {
+        $invalidGlobPattern = false;
+
+        if (substr($this->globPattern, 0) !== '{'
+            && (substr($this->globPattern, -1) !== '}' && substr($this->globPattern, -2) !== '}*'))
+        {
+            $invalidGlobPattern = true;
+        }
+
+        $bracesContent = trim(substr($this->globPattern, 1, -1));
+
+        if (empty($bracesContent)) {
+            $invalidGlobPattern = true;
+        }
+
+        $globPatterns = explode(',', $bracesContent);
+
+        if (count($globPatterns) == 1) {
+            $invalidGlobPattern = true;
+        }
+
+        if ($invalidGlobPattern === true) {
+            throw new InvalidGlobPattern;
+        }
+    }
+
     /**
      * Overwrite the default glob pattern.
      *
      * @param string $pattern The glob pattern to use to detect expected
      *                        export-ignores files.
      *
+     * @throws Stolt\LeanPackag\Exceptions\InvalidGlobPattern
+     *
      * @return Stolt\LeanPackag\Analyser
      */
     public function setGlobPattern($pattern)
     {
         $this->globPattern = trim($pattern);
+        $this->guardGlobPattern();
 
         return $this;
     }
