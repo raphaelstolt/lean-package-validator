@@ -608,4 +608,15 @@ CONTENT;
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{*.go}');
     }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function globPatternWithEnclosedBracesAreConsideredValid()
+    {
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPattern('{{{M,m}ake,{B,b}ox,{V,v}agrant}file,RMT}');
+    }
 }
