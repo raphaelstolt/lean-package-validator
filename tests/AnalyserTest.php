@@ -174,6 +174,38 @@ CONTENT;
     /**
      * @test
      */
+    public function expectedFileMatchesAreInGitattributesContent()
+    {
+        $artifactsWithoutExportIgnore = [
+            'Vagrantfile',
+            'makefile',
+            'Boxfile',
+        ];
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+Boxfile export-ignore
+makefile export-ignore
+Vagrantfile export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent(
+            $artifactsWithoutExportIgnore
+        );
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
+     */
     public function nonExportIgnoresContentIsEmptyForNonexistentGitattributesFile()
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
