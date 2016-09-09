@@ -241,6 +241,7 @@ CONTENT;
 
         $actualGitattributesContent = $analyser->getPresentNonExportIgnoresContent();
 
+        $exportIgnoresPlacementPlaceholder = Analyser::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
         $expectedGitattributesContent = <<<CONTENT
 # Auto-detect text files, ensure they use LF.
 * text=auto eol=lf
@@ -248,6 +249,7 @@ CONTENT;
 *.php text eol=lf whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,tabwidth=4 diff=php
 
 # Don't include in archives
+{$exportIgnoresPlacementPlaceholder}
 
 CONTENT;
 
@@ -520,6 +522,253 @@ CONTENT;
             $expectedExportIgnores,
             $actualExportIgnores
         );
+    }
+
+    /**
+     * @test
+     */
+    public function nonExportIgnoresContentHasPlaceholderForExportIgnoresPlacement()
+    {
+        $gitattributesContent = <<<CONTENT
+# A head comment
+* text=auto eol=lf
+
+# Some content before
+
+.editorconfig export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
+
+# Some content after
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $exportIgnoresPlacementPlaceholder = Analyser::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
+
+$expectedNonExportIgnoresContent = <<<CONTENT
+# A head comment
+* text=auto eol=lf
+
+# Some content before
+
+{$exportIgnoresPlacementPlaceholder}
+
+# Some content after
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+
+        $actualNonExportIgnoresContentContent = $analyser->getPresentNonExportIgnoresContent();
+
+        $this->assertEquals(
+            $expectedNonExportIgnoresContent,
+            $actualNonExportIgnoresContentContent
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function returnsExpectedGitattributesContentWithPreservedLocation()
+    {
+        $artifactFilenames = [
+            'README.md',
+            'Makefile',
+            '.editorconfig',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests', '.github']
+        );
+
+        $gitattributesContent = <<<CONTENT
+# A head comment
+* text=auto eol=lf
+
+# Some content before
+
+.editorconfig export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
+
+# Some content after
+
+# Some more content
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $expectedGitattributesContent = <<<CONTENT
+# A head comment
+* text=auto eol=lf
+
+# Some content before
+
+.editorconfig export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
+Makefile export-ignore
+README.md export-ignore
+tests/ export-ignore
+
+# Some content after
+
+# Some more content
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function notPatternMatchingExportIgnoresArePreservedAssumedFileExists()
+    {
+        $artifactFilenames = [
+            'README.md',
+            'phpspec.yml.dist',
+            'application-version-incrementor',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+# A head comment
+* text=auto eol=lf
+
+# Files to exclude from export
+.gitattributes export-ignore
+application-version-incrementor export-ignore
+
+# Other patterns
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $expectedGitattributesContent = <<<CONTENT
+# A head comment
+* text=auto eol=lf
+
+# Files to exclude from export
+.gitattributes export-ignore
+application-version-incrementor export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+
+# Other patterns
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function nonPatternsMatchingButMatchingExistingFilesArePreservedExportIgnores()
+    {
+        $artifactFilenames = [
+            'changelog-generator',
+            'README.md',
+            'phpspec.yml.dist',
+            'application-version-incrementor',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+changelog-generator export-ignore
+.gitattributes export-ignore
+application-version-incrementor export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $expectedExportIgnoresToPreserve = [
+            'changelog-generator',
+            'application-version-incrementor',
+        ];
+
+        $globPatternMatchingExportIgnores = [
+            'README.md',
+            'phpspec.yml.dist',
+            'specs/',
+            '.gitattributes',
+        ];
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+
+        $actualExportIgnoresToPreserve = $analyser->getPresentExportIgnoresToPreserve(
+            $globPatternMatchingExportIgnores
+        );
+
+        $this->assertEquals(
+            $expectedExportIgnoresToPreserve,
+            $actualExportIgnoresToPreserve
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function notPatternMatchingExportIgnoresDoNotFailCompletnessCheck()
+    {
+        $artifactFilenames = [
+            'changelog-generator',
+            'README.md',
+            'phpspec.yml.dist',
+            'application-version-incrementor',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+application-version-incrementor export-ignore
+changelog-generator export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
     /**

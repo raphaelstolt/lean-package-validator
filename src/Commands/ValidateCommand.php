@@ -194,8 +194,26 @@ class ValidateCommand extends Command
 
             return 1;
         } else {
+            if ($this->analyser->hasCompleteExportIgnores() === false) {
+                $outputContent = '<error>The present .gitattributes file is considered invalid.</error>';
+
+                if ($this->analyser->hasCompleteExportIgnores() === false) {
+                    $expectedGitattributesFileContent = $this->analyser
+                        ->getExpectedGitattributesContent();
+
+                    $outputContent .= $this->getExpectedGitattributesFileContentOutput(
+                        $expectedGitattributesFileContent
+                    );
+
+                    $output->writeln($outputContent);
+
+                    return 1;
+                }
+            }
+
             $info = '<info>The present .gitattributes file is considered valid.</info>';
             $output->writeln($info);
+
             return true;
         }
     }
@@ -210,6 +228,22 @@ class ValidateCommand extends Command
         return $this->archiveValidator->validate(
             $this->analyser->collectExpectedExportIgnores()
         );
+    }
+
+    /**
+     * Get expected gitattributes file content output content.
+     *
+     * @param  string $expectedGitattributesFileContent
+     *
+     * @return string
+     */
+    protected function getExpectedGitattributesFileContentOutput(
+        $expectedGitattributesFileContent
+    ) {
+        $content = 'Would expect the following .gitattributes file content:' . PHP_EOL
+            . '<info>' . $expectedGitattributesFileContent . '</info>';
+
+        return str_repeat(PHP_EOL, 2) . $content;
     }
 
     /**

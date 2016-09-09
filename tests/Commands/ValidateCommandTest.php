@@ -178,9 +178,22 @@ CONTENT;
      */
     public function validGitattributesReturnsExpectedStatusCode()
     {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'foo.txt',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
         $gitattributesContent = <<<CONTENT
-phpspec.yml.dist export-ignore
+.gitattributes export-ignore
 .buildignore export-ignore
+foo.txt export-ignore
+phpspec.yml.dist export-ignore
 specs/ export-ignore
 CONTENT;
 
@@ -200,6 +213,51 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() == 0);
+    }
+
+    /**
+     * @test
+     */
+    public function invalidGitattributesReturnsExpectedStatusCode()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+specs/ export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+.buildignore export-ignore
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
     /**

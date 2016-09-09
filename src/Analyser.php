@@ -6,6 +6,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 
 class Analyser
 {
+    const EXPORT_IGNORES_PLACEMENT_PLACEHOLDER = '{{ export_ignores_placement }}';
     /**
      * The directory to analyse
      *
@@ -195,11 +196,14 @@ class Analyser
 
             if ($this->hasGitattributesFile()) {
                 $exportIgnoreContent = rtrim($content);
+                $this->getPresentExportIgnoresToPreserve($postfixlessExportIgnores);
+
                 $content = $this->getPresentNonExportIgnoresContent();
-                if ($this->lastContentLineHasEol($content) === false) {
-                    $content.= $this->preferredEol;
-                }
-                $content .= $exportIgnoreContent;
+                $content = str_replace(
+                    self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER,
+                    $exportIgnoreContent,
+                    $content
+                );
             } else {
                 $content = "* text=auto eol=lf"
                     . str_repeat($this->preferredEol, 2)
@@ -213,19 +217,38 @@ class Analyser
     }
 
     /**
-     * Check if last line of content has an end of line sequence.
+     * Return export ignores in .gitattributes file to preserve.
      *
-     * @param  string $content The content to detect the eol in.
+     * @param  array $postfixlessExportIgnores Export ignores matching glob pattern.
      *
-     * @return boolean
+     * @return array
      */
-    private function lastContentLineHasEol($content)
+    public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores)
     {
-        if (substr($content, -1) !== $this->preferredEol) {
-            return false;
-        }
+        $gitattributesContent = file_get_contents($this->gitattributesFile);
+        $eol = $this->detectEol($gitattributesContent);
 
-        return true;
+        $gitattributesLines = preg_split(
+            '/\\r\\n|\\r|\\n/',
+            $gitattributesContent
+        );
+
+        $exportIgnoresToPreserve = [];
+
+        array_filter($gitattributesLines, function ($line) use (
+            &$exportIgnoresToPreserve,
+            &$globPatternMatchingExportIgnores
+        ) {
+            if (strstr($line, 'export-ignore')) {
+                list($pattern, $void) = explode('export-ignore', $line);
+                $patternMatches = $this->patternHasMatch($pattern);
+                if ($patternMatches && !in_array(trim($pattern), $globPatternMatchingExportIgnores)) {
+                    return $exportIgnoresToPreserve[] = trim($pattern);
+                }
+            }
+        });
+
+        return $exportIgnoresToPreserve;
     }
 
     /**
@@ -252,6 +275,13 @@ class Analyser
         }
 
         chdir($initialWorkingDirectory);
+
+        if ($this->hasGitattributesFile()) {
+            $expectedExportIgnores = array_merge(
+                $expectedExportIgnores,
+                $this->getPresentExportIgnoresToPreserve($expectedExportIgnores)
+            );
+        }
 
         sort($expectedExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
@@ -284,6 +314,27 @@ class Analyser
     }
 
     /**
+     * Check if a given pattern produces a match
+     * against the repository directory.
+     *
+     * @param  string  $globPattern
+     * @return boolean
+     */
+    private function patternHasMatch($globPattern)
+    {
+        $globPattern = '{' . trim($globPattern) . '}*';
+
+        $initialWorkingDirectory = getcwd();
+        chdir($this->directory);
+
+        $matches = glob($globPattern, GLOB_BRACE);
+
+        chdir($initialWorkingDirectory);
+
+        return is_array($matches) && count($matches) > 0;
+    }
+
+    /**
      * Get the present non export-ignore entries of
      * the .gitattributes file.
      *
@@ -304,9 +355,21 @@ class Analyser
         );
 
         $nonExportIgnoreLines = [];
-        array_filter($gitattributesLines, function ($line) use (&$nonExportIgnoreLines) {
+        $exportIgnoresPlacementPlaceholderSet = false;
+        $exportIgnoresPlacementPlaceholder = self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
+
+        array_filter($gitattributesLines, function ($line) use (
+            &$nonExportIgnoreLines,
+            &$exportIgnoresPlacementPlaceholderSet,
+            &$exportIgnoresPlacementPlaceholder
+        ) {
             if (strstr($line, 'export-ignore') === false) {
                 return $nonExportIgnoreLines[] = trim($line);
+            } else {
+                if ($exportIgnoresPlacementPlaceholderSet === false) {
+                    $exportIgnoresPlacementPlaceholderSet = true;
+                    return $nonExportIgnoreLines[] = $exportIgnoresPlacementPlaceholder;
+                }
             }
         });
 
