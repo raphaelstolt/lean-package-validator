@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.0.5 `2016-09-09`
+- Fix expected and actual `export-ignores` comparison. Related to [#3](https://github.com/raphaelstolt/lean-package-validator/issues/3).
+
 #### v1.0.4 `2016-09-09`
 - Additional artifacts glob pattern expansion to match Vagrant and Box files.
 - Fix present `.gitattributes` files are really validated. Closes [#3](https://github.com/raphaelstolt/lean-package-validator/issues/3).

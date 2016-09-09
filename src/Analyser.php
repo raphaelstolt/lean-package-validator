@@ -423,6 +423,6 @@ class Analyser
 
         $actualExportIgnores = $this->getPresentExportIgnores();
 
-        return ($expectedExportIgnores === $actualExportIgnores);
+        return array_values($expectedExportIgnores) === array_values($actualExportIgnores);
     }
 }
