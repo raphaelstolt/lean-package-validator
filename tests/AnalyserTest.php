@@ -174,13 +174,17 @@ CONTENT;
     /**
      * @test
      */
-    public function expectedFileMatchesAreInGitattributesContent()
+    public function expectedFileMatchesAreInExpectedGitattributesContent()
     {
-        $artifactsWithoutExportIgnore = [
+        $artifactFilenames = [
             'Vagrantfile',
             'makefile',
             'Boxfile',
         ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames
+        );
 
         $expectedGitattributesContent = <<<CONTENT
 * text=auto eol=lf
@@ -193,9 +197,7 @@ CONTENT;
 
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
 
-        $actualGitattributesContent = $analyser->getExpectedGitattributesContent(
-            $artifactsWithoutExportIgnore
-        );
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
             $expectedGitattributesContent,
