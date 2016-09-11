@@ -21,3 +21,4 @@ $fileContent = preg_replace(
 file_put_contents($binFile, $fileContent);
 
 echo "Set version in {$binFile} to {$version}." . PHP_EOL;
+echo "Run git add bin/lean-package-validator && git commit -m 'Release {$version}' && git tag v{$version} to release." . PHP_EOL;
