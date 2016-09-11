@@ -740,7 +740,7 @@ CONTENT;
     /**
      * @test
      */
-    public function notPatternMatchingExportIgnoresDoNotFailCompletnessCheck()
+    public function notPatternMatchingExportIgnoresDoNotFailCompletenessCheck()
     {
         $artifactFilenames = [
             'changelog-generator',
