@@ -566,6 +566,126 @@ CONTENT;
     }
 
     /**
+     * @test
+     * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
+     * @dataProvider optionProvider
+     */
+    public function incompleteGitattributesFileIsOverwritten($option)
+    {
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+version-increase-command export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+
+        $artifactFilenames = ['phpspec.yml.dist', 'version-increase-command'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            $option => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Overwrote it with the shown content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+version-increase-command export-ignore
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $this->assertFileExists(
+            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+        );
+    }
+
+    /**
+     * @test
+     * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
+     */
+    public function failingGitattributesFilesOverwriteReturnsExpectedStatusCode()
+    {
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+
+        $artifactFilenames = ['phpspec.yml.dist'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $builder = new MockBuilder();
+        $builder->setNamespace('Stolt\LeanPackage\Commands')
+            ->setName('file_put_contents')
+            ->setFunction(
+                function () {
+                    return false;
+                }
+            );
+
+        $mock = $builder->build();
+        $mock->enable();
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--create' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Overwrite of .gitattributes file failed.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+
+        $mock->disable();
+    }
+
+    /**
+     * @return array
+     */
+    public function optionProvider()
+    {
+        return [
+            ['--overwrite'],
+            ['--create']
+        ];
+    }
+
+    /**
      * @return \Symfony\Component\Console\Application
      */
     protected function getApplicationWithMockedAnalyser(MockInterface $mockedAnalyser)

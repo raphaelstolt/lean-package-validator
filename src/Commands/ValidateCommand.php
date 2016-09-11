@@ -201,6 +201,23 @@ class ValidateCommand extends Command
                     $expectedGitattributesFileContent = $this->analyser
                         ->getExpectedGitattributesContent();
 
+                    if ($createGitattributesFile || $overwriteGitattributesFile) {
+                        try {
+                            $outputContent .= $this->overwriteGitattributesFile(
+                                $expectedGitattributesFileContent
+                            );
+
+                            $output->writeln($outputContent);
+
+                            return true;
+                        } catch (GitattributesCreationFailed $e) {
+                            $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
+                            $output->writeln($outputContent);
+
+                            return 1;
+                        }
+                    }
+
                     $outputContent .= $this->getExpectedGitattributesFileContentOutput(
                         $expectedGitattributesFileContent
                     );
@@ -287,6 +304,32 @@ class ValidateCommand extends Command
         }
 
         $message = 'Creation of .gitattributes file failed.';
+        throw new GitattributesCreationFailed($message);
+    }
+
+    /**
+     * Overwrite an existing gitattributes file.
+     *
+     * @param  string  $content The content of the gitattributes file
+     * @throws \Stolt\LeanPackage\Exceptions\GitattributesCreationFailed
+     *
+     * @return string
+     */
+    protected function overwriteGitattributesFile($content)
+    {
+        $bytesWritten = file_put_contents(
+            $this->analyser->getGitattributesFilePath(),
+            $content
+        );
+
+        if ($bytesWritten) {
+            $content = 'Overwrote it with the shown content:'
+                . PHP_EOL . '<info>' . $content . '</info>';
+
+            return PHP_EOL . PHP_EOL . $content;
+        }
+
+        $message = 'Overwrite of .gitattributes file failed.';
         throw new GitattributesCreationFailed($message);
     }
 }
