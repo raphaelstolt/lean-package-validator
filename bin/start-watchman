@@ -1,0 +1,3 @@
+#!/bin/bash
+command -v watchman >/dev/null 2>&1 || { echo >&2 "Watchman (https://github.com/facebook/watchman) is not installed. Aborting."; exit 1; }
+watchman-make --pattern 'src/**/*.php' 'tests/**/*.php' 'bin/lean*' --make=composer --target 'test -- --colors=always'
