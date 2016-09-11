@@ -1,15 +1,53 @@
 #!/usr/bin/env php
 <?php
+$binApplicationName = 'lean-package-validator';
+$binFile = __DIR__ . DIRECTORY_SEPARATOR . $binApplicationName;
+list($void, $binFileRelative) = explode($binApplicationName, $binFile, 2);
+$shortBinFilePath = $binApplicationName . $binFileRelative;
 
-$binFile = __DIR__ . DIRECTORY_SEPARATOR . 'lean-package-validator';
+$options = getopt('v:ch', ['version:', 'current', 'help']);
 
-$options = getopt('v:', ['version:']);
+$help = <<<HELP
+This command increments the version number in the {$shortBinFilePath} file:
+
+Usage:
+  increment-application-version [options] [--] [<command_name>]
+
+Options:
+  -v, --version                  The version number to set
+  -c, --current                  The current version number
+  -h, --help                     Display this help message
+
+HELP;
+
+if (array_key_exists('h', $options) || array_key_exists('help', $options)) {
+    echo $help;
+    exit(0);
+}
+
+if (array_key_exists('c', $options) || array_key_exists('current', $options)) {
+    $matches = [];
+    $match = preg_match(
+        '/(\d+\.)?(\d+\.)?(\*|\d+)/',
+        file_get_contents($binFile),
+        $matches
+    );
+
+    echo "Current version set in {$shortBinFilePath} is {$matches[0]}." . PHP_EOL;
+
+    exec('git describe --tags --abbrev=0', $output);
+    $latestGitTag = $output[0];
+
+    echo "Current tagged version {$latestGitTag}." . PHP_EOL;
+    exit(0);
+}
 
 if ($options === []) {
-    echo 'No version set. Provide one via --version|-v.' . PHP_EOL;
+    echo 'No version set.' . PHP_EOL;
     exit(1);
 }
-$version = isset($options['version']) ? $options['version'] : $options['v'];
+
+$version = isset($options['version']) ? trim($options['version']) : trim($options['v']);
 
 $fileContent = file_get_contents($binFile);
 $fileContent = preg_replace(
@@ -20,5 +58,5 @@ $fileContent = preg_replace(
 
 file_put_contents($binFile, $fileContent);
 
-echo "Set version in {$binFile} to {$version}." . PHP_EOL;
-echo "Run git add bin/lean-package-validator && git commit -m 'Release {$version}' && git tag v{$version} to release." . PHP_EOL;
+echo "Set version in {$shortBinFilePath} to {$version}." . PHP_EOL;
+echo "Run 'git add bin/{$binApplicationName} && git commit -m \"Release {$version}\" && git tag v{$version}' to release." . PHP_EOL;
