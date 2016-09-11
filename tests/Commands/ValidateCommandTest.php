@@ -582,7 +582,6 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-
         $artifactFilenames = ['phpspec.yml.dist', 'version-increase-command'];
 
         $this->createTemporaryFiles(
@@ -632,7 +631,6 @@ specs/ export-ignore
 CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
-
 
         $artifactFilenames = ['phpspec.yml.dist'];
 

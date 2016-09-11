@@ -61,7 +61,7 @@ class TestCase extends PHPUnit
      *
      * @return void
      */
-    protected function createTemporaryFiles(array $files, array $directories = array())
+    protected function createTemporaryFiles(array $files, array $directories = [])
     {
         foreach ($files as $file) {
             $artifactFile = $this->temporaryDirectory
