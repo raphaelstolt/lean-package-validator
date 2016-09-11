@@ -5,7 +5,7 @@ $binFile = __DIR__ . DIRECTORY_SEPARATOR . $binApplicationName;
 list($void, $binFileRelative) = explode($binApplicationName, $binFile, 2);
 $shortBinFilePath = $binApplicationName . $binFileRelative;
 
-$options = getopt('v:ch', ['version:', 'current', 'help']);
+$options = getopt('v:chm', ['version:', 'current', 'match', 'help']);
 
 $help = <<<HELP
 This command increments the version number in the {$shortBinFilePath} file:
@@ -14,6 +14,7 @@ Usage:
   increment-application-version [options] [--] [<command_name>]
 
 Options:
+  -m, --match                    Verify application version and Git tag match
   -v, --version                  The version number to set
   -c, --current                  The current version number
   -h, --help                     Display this help message
@@ -23,6 +24,28 @@ HELP;
 if (array_key_exists('h', $options) || array_key_exists('help', $options)) {
     echo $help;
     exit(0);
+}
+
+if (array_key_exists('m', $options) || array_key_exists('match', $options)) {
+    $matches = [];
+    $match = preg_match(
+        '/(\d+\.)?(\d+\.)?(\*|\d+)/',
+        file_get_contents($binFile),
+        $matches
+    );
+
+    $applicationVersion = 'v' . trim($matches[0]);
+
+    exec('git describe --tags --abbrev=0', $output);
+
+    $latestGitTag = trim($output[0]);
+
+    if ($applicationVersion === $latestGitTag) {
+        echo "The application version and Git tag match on {$latestGitTag}." . PHP_EOL;
+        exit(0);
+    }
+    echo "The application version {$applicationVersion} and Git tag {$latestGitTag} don't match." . PHP_EOL;
+    exit(1);
 }
 
 if (array_key_exists('c', $options) || array_key_exists('current', $options)) {
