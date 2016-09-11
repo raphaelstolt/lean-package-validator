@@ -547,7 +547,7 @@ CONTENT;
 
         $exportIgnoresPlacementPlaceholder = Analyser::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
 
-$expectedNonExportIgnoresContent = <<<CONTENT
+        $expectedNonExportIgnoresContent = <<<CONTENT
 # A head comment
 * text=auto eol=lf
 

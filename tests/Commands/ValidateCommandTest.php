@@ -323,7 +323,7 @@ CONTENT;
             '--glob-pattern' => $failingGlobPattern,
         ]);
 
-$expectedDisplay = <<<CONTENT
+        $expectedDisplay = <<<CONTENT
 Warning: The provided glob pattern '{$failingGlobPattern}' is considered invalid.
 
 CONTENT;

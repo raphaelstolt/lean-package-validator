@@ -82,8 +82,7 @@ class Analyser
         $invalidGlobPattern = false;
 
         if (substr($this->globPattern, 0) !== '{'
-            && (substr($this->globPattern, -1) !== '}' && substr($this->globPattern, -2) !== '}*'))
-        {
+            && (substr($this->globPattern, -1) !== '}' && substr($this->globPattern, -2) !== '}*')) {
             $invalidGlobPattern = true;
         }
 
