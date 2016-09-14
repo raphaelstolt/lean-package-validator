@@ -50,7 +50,7 @@ The `--glob-pattern` option allows you to overwrite the default pattern\* used t
 ``` bash
 lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod],dist/}'
 ```
-\* The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,box.json,*dist*,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant}file,RMT}*`.
+\* The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,box.json,*dist*,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
 
 The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and by inspecting it's content.
 

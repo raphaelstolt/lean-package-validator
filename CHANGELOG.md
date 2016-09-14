@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.0.? `2016-??-??`
+- Additional artifacts glob pattern expansion to match Phulp files.
+
 #### v1.0.6 `2016-09-11`
 - Fix present, invalid `.gitattributes` files are overwritable. Closes [#8](https://github.com/raphaelstolt/lean-package-validator/issues/8).
 

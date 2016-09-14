@@ -64,7 +64,7 @@ class Analyser
             '{S,s}pec*',
             '{E,e}xample*',
             'LICENSE',
-            '{{M,m}ake,{B,b}ox,{V,v}agrant}file',
+            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
             'RMT'
         ];
 
