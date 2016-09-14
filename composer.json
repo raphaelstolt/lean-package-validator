@@ -28,7 +28,8 @@
     "bin": ["bin/lean-package-validator"],
     "scripts": {
         "test": "phpunit",
-        "cs-fix": "php-cs-fixer fix . -vv || true"
+        "cs-fix": "php-cs-fixer fix . -vv || true",
+        "configure-commit-template": "git config --add commit.template .gitmessage"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8 || ^5.0",

@@ -4,6 +4,7 @@
 .gitattributes export-ignore
 .github/ export-ignore
 .gitignore export-ignore
+.gitmessage export-ignore
 .php_cs export-ignore
 .travis.yml export-ignore
 bin/increment-application-version export-ignore
