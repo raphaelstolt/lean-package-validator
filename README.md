@@ -52,14 +52,14 @@ lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod
 ```
 \* The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,box.json,*dist*,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
 
-The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and by inspecting it's content.
+The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting it's content.
 
 ``` bash
 lean-package-validator validate [<directory>] --validate-git-archive
 ```
 
 ## Utilisation via Composer scripts
-To avoid that changes coming from contributions or own modifications slip into release/dist archives it might be helpful to use a guarding [Composer scripts](https://getcomposer.org/doc/articles/scripts.md), which will be available at everyones fingertips.
+To avoid that changes coming from contributions or own modifications slip into release/dist archives it might be helpful to use a guarding [Composer script](https://getcomposer.org/doc/articles/scripts.md), which will be available at everyones fingertips.
 
 By adding the following to the project/micro-package its `composer.json` the ` .gitattributes` file can now be easily validated via `composer validate-gitattributes`.
 
@@ -70,7 +70,7 @@ By adding the following to the project/micro-package its `composer.json` the ` .
     },
 }
 ```
-Further this Composer script could also be utilised in TravisCI [builds](.travis.yml) similar to the `composer test` script call.
+Further this Composer script could also be utilised in Travis CI [builds](.travis.yml) similar to the `composer test` script call.
 
 #### Running tests
 ``` bash
