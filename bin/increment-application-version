@@ -98,4 +98,6 @@ if ($numberOfUncommittedFiles > 1) {
     $warning = "Attention: There seem to be uncommitted files "
         . "besides bin/{$binApplicationName} present.";
     echo $warning . PHP_EOL;
+    exit(1);
 }
+exit(0);
