@@ -11,7 +11,7 @@ $help = <<<HELP
 This command increments the version number in the {$shortBinFilePath} file:
 
 Usage:
-  increment-application-version [options] [--] [<command_name>]
+  increment-application-version [options]
 
 Options:
   -m, --match                    Verify application version and Git tag match
