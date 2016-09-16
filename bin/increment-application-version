@@ -90,3 +90,12 @@ $releaseCommands = implode(' && ', [
 ]);
 
 echo "Run '{$releaseCommands}' to release." . PHP_EOL;
+
+exec('expr $(git status --porcelain 2>/dev/null| egrep "^(M| M|D| D|\??)" | wc -l)', $output);
+$numberOfUncommittedFiles = $output[0];
+
+if ($numberOfUncommittedFiles > 1) {
+    $warning = "Attention: There seem to be uncommitted files "
+        . "besides bin/{$binApplicationName} present.";
+    echo $warning . PHP_EOL;
+}
