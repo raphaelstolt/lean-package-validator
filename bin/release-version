@@ -1,0 +1,144 @@
+#!/usr/bin/env php
+<?php
+
+$autoloads = [
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/vendor/autoload.php',
+];
+
+foreach ($autoloads as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+use vierbergenlars\SemVer\version as SemVer;
+
+$binApplicationName = 'lean-package-validator';
+$binFile = __DIR__ . DIRECTORY_SEPARATOR . $binApplicationName;
+list($void, $binFileRelative) = explode($binApplicationName, $binFile, 2);
+$shortBinFilePath = $binApplicationName . $binFileRelative;
+
+$defaultReleaseMessage = 'Release {version}';
+$acceptedIncrementSchemes = ['major', 'minor', 'patch'];
+$incrementSchemeList = implode(', ', $acceptedIncrementSchemes);
+
+$options = getopt('v:i:hm', ['version:', 'increment:', 'help', 'release-message']);
+
+$help = <<<HELP
+This command releases a new version without pushing it:
+
+Usage:
+  release-version [options]
+
+Options:
+  -i, --increment                The scheme (one of: {$incrementSchemeList}) to increment the
+                                 release version number by
+  -m, --release-message          The Git commit message [default: {$defaultReleaseMessage}] for the release
+  -v, --version                  The version number to release, if set increment scheme is ignored
+  -h, --help                     Display this help message
+
+HELP;
+
+if (array_key_exists('h', $options) || array_key_exists('help', $options)) {
+    echo $help;
+    exit(0);
+}
+
+/**
+ * Check if repository is in releasable state which is given
+ * when no uncommitted files are present.
+ *
+ * @return boolean
+ */
+function is_repository_in_releaseable_state() {
+    exec('expr $(git status --porcelain 2>/dev/null| egrep "^(M| M|D| D|\??)" | wc -l)', $output);
+    $numberOfUncommittedFiles = (int) $output[0];
+
+    return $numberOfUncommittedFiles === 0;
+}
+
+/**
+ * Return current version
+ *
+ * @return string
+ */
+function get_current_version() {
+    exec('php bin/application-version --current-raw', $output);
+
+    return $output[0];
+}
+
+if ($options === []) {
+    echo 'No options set.' . PHP_EOL;
+    exit(1);
+}
+
+$currentVersion = get_current_version();
+
+$version = isset($options['version']) ? trim($options['version']) : null;
+if ($version === null) {
+    $version = isset($options['v']) ? trim($options['v']) : null;
+}
+
+if ($version) {
+    if (SemVer::lte($version, $currentVersion)) {
+        echo "Earlier version '{$version}' provided." . PHP_EOL;
+        exit(1);
+    }
+    unset($options['increment'], $options['i']);
+}
+
+$increment = isset($options['i']) ? trim($options['i']) : null;
+if ($increment === null) {
+    $increment = isset($options['increment']) ? trim($options['increment']) : null;
+}
+
+if ($increment) {
+    if (!in_array($increment, $acceptedIncrementSchemes)) {
+        $message = "Invalid increment scheme '{$increment}' provided. "
+            . "Pick one out of [{$incrementSchemeList}].";
+        echo $message . PHP_EOL;
+        exit(1);
+    }
+
+    $version = (new SemVer($currentVersion))->inc($increment)->getVersion();
+}
+
+$overwrittenReleaseMessage = isset($options['m']) ? trim($options['m']) : null;
+if ($overwrittenReleaseMessage === null) {
+    $overwrittenReleaseMessage = isset($options['release-message']) ? trim($options['release-message']) : null;
+}
+if ($overwrittenReleaseMessage) {
+    $defaultReleaseMessage = $overwrittenReleaseMessage;
+}
+
+$releaseMessage = str_replace('{version}', $version, $defaultReleaseMessage);
+
+if (is_repository_in_releaseable_state()) {
+    echo 'Releasing ' . $version . PHP_EOL;
+
+    $releaseCommands = [
+        "php bin/application-version --version {$version}",
+        "git add bin/{$binApplicationName}",
+        "git commit -m \"{$releaseMessage}\"",
+        "git tag v{$version}",
+    ];
+
+    foreach ($releaseCommands as $command) {
+        echo "> {$command}" . PHP_EOL;
+        exec($command, $output);
+        if (trim($output) !== '') {
+            echo $output[0] . PHP_EOL;
+        }
+    }
+
+    echo "Released version {$version}." . PHP_EOL;
+    exit(0);
+}
+
+$warning = "There seem to be uncommitted files present. Aborting release.";
+echo $warning . PHP_EOL;
+exit(1);

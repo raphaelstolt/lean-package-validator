@@ -98,21 +98,4 @@ file_put_contents($binFile, $fileContent);
 
 echo "Set version in {$shortBinFilePath} to {$version}." . PHP_EOL;
 
-$releaseCommands = implode(' && ', [
-    "git add bin/{$binApplicationName}",
-    "git commit -m \"Release {$version}\"",
-    "git tag v{$version}",
-]);
-
-echo "Run '{$releaseCommands}' to release." . PHP_EOL;
-
-exec('expr $(git status --porcelain 2>/dev/null| egrep "^(M| M|D| D|\??)" | wc -l)', $output);
-$numberOfUncommittedFiles = $output[0];
-
-if ($numberOfUncommittedFiles > 1) {
-    $warning = "Attention: There seem to be uncommitted files "
-        . "besides bin/{$binApplicationName} present.";
-    echo $warning . PHP_EOL;
-    exit(1);
-}
 exit(0);
