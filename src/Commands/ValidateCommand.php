@@ -62,7 +62,7 @@ class ValidateCommand extends Command
             $this->analyser->getDirectory()
         );
 
-        $createDescription = 'Create .gitattributes file if not present';
+        $createDescription = 'Create a .gitattributes file if not present';
         $enforceStrictOrderDescription = 'Enforce a strict order comparison of '
             . 'export-ignores in the .gitattributes file';
         $overwriteDescription = 'Overwrite existing .gitattributes file '
