@@ -43,6 +43,15 @@ class Analyser
     private $preferredEol = "\n";
 
     /**
+     * Whether to do a strict comparsion of the export-ignores
+     * in the .gitattributes files against the expected ones
+     * or not.
+     *
+     * @var boolean
+     */
+    private $strictOrderComparison = false;
+
+    /**
      * Initialize.
      */
     public function __construct()
@@ -151,6 +160,26 @@ class Analyser
     public function getDirectory()
     {
         return $this->directory;
+    }
+
+    /**
+     * Enable strict order camparison.
+     */
+    public function enableStrictOrderCamparison()
+    {
+        $this->strictOrderComparison = true;
+
+        return $this;
+    }
+
+    /**
+     * Accessor for strict order camparison.
+     *
+     * @return boolean
+     */
+    public function isStrictOrderCamparisonEnabled()
+    {
+        return $this->strictOrderComparison === true;
     }
 
     /**
@@ -402,7 +431,9 @@ class Analyser
             }
         });
 
-        sort($exportIgnores, SORT_STRING | SORT_FLAG_CASE);
+        if ($this->isStrictOrderCamparisonEnabled() === false) {
+            sort($exportIgnores, SORT_STRING | SORT_FLAG_CASE);
+        }
 
         return $exportIgnores;
     }

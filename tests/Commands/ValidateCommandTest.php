@@ -673,6 +673,60 @@ CONTENT;
     }
 
     /**
+     * @test
+     * @ticket 6 (https://github.com/raphaelstolt/lean-package-validator/issues/6)
+     */
+    public function strictOrderOfExportIgnoresCanBeEnforced()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'Phulpfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+Phulpfile export-ignore
+.buildignore export-ignore
+phpspec.yml.dist
+specs/ export-ignore
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--enforce-strict-order' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+.buildignore export-ignore
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+Phulpfile export-ignore
+specs/ export-ignore
+phpspec.yml.dist
+
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
      * @return array
      */
     public function optionProvider()

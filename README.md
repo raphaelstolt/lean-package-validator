@@ -33,6 +33,12 @@ lean-package-validator validate [<directory>]
 ```
 
 #### Available options
+The `--enforce-strict-order` option will enforce a strict order comparison of export-ignores in the .gitattributes file and fail validation if the order differs. Per __default__ the order comparison is done in a non strict fashion.
+
+``` bash
+lean-package-validator validate [<directory>] --enforce-strict-order
+```
+
 The `--create|-c` option creates an `.gitattributes` file if nonexistent.
 
 ``` bash

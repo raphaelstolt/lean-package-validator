@@ -1,7 +1,8 @@
 # Changelog
 
-#### v1.0.? `2016-??-??`
+#### v1.1.0 `2016-09-18`
 - Additional artifacts glob pattern expansion to match Phulp files.
+- New `--enforce-strict-order` option to enforce a strict order comparison of export-ignores in the .gitattributes file. Closes [#6](https://github.com/raphaelstolt/lean-package-validator/issues/6).
 
 #### v1.0.6 `2016-09-11`
 - Fix present, invalid `.gitattributes` files are overwritable. Closes [#8](https://github.com/raphaelstolt/lean-package-validator/issues/8).

@@ -63,6 +63,8 @@ class ValidateCommand extends Command
         );
 
         $createDescription = 'Create .gitattributes file if not present';
+        $enforceStrictOrderDescription = 'Enforce a strict order comparison of '
+            . 'export-ignores in the .gitattributes file';
         $overwriteDescription = 'Overwrite existing .gitattributes file '
             . 'with missing export-ignores';
         $validateArchiveDescription = 'Validate Git archive against current HEAD';
@@ -73,6 +75,12 @@ class ValidateCommand extends Command
             . 'export-ignored';
 
         $this->addOption('create', 'c', InputOption::VALUE_NONE, $createDescription);
+        $this->addOption(
+            'enforce-strict-order',
+            null,
+            InputOption::VALUE_NONE,
+            $enforceStrictOrderDescription
+        );
         $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, $overwriteDescription);
         $this->addOption(
             'validate-git-archive',
@@ -117,6 +125,11 @@ class ValidateCommand extends Command
         $overwriteGitattributesFile = $input->getOption('overwrite');
         $validateArchive = $input->getOption('validate-git-archive');
         $globPattern = $input->getOption('glob-pattern');
+        $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
+
+        if ($enforceStrictOrderComparison) {
+            $this->analyser->enableStrictOrderCamparison();
+        }
 
         if ($globPattern) {
             try {
