@@ -633,6 +633,44 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 5 (https://github.com/raphaelstolt/lean-package-validator/issues/5)
+     */
+    public function varyingOrderDoesNotFailCompletenessCheck()
+    {
+        $artifactFilenames = [
+            'README.md',
+            'phpspec.yml.dist',
+            'build.xml.dist',
+            'Makefile',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+# Files to exclude from export
+specs/ export-ignore
+build.xml.dist export-ignore
+README.md export-ignore
+Makefile export-ignore
+phpspec.yml.dist export-ignore
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+    }
+
+    /**
+     * @test
      */
     public function notPatternMatchingExportIgnoresArePreservedAssumedFileExists()
     {
