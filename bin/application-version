@@ -8,7 +8,7 @@ $shortBinFilePath = $binApplicationName . $binFileRelative;
 $options = getopt('v:ch', ['version:', 'current', 'verify-tag-match', 'help', 'current-raw']);
 
 $help = <<<HELP
-This command increments the version number in the {$shortBinFilePath} file:
+This command sets the version number in the {$shortBinFilePath} file:
 
 Usage:
   application-version [options]
