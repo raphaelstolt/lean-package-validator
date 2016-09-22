@@ -130,7 +130,7 @@ if (is_repository_in_releaseable_state()) {
     foreach ($releaseCommands as $command) {
         echo "> {$command}" . PHP_EOL;
         exec($command, $output);
-        if (trim($output) !== '') {
+        if (trim($output[0]) !== '') {
             echo $output[0] . PHP_EOL;
         }
     }
