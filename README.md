@@ -58,6 +58,12 @@ lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod
 ```
 \* The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,box.json,*dist*,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
 
+The `--glob-pattern-file` option allows you to load patterns, which should be used to match the common repository artifacts, from a given file. You can put a `.lpv` file in the repository which will be used per default and overwrite the default pattern\*. The structure of such a glob pattern file can be taken from the [example](example/.lpv) directory.
+
+``` bash
+lean-package-validator validate [<directory>] --glob-pattern-file /path/to/glob-pattern-file
+```
+
 The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting it's content.
 
 ``` bash

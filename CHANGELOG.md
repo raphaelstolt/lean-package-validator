@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.2.0 `2016-09-22`
+- New `--glob-pattern-file` option to load custom glob patterns from a file. Closes [#9](https://github.com/raphaelstolt/lean-package-validator/issues/9).
+
 #### v1.1.0 `2016-09-18`
 - Additional artifacts glob pattern expansion to match Phulp files.
 - New `--enforce-strict-order` option to enforce a strict order comparison of export-ignores in the .gitattributes file. Closes [#6](https://github.com/raphaelstolt/lean-package-validator/issues/6).

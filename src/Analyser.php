@@ -3,6 +3,8 @@
 namespace Stolt\LeanPackage;
 
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
+use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 
 class Analyser
 {
@@ -78,6 +80,47 @@ class Analyser
         ];
 
         $this->globPattern = '{' . implode(',', $globPatterns) . '}*';
+    }
+
+    /**
+     * Set the glob pattern file.
+     *
+     * @param  string $file
+     * @throws Stolt\LeanPackag\Exceptions\NonExistentGlobPatternFile
+     * @throws Stolt\LeanPackag\Exceptions\InvalidGlobPatternFile
+     * @return Stolt\LeanPackag\Analyser
+     */
+    public function setGlobPatternFromFile($file)
+    {
+        if (!is_file($file)) {
+            $message = "Glob pattern file {$file} doesn't exist.";
+            throw new NonExistentGlobPatternFile($message);
+        }
+
+        $globPatternContent = file_get_contents($file);
+
+        $globPatternLines = preg_split(
+            '/\\r\\n|\\r|\\n/',
+            $globPatternContent
+        );
+
+        $globPatterns = [];
+        array_filter($globPatternLines, function ($line) use (&$globPatterns) {
+            if (trim($line) !== '') {
+                $globPatterns[] = trim($line);
+            }
+        });
+
+        $globPattern = '{' . implode(',', $globPatterns) . '}*';
+
+        try {
+            $this->setGlobPattern($globPattern);
+
+            return $this;
+        } catch (InvalidGlobPattern $e) {
+            $message = "Glob pattern file '{$file}' is invalid.";
+            throw new InvalidGlobPatternFile($message);
+        }
     }
 
     /**

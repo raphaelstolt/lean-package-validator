@@ -95,4 +95,20 @@ class TestCase extends PHPUnit
 
         return file_put_contents($temporaryGitattributesFile, $content);
     }
+
+    /**
+     * Create temporary glob pattern (.lpv) file.
+     *
+     * @param  string $content Content of file.
+     *
+     * @return integer
+     */
+    protected function createTemporaryGlobPatternFile($content)
+    {
+        $temporaryLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv';
+
+        return file_put_contents($temporaryLpvFile, $content);
+    }
 }

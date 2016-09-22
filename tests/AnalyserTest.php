@@ -6,6 +6,8 @@ use Mockery;
 use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
+use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 
 class AnalyserTest extends TestCase
 {
@@ -846,6 +848,86 @@ CONTENT;
 
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function nonExistingGlobPatternFileThrowsExpectedException()
+    {
+        $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
+        $globPatternFile = $fixturesDirectory . DIRECTORY_SEPARATOR . '.non-existent-lpv';
+
+        $this->expectException(NonExistentGlobPatternFile::class);
+
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPatternFromFile($globPatternFile);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function emptyGlobPatternFileThrowsExpectedException()
+    {
+        $temporaryLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv';
+        $lpvContent = '';
+
+        $this->createTemporaryGlobPatternFile($lpvContent);
+        $this->expectException(InvalidGlobPatternFile::class);
+
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPatternFromFile($temporaryLpvFile);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function defaultExportIgnoresGlobPatternIsOverwritableFromFile()
+    {
+        $temporaryLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv';
+        $lpvContent = <<<CONTENT
+*file
+*.dist
+
+CONTENT;
+
+        $this->createTemporaryGlobPatternFile($lpvContent);
+
+        $artifactFilenamesMatchingGlob = [
+            'build.xml.dist',
+            'Dockerfile',
+            'Phulpfile',
+            'resultset.xml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenamesMatchingGlob
+        );
+
+        $analyser = (new Analyser())
+            ->setDirectory($this->temporaryDirectory)
+            ->setGlobPatternFromFile($temporaryLpvFile);
+
+        $actualExportIgnores = $analyser->collectExpectedExportIgnores();
+
+        sort($artifactFilenamesMatchingGlob, SORT_STRING | SORT_FLAG_CASE);
+
+        $this->assertEquals(
+            $artifactFilenamesMatchingGlob,
+            $actualExportIgnores
+        );
     }
 
     /**

@@ -5,6 +5,8 @@ namespace Stolt\LeanPackage\Commands;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
+use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Generator;
 use Stolt\LeanPackage\Archive\Validator;
 use Symfony\Component\Console\Command\Command;
@@ -15,6 +17,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ValidateCommand extends Command
 {
+    /**
+     * Default glob pattern file.
+     *
+     * @var string
+     */
+    protected $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
     /**
      * Package analyser.
      *
@@ -73,6 +81,8 @@ class ValidateCommand extends Command
         $globPatternDescription = 'Use this glob pattern e.g. <comment>'
             . $exampleGlobPattern . '</comment> to match artifacts which should be '
             . 'export-ignored';
+        $globPatternFileDescription = 'Use this file with glob patterns '
+            . 'to match artifacts which should be export-ignored';
 
         $this->addOption('create', 'c', InputOption::VALUE_NONE, $createDescription);
         $this->addOption(
@@ -93,6 +103,13 @@ class ValidateCommand extends Command
             null,
             InputOption::VALUE_REQUIRED,
             $globPatternDescription
+        );
+        $this->addOption(
+            'glob-pattern-file',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            $globPatternFileDescription,
+            $this->defaultLpvFile
         );
     }
 
@@ -125,6 +142,8 @@ class ValidateCommand extends Command
         $overwriteGitattributesFile = $input->getOption('overwrite');
         $validateArchive = $input->getOption('validate-git-archive');
         $globPattern = $input->getOption('glob-pattern');
+        $globPatternFile = $input->getOption('glob-pattern-file');
+
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
 
         if ($enforceStrictOrderComparison) {
@@ -137,6 +156,24 @@ class ValidateCommand extends Command
             } catch (InvalidGlobPattern $e) {
                 $warning = "Warning: The provided glob pattern "
                     . "'$globPattern' is considered invalid.";
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+
+                return 1;
+            }
+        } elseif ($this->isGlobPatternFileSetable($globPatternFile)) {
+            try {
+                $this->analyser->setGlobPatternFromFile($globPatternFile);
+            } catch (NonExistentGlobPatternFile $e) {
+                $warning = "Warning: The provided glob pattern file "
+                    . "'$globPatternFile' doesn't exist.";
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+
+                return 1;
+            } catch (InvalidGlobPatternFile $e) {
+                $warning = "Warning: The provided glob pattern file "
+                    . "'$globPatternFile' is considered invalid.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
@@ -246,6 +283,40 @@ class ValidateCommand extends Command
 
             return true;
         }
+    }
+
+    /**
+     * Check if a glob pattern file is setable.
+     *
+     * @return boolean
+     */
+    protected function isGlobPatternFileSetable($file)
+    {
+        if ($this->isGlobPatternFileProvided($file)) {
+            return true;
+        }
+
+        return $this->isDefaultGlobPatternFilePresent();
+    }
+
+    /**
+     * Check if a glob pattern file was provided.
+     *
+     * @return boolean
+     */
+    protected function isGlobPatternFileProvided($file)
+    {
+        return $file !== $this->defaultLpvFile;
+    }
+
+    /**
+     * Check if a default glob pattern file (.lpv) is present.
+     *
+     * @return boolean
+     */
+    protected function isDefaultGlobPatternFilePresent()
+    {
+        return file_exists($this->defaultLpvFile);
     }
 
     /**

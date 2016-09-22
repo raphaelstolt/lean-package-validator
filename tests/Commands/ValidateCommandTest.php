@@ -727,6 +727,196 @@ CONTENT;
     }
 
     /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function givenGlobPatternTakesPrecedenceOverDefaultGlobPatternFile()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'Phulpfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.buildignore export-ignore
+.gitattributes export-ignore
+.lpv export-ignore
+phpspec.yml.dist export-ignore
+Phulpfile export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $lpvContent = <<<CONTENT
+*.txt
+*.php
+
+CONTENT;
+
+        $this->createTemporaryGlobPatternFile($lpvContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--glob-pattern' => '{.*,*file,*.dist,specs}*',
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() === 0);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function presentGlobPatternFileTakesPrecedenceOverDefaultGlobPattern()
+    {
+        $artifactFilenames = [
+            'a.txt',
+            'b.rst',
+            'Vagrantfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['example']
+        );
+
+        $gitattributesContent = <<<CONTENT
+example/ export-ignore
+a.txt export-ignore
+b.rst export-ignore
+Vagrantfile export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $lpvContent = <<<CONTENT
+*.txt
+*file
+example
+
+CONTENT;
+
+        $this->createTemporaryGlobPatternFile($lpvContent);
+
+        $temporaryLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv';
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--glob-pattern-file' => $temporaryLpvFile,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() === 0);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function providedNonExistentGlobPatternFileFailsValidation()
+    {
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $temporaryLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv-non-existent';
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--glob-pattern-file' => $temporaryLpvFile,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: The provided glob pattern file '{$temporaryLpvFile}' doesn't exist.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
+     */
+    public function providedInvalidGlobPatternFileFailsValidation()
+    {
+$gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+$lpvContent = <<<CONTENT
+{foo.*}
+
+CONTENT;
+
+        $this->createTemporaryGlobPatternFile($lpvContent);
+
+        $temporaryLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv';
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--glob-pattern-file' => $temporaryLpvFile,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: The provided glob pattern file '{$temporaryLpvFile}' is considered invalid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
      * @return array
      */
     public function optionProvider()

@@ -11,6 +11,7 @@ bin/application-version export-ignore
 bin/release-version export-ignore
 bin/start-watchman export-ignore
 CHANGELOG.md export-ignore
+example/ export-ignore
 LICENSE.md export-ignore
 phpunit.xml.dist export-ignore
 README.md export-ignore
