@@ -54,6 +54,14 @@ class Analyser
     private $strictOrderComparison = false;
 
     /**
+     * Whether at least one export-ignore pattern has
+     * a preceding slash or not.
+     *
+     * @var boolean
+     */
+    private $hasPrecedingSlashesInExportIgnorePattern = false;
+
+    /**
      * Initialize.
      */
     public function __construct()
@@ -80,6 +88,16 @@ class Analyser
         ];
 
         $this->globPattern = '{' . implode(',', $globPatterns) . '}*';
+    }
+
+    /**
+     * Accessor for preceding slashes in export-ignore pattern.
+     *
+     * @return boolean
+     */
+    public function hasPrecedingSlashesInExportIgnorePattern()
+    {
+        return $this->hasPrecedingSlashesInExportIgnorePattern;
     }
 
     /**
@@ -312,6 +330,10 @@ class Analyser
         ) {
             if (strstr($line, 'export-ignore')) {
                 list($pattern, $void) = explode('export-ignore', $line);
+                if (substr($pattern, 0, 1) === '/') {
+                    $pattern = substr($pattern, 1);
+                    $this->hasPrecedingSlashesInExportIgnorePattern = true;
+                }
                 $patternMatches = $this->patternHasMatch($pattern);
                 if ($patternMatches && !in_array(trim($pattern), $globPatternMatchingExportIgnores)) {
                     return $exportIgnoresToPreserve[] = trim($pattern);
@@ -470,6 +492,9 @@ class Analyser
         array_filter($gitattributesLines, function ($line) use (&$exportIgnores) {
             if (strstr($line, 'export-ignore', true)) {
                 list($line, $void) = explode('export-ignore', $line);
+                if (substr($line, 0, 1) === '/') {
+                    $line = substr($line, 1);
+                }
                 return $exportIgnores[] = trim($line);
             }
         });

@@ -281,6 +281,13 @@ class ValidateCommand extends Command
             $info = '<info>The present .gitattributes file is considered valid.</info>';
             $output->writeln($info);
 
+            if ($this->analyser->hasPrecedingSlashesInExportIgnorePattern()) {
+                $warning = "Warning: At least one export-ignore pattern has a leading '/', "
+                    . $warning = 'which is considered as a smell.';
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+            }
+
             return true;
         }
     }

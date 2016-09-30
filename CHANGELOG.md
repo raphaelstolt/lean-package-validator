@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.3.0 `2016-10-??`
+- Leading slashes in export-ignore patterns are considered as a smell and raise a warning. Closes [#4](https://github.com/raphaelstolt/lean-package-validator/issues/4).
+
 #### v1.2.0 `2016-09-22`
 - New `--glob-pattern-file` option to load custom glob patterns from a file. Closes [#9](https://github.com/raphaelstolt/lean-package-validator/issues/9).
 

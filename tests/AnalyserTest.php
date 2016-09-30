@@ -1029,4 +1029,39 @@ CONTENT;
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{{{M,m}ake,{B,b}ox,{V,v}agrant}file,RMT}');
     }
+
+    /**
+     * @test
+     * @ticket 4 (https://github.com/raphaelstolt/lean-package-validator/issues/4)
+     */
+    public function precedingSlashesAreDetected()
+    {
+        $artifactFilenames = [
+            'changelog-generator',
+            'README.md',
+            'phpspec.yml.dist',
+            'application-version-incrementor',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+/.gitattributes export-ignore
+/application-version-incrementor export-ignore
+/changelog-generator export-ignore
+phpspec.yml.dist export-ignore
+/README.md export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertFalse($analyser->hasPrecedingSlashesInExportIgnorePattern());
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+        $this->assertTrue($analyser->hasPrecedingSlashesInExportIgnorePattern());
+    }
 }
