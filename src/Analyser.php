@@ -62,6 +62,13 @@ class Analyser
     private $hasPrecedingSlashesInExportIgnorePattern = false;
 
     /**
+     * Whether a text auto configuration is present or not.
+     *
+     * @var boolean
+     */
+    private $hasTextAutoConfiguration = false;
+
+    /**
      * Initialize.
      */
     public function __construct()
@@ -98,6 +105,16 @@ class Analyser
     public function hasPrecedingSlashesInExportIgnorePattern()
     {
         return $this->hasPrecedingSlashesInExportIgnorePattern;
+    }
+
+    /**
+     * Accessor for text auto configuration.
+     *
+     * @return boolean
+     */
+    public function hasTextAutoConfiguration()
+    {
+        return $this->hasTextAutoConfiguration;
     }
 
     /**
@@ -315,6 +332,11 @@ class Analyser
     public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores)
     {
         $gitattributesContent = file_get_contents($this->gitattributesFile);
+
+        if (preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $gitattributesContent)) {
+            $this->hasTextAutoConfiguration = true;
+        }
+
         $eol = $this->detectEol($gitattributesContent);
 
         $gitattributesLines = preg_split(

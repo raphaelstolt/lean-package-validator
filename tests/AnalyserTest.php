@@ -1064,4 +1064,67 @@ CONTENT;
         $this->assertTrue($analyser->hasCompleteExportIgnores());
         $this->assertTrue($analyser->hasPrecedingSlashesInExportIgnorePattern());
     }
+
+    /**
+     * @test
+     * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
+     */
+    public function missingTextAutoConfigurationIsDetected()
+    {
+        $artifactFilenames = [
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+        $this->assertFalse($analyser->hasTextAutoConfiguration());
+    }
+
+    /**
+     * @test
+     * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
+     */
+    public function presentTextAutoConfigurationIsDetected()
+    {
+        $artifactFilenames = [
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+# some comment
+* text=auto eol=lf
+
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+        $this->assertTrue($analyser->hasTextAutoConfiguration());
+    }
 }

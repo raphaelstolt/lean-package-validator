@@ -288,6 +288,13 @@ class ValidateCommand extends Command
                 $output->writeln($outputContent);
             }
 
+            if ($this->analyser->hasTextAutoConfiguration() === false) {
+                $warning = 'Warning: Missing a text auto configuration. '
+                    . 'Consider adding one.';
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+            }
+
             return true;
         }
     }

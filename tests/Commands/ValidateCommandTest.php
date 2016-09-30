@@ -190,6 +190,8 @@ CONTENT;
         );
 
         $gitattributesContent = <<<CONTENT
+*    text=auto eol=lf
+
 .gitattributes export-ignore
 .buildignore export-ignore
 foo.txt export-ignore
@@ -745,6 +747,8 @@ CONTENT;
         );
 
         $gitattributesContent = <<<CONTENT
+* text   = auto
+
 .buildignore export-ignore
 .gitattributes export-ignore
 .lpv export-ignore
@@ -800,6 +804,8 @@ CONTENT;
         );
 
         $gitattributesContent = <<<CONTENT
+* text=auto
+
 example/ export-ignore
 a.txt export-ignore
 b.rst export-ignore
@@ -934,11 +940,14 @@ CONTENT;
         );
 
         $gitattributesContent = <<<CONTENT
+
 /Phulpfile export-ignore
 /.buildignore export-ignore
 /phpspec.yml.dist export-ignore
 /specs/ export-ignore
 /.gitattributes export-ignore
+
+*    text=auto
 
 CONTENT;
 
@@ -961,6 +970,50 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() == 0);
     }
 
+    /**
+     * @test
+     * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
+     */
+    public function missingTextAutoConfigurationRaisesAWarning()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'Phulpfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+Phulpfile export-ignore
+.buildignore export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+Warning: Missing a text auto configuration. Consider adding one.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() == 0);
+    }
 
     /**
      * @return array
