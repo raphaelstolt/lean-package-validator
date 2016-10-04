@@ -28,6 +28,7 @@
     "bin": ["bin/lean-package-validator"],
     "scripts": {
         "test": "phpunit",
+        "test-with-coverage": "composer test -- --coverage-html coverage-reports",
         "cs-fix": "php-cs-fixer fix . -vv || true",
         "configure-commit-template": "git config --add commit.template .gitmessage"
     },
