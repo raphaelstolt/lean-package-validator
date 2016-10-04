@@ -2,10 +2,10 @@
 
 namespace Stolt\LeanPackage;
 
+use PharData;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
-use PharData;
 
 class Archive
 {

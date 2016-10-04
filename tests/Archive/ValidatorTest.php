@@ -3,10 +3,10 @@
 namespace Stolt\LeanPackage\Tests\Archive;
 
 use Mockery;
-use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Exceptions\GitArchiveNotValidatedYet;
+use Stolt\LeanPackage\Tests\TestCase;
 
 class ValidatorTest extends TestCase
 {

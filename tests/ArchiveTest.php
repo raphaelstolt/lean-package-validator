@@ -3,11 +3,11 @@
 namespace Stolt\LeanPackage\Tests;
 
 use Mockery;
-use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Archive;
-use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
+use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
+use Stolt\LeanPackage\Tests\TestCase;
 
 class ArchiveTest extends TestCase
 {

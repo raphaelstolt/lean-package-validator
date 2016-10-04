@@ -3,11 +3,11 @@
 namespace Stolt\LeanPackage\Tests;
 
 use Mockery;
-use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Tests\TestCase;
 
 class AnalyserTest extends TestCase
 {

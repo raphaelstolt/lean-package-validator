@@ -3,13 +3,13 @@
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Generator;
-use Stolt\LeanPackage\Archive\Validator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -359,8 +359,8 @@ class ValidateCommand extends Command
      * Validate archive of current Git HEAD.
      *
      * @param  boolean $validateLicenseFilePresence Whether the archive should have a license file or not.
-     * @return boolean
      * @throws \Stolt\LeanPackage\Exceptions\NoLicenseFilePresent
+     * @return boolean
      */
     protected function isValidArchive($validateLicenseFilePresence = false)
     {
