@@ -313,6 +313,7 @@ class Analyser
             } else {
                 $content = "* text=auto eol=lf"
                     . str_repeat($this->preferredEol, 2)
+                    . '.gitattributes export-ignore' . $this->preferredEol
                     . $content;
             }
 

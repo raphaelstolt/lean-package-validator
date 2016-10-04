@@ -153,6 +153,7 @@ CONTENT;
         $expectedGitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
+.gitattributes export-ignore
 .buildignore export-ignore
 .travis.yml export-ignore
 documentation/ export-ignore
@@ -191,6 +192,7 @@ CONTENT;
         $expectedGitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
+.gitattributes export-ignore
 Boxfile export-ignore
 makefile export-ignore
 Vagrantfile export-ignore
@@ -339,6 +341,7 @@ CONTENT;
         $expectedGitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
+.gitattributes export-ignore
 .travis.yml export-ignore
 README.md export-ignore
 

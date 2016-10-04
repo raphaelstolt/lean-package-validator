@@ -75,6 +75,7 @@ Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 Would expect the following .gitattributes file content:
 * text=auto eol=lf
 
+.gitattributes export-ignore
 .buildignore export-ignore
 .travis.yml export-ignore
 CONDUCT.md export-ignore
@@ -88,6 +89,49 @@ CONTENT;
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
+
+    /**
+     * @test
+     * @ticket 13 (https://github.com/raphaelstolt/lean-package-validator/issues/13)
+     */
+    public function gitattributesIsInSuggestedFileContent()
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
 
     /**
      * @test
@@ -160,6 +204,7 @@ Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 Created a .gitattributes file with the shown content:
 * text=auto eol=lf
 
+.gitattributes export-ignore
 CONDUCT.md export-ignore
 specs/ export-ignore
 
@@ -295,6 +340,7 @@ Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 Would expect the following .gitattributes file content:
 * text=auto eol=lf
 
+.gitattributes export-ignore
 .buildignore export-ignore
 .travis.yml export-ignore
 CONDUCT.rst export-ignore
@@ -360,6 +406,7 @@ Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 Created a .gitattributes file with the shown content:
 * text=auto eol=lf
 
+.gitattributes export-ignore
 CONDUCT.md export-ignore
 specs/ export-ignore
 
