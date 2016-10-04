@@ -40,7 +40,7 @@ class Validator
     }
 
     /**
-     * Accessor for archive instance.
+     * Accessor for injected archive instance.
      *
      * @return \Stolt\LeanPackage\Archive
      */

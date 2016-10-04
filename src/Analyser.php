@@ -262,7 +262,7 @@ class Analyser
     }
 
     /**
-     * Accessor for strict order camparison.
+     * Guard for strict order camparison.
      *
      * @return boolean
      */
