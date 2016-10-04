@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.3.1 `2016-10-04`
+- Fix dependency constraint.
+
 #### v1.3.0 `2016-09-30`
 - Leading slashes in export-ignore patterns are considered as a smell and raise a warning. Closes [#4](https://github.com/raphaelstolt/lean-package-validator/issues/4).
 - A missing text auto configuration is considered as a smell and raises a warning. Closes [#12](https://github.com/raphaelstolt/lean-package-validator/issues/12).
