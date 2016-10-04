@@ -3,8 +3,16 @@
 $finder = Symfony\CS\Finder\DefaultFinder::create()
     ->in(__DIR__);
 
+$fixers = [
+    '-psr0',
+    'extra_empty_lines',
+    'double_arrow_multiline_whitespaces',
+    'short_array_syntax',
+    'phpdoc_order',
+];
+
 return Symfony\CS\Config\Config::create()
     ->level(Symfony\CS\FixerInterface::PSR2_LEVEL)
-    ->fixers(['-psr0', 'extra_empty_lines', 'double_arrow_multiline_whitespaces', 'short_array_syntax'])
+    ->fixers($fixers)
     ->finder($finder)
     ->setUsingCache(true);
