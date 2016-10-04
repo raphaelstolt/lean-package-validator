@@ -6,4 +6,5 @@ $finder = Symfony\CS\Finder\DefaultFinder::create()
 return Symfony\CS\Config\Config::create()
     ->level(Symfony\CS\FixerInterface::PSR2_LEVEL)
     ->fixers(['-psr0', 'extra_empty_lines', 'double_arrow_multiline_whitespaces', 'short_array_syntax'])
-    ->finder($finder);
+    ->finder($finder)
+    ->setUsingCache(true);
