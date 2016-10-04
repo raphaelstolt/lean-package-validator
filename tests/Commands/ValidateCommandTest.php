@@ -132,7 +132,6 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-
     /**
      * @test
      */
@@ -934,14 +933,14 @@ CONTENT;
      */
     public function providedInvalidGlobPatternFileFailsValidation()
     {
-$gitattributesContent = <<<CONTENT
+        $gitattributesContent = <<<CONTENT
 .gitattributes export-ignore
 
 CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-$lpvContent = <<<CONTENT
+        $lpvContent = <<<CONTENT
 {foo.*}
 
 CONTENT;
