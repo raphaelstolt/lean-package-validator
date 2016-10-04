@@ -28,6 +28,28 @@ class Validator
     }
 
     /**
+     * Set if license file presence should be validated.
+     *
+     * @return Stolt\LeanPackage\Archive\Validator
+     */
+    public function shouldHaveLicenseFile()
+    {
+        $this->archive->shouldHaveLicenseFile();
+
+        return $this;
+    }
+
+    /**
+     * Accessor for archive instance.
+     *
+     * @return \Stolt\LeanPackage\Archive
+     */
+    public function getArchive()
+    {
+        return $this->archive;
+    }
+
+    /**
      * Validate archive against unexpected artifacts.
      *
      * @param  array $unexpectedArtifacts Artifacts not expected in archive.

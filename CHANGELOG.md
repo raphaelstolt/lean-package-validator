@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.5.0 `2016-10-04`
+- New `--keep-license` option to allow license files in releases. Closes [#15](https://github.com/raphaelstolt/lean-package-validator/issues/15).
+
 #### v1.4.0 `2016-10-04`
 - Additional artifacts glob pattern expansion to match CaptainHook configuration files. Closes [#14](https://github.com/raphaelstolt/lean-package-validator/issues/14).
 - Fix missing `.gitattributes export-ignore` in suggested and generated `.gitattributes` file content. Closes [#13](https://github.com/raphaelstolt/lean-package-validator/issues/13).

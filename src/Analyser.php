@@ -69,6 +69,14 @@ class Analyser
     private $hasTextAutoConfiguration = false;
 
     /**
+     * Whether to exclude a license file from the export-ignores
+     * or not.
+     *
+     * @var boolean
+     */
+    private $keepLicense = false;
+
+    /**
      * Initialize.
      */
     public function __construct()
@@ -264,6 +272,28 @@ class Analyser
     }
 
     /**
+     * Keep license file in releases.
+     *
+     * @return Stolt\LeanPackag\Analyser
+     */
+    public function keepLicense()
+    {
+        $this->keepLicense = true;
+
+        return $this;
+    }
+
+    /**
+     * Guard for not export-ignoring license file.
+     *
+     * @return boolean
+     */
+    public function isKeepLicenseEnabled()
+    {
+        return $this->keepLicense === true;
+    }
+
+    /**
      * Accessor for the set .gitattributes file path.
      *
      * @return string
@@ -403,6 +433,19 @@ class Analyser
         }
 
         sort($expectedExportIgnores, SORT_STRING | SORT_FLAG_CASE);
+
+        if ($this->isKeepLicenseEnabled()) {
+            $licenseLessExpectedExportIgnores = [];
+            array_filter($expectedExportIgnores, function ($exportIgnore) use (
+                &$licenseLessExpectedExportIgnores
+            ) {
+                if (!preg_match('/(License.*)/i', $exportIgnore)) {
+                    $licenseLessExpectedExportIgnores[] = $exportIgnore;
+                }
+            });
+
+            $expectedExportIgnores = $licenseLessExpectedExportIgnores;
+        }
 
         return array_unique($expectedExportIgnores);
     }

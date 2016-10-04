@@ -4,6 +4,7 @@ namespace Stolt\LeanPackage;
 
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
+use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use PharData;
 
 class Archive
@@ -29,6 +30,13 @@ class Archive
     private $foundUnexpectedArtifacts = [];
 
     /**
+     * Whether the archive should have a license file or not.
+     *
+     * @var boolean
+     */
+    private $shouldHaveLicenseFile = false;
+
+    /**
      * Initialize.
      *
      * @param string $directory The directory of the repository to archive.
@@ -41,6 +49,28 @@ class Archive
         $this->filename = $directory
             . DIRECTORY_SEPARATOR
             . $name . '.tar.gz';
+    }
+
+    /**
+     * Set if license file presence should be validated.
+     *
+     * @return Stolt\LeanPackage\Archive
+     */
+    public function shouldHaveLicenseFile()
+    {
+        $this->shouldHaveLicenseFile = true;
+
+        return $this;
+    }
+
+    /**
+     * Guard for license file presence validation.
+     *
+     * @return boolean
+     */
+    public function validateLicenseFilePresence()
+    {
+        return $this->shouldHaveLicenseFile === true;
     }
 
     /**
@@ -120,13 +150,14 @@ class Archive
      * Compare archive against unexpected artifacts.
      *
      * @param  array $unexpectedArtifacts The unexpected artifacts.
-     *
+     * @throws \Stolt\LeanPackage\Exceptions\NoLicenseFilePresent
      * @return array
      */
     public function compareArchive(array $unexpectedArtifacts)
     {
         $foundUnexpectedArtifacts = [];
         $archive = new PharData($this->getFilename());
+        $hasLicenseFile = false;
 
         foreach ($archive as $archiveFile) {
             if ($archiveFile->isDir()) {
@@ -138,9 +169,19 @@ class Archive
             }
 
             $file = basename($archiveFile);
+            if ($this->validateLicenseFilePresence()) {
+                if (preg_match('/(License.*)/i', $file)) {
+                    $hasLicenseFile = true;
+                }
+            }
+
             if (in_array($file, $unexpectedArtifacts)) {
                 $foundUnexpectedArtifacts[] = $file;
             }
+        }
+
+        if ($this->validateLicenseFilePresence() && $hasLicenseFile === false) {
+            throw new NoLicenseFilePresent('No license file present in archive.');
         }
 
         sort($foundUnexpectedArtifacts, SORT_STRING | SORT_FLAG_CASE);

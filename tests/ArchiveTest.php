@@ -7,6 +7,7 @@ use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
+use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 
 class ArchiveTest extends TestCase
 {
@@ -166,6 +167,43 @@ class ArchiveTest extends TestCase
             ->compareArchive($unexpectedArtifacts);
 
         $this->assertEquals([], $foundUnexpectedArtifacts);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     * @group travis-ci-exclude-56
+     */
+    public function compareArchiveThrowsExpectedExceptionWhenLicenseFileIsMissing()
+    {
+        $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
+
+        $archive = (new Archive($fixturesDirectory, 'archive-licenseless'))
+            ->shouldHaveLicenseFile();
+
+        $this->assertTrue($archive->validateLicenseFilePresence());
+
+        $this->expectException(NoLicenseFilePresent::class);
+        $this->expectExceptionMessage('No license file present in archive.');
+
+        $archive->compareArchive([]);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     * @group travis-ci-exclude-56
+     */
+    public function compareArchiveDoesNotThrowsExceptionOnPresentLicenseFile()
+    {
+        $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
+
+        $archive = (new Archive($fixturesDirectory, 'archive-with-license'))
+            ->shouldHaveLicenseFile();
+
+        $this->assertTrue($archive->validateLicenseFilePresence());
+
+        $archive->compareArchive([]);
     }
 
     /**

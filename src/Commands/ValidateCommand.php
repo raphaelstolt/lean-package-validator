@@ -6,6 +6,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Generator;
 use Stolt\LeanPackage\Archive\Validator;
@@ -84,6 +85,8 @@ class ValidateCommand extends Command
         $globPatternFileDescription = 'Use this file with glob patterns '
             . 'to match artifacts which should be export-ignored';
 
+        $keepLicenseDescription = 'Do not export-ignore license file';
+
         $this->addOption('create', 'c', InputOption::VALUE_NONE, $createDescription);
         $this->addOption(
             'enforce-strict-order',
@@ -110,6 +113,12 @@ class ValidateCommand extends Command
             InputOption::VALUE_OPTIONAL,
             $globPatternFileDescription,
             $this->defaultLpvFile
+        );
+        $this->addOption(
+            'keep-license',
+            null,
+            InputOption::VALUE_NONE,
+            $keepLicenseDescription
         );
     }
 
@@ -148,6 +157,12 @@ class ValidateCommand extends Command
 
         if ($enforceStrictOrderComparison) {
             $this->analyser->enableStrictOrderCamparison();
+        }
+
+        $keepLicense = $input->getOption('keep-license');
+
+        if ($keepLicense) {
+            $this->analyser->keepLicense();
         }
 
         if ($globPattern) {
@@ -221,23 +236,30 @@ class ValidateCommand extends Command
 
             return 1;
         } elseif ($validateArchive) {
-            if ($this->isValidArchive()) {
-                $info = '<info>The archive file of the current HEAD is considered lean.</info>';
-                $output->writeln($info);
+            try {
+                if ($this->isValidArchive($keepLicense)) {
+                    $info = '<info>The archive file of the current HEAD is considered lean.</info>';
+                    $output->writeln($info);
 
-                return true;
-            }
-            $foundUnexpectedArchiveArtifacts = $this->archiveValidator
-                ->getFoundUnexpectedArchiveArtifacts();
+                    return true;
+                }
+                $foundUnexpectedArchiveArtifacts = $this->archiveValidator
+                    ->getFoundUnexpectedArchiveArtifacts();
 
-            $info = '<error>The archive file of the current HEAD is not considered lean.</error>'
-                . PHP_EOL . PHP_EOL . 'Seems like the following artifacts slipped in:<info>' . PHP_EOL
-                . implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
-
-            if (count($this->archiveValidator->getFoundUnexpectedArchiveArtifacts()) === 1) {
                 $info = '<error>The archive file of the current HEAD is not considered lean.</error>'
-                    . PHP_EOL . PHP_EOL . 'Seems like the following artifact slipped in:<info>' . PHP_EOL
+                    . PHP_EOL . PHP_EOL . 'Seems like the following artifacts slipped in:<info>' . PHP_EOL
                     . implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
+
+                if (count($this->archiveValidator->getFoundUnexpectedArchiveArtifacts()) === 1) {
+                    $info = '<error>The archive file of the current HEAD is not considered lean.</error>'
+                        . PHP_EOL . PHP_EOL . 'Seems like the following artifact slipped in:<info>' . PHP_EOL
+                        . implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
+                }
+            } catch (NoLicenseFilePresent $e) {
+                $errorMessage = 'The archive file of the current HEAD '
+                    . 'is considered invalid due to a missing license file.';
+                $info = '<error>' . $errorMessage . '</error>' . PHP_EOL;
+                $this->archiveValidator->getArchive()->removeArchive();
             }
 
             $output->writeln($info);
@@ -336,10 +358,18 @@ class ValidateCommand extends Command
     /**
      * Validate archive of current Git HEAD.
      *
+     * @param  boolean $validateLicenseFilePresence Whether the archive should have a license file or not.
      * @return boolean
+     * @throws \Stolt\LeanPackage\Exceptions\NoLicenseFilePresent
      */
-    protected function isValidArchive()
+    protected function isValidArchive($validateLicenseFilePresence = false)
     {
+        if ($validateLicenseFilePresence) {
+            return $this->archiveValidator->shouldHaveLicenseFile()->validate(
+                $this->analyser->collectExpectedExportIgnores()
+            );
+        }
+
         return $this->archiveValidator->validate(
             $this->analyser->collectExpectedExportIgnores()
         );

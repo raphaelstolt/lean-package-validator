@@ -1069,6 +1069,43 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function licenseFileIsNotExportIgnored()
+    {
+        $artifactFilenames = [
+            'LICENSE.txt',
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory)->keepLicense();
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertTrue($analyser->isKeepLicenseEnabled());
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
      * @ticket 4 (https://github.com/raphaelstolt/lean-package-validator/issues/4)
      */
     public function precedingSlashesAreDetected()

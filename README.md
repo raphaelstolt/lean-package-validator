@@ -64,7 +64,13 @@ The `--glob-pattern-file` option allows you to load patterns, which should be us
 lean-package-validator validate [<directory>] --glob-pattern-file /path/to/glob-pattern-file
 ```
 
-The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting it's content.
+The `--keep-license` option will allow a license file in the release/dist archive file which is per default ommitted.
+
+``` bash
+lean-package-validator validate [<directory>] --keep-license
+```
+
+The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting it's content. With a set `--keep-license` option a license file becomes mandatory and will fail the archive validation if not present.
 
 ``` bash
 lean-package-validator validate [<directory>] --validate-git-archive

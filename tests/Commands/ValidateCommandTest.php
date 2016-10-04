@@ -11,6 +11,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
+use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Tests\TestCase;
 
@@ -130,6 +131,288 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function licenseIsInSuggestedFileContentPerDefault()
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.rst',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+License.rst export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function licenseIsNotInSuggestedFileContent()
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.rst',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--keep-license' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function licenseIsNotInSuggestedFileContentWithCustomGlobPattern()
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.md',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--keep-license' => true,
+            '--glob-pattern' => '{.*,*.md,*.dist,LICENSE.md,spec*}*',
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function presentExportIgnoredLicenseWithKeepLicenseOptionInvalidatesResult()
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.rst',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+*    text=auto eol=lf
+
+.gitattributes export-ignore
+License.rst export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--keep-license' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+*    text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function archiveWithoutLicenseFileIsConsideredInvalid()
+    {
+        $mock = Mockery::mock(
+            'Stolt\LeanPackage\Archive\Validator[validate, shouldHaveLicenseFile]',
+            [new Archive(WORKING_DIRECTORY, 'foo')]
+        );
+
+        $mock->shouldReceive('validate')
+            ->once()
+            ->withAnyArgs()
+            ->andThrow(new NoLicenseFilePresent);
+
+        $mock->shouldReceive('shouldHaveLicenseFile')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn($mock);
+
+        $application = $this->getApplicationWithMockedArchiveValidator($mock);
+
+        $gitattributesContent = <<<CONTENT
+phpspec.yml.dist export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--validate-git-archive' => true,
+            '--keep-license' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The archive file of the current HEAD is considered invalid due to a missing license file.
+
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
+     */
+    public function archiveWithLicenseFileIsConsideredValid()
+    {
+        $mock = Mockery::mock(
+            'Stolt\LeanPackage\Archive\Validator[validate, shouldHaveLicenseFile]',
+            [new Archive(WORKING_DIRECTORY, 'foo')]
+        );
+
+        $mock->shouldReceive('validate')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn(true);
+
+        $mock->shouldReceive('shouldHaveLicenseFile')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn($mock);
+
+        $application = $this->getApplicationWithMockedArchiveValidator($mock);
+
+        $gitattributesContent = <<<CONTENT
+phpspec.yml.dist export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--validate-git-archive' => true,
+            '--keep-license' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The archive file of the current HEAD is considered lean.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() == 0);
     }
 
     /**
