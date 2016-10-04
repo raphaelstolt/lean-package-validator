@@ -82,6 +82,7 @@ class Analyser
             '*.xml',
             '*.yml',
             'box.json',
+            'captainhook.json',
             '*.dist.*',
             '{B,b}uild*',
             '{D,d}oc*',

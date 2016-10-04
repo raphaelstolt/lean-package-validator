@@ -1,6 +1,7 @@
 # Changelog
 
-#### v1.3.2 `2016-10-04`
+#### v1.4.0 `2016-10-04`
+- Additional artifacts glob pattern expansion to match CaptainHook configuration files. Closes [#14](https://github.com/raphaelstolt/lean-package-validator/issues/14).
 - Fix missing `.gitattributes export-ignore` in suggested and generated `.gitattributes` file content. Closes [#13](https://github.com/raphaelstolt/lean-package-validator/issues/13).
 
 #### v1.3.1 `2016-10-04`

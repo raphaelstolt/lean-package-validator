@@ -856,6 +856,40 @@ CONTENT;
     /**
      * @test
      * @group glob
+     * @ticket 14 (https://github.com/raphaelstolt/lean-package-validator/issues/14)
+     */
+    public function captainHookConfigurationFileIsInDefaultPattern()
+    {
+        $artifactFilenames = [
+            'README.md',
+            'captainhook.json'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+captainhook.json export-ignore
+README.md export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
+     * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
     public function nonExistingGlobPatternFileThrowsExpectedException()
