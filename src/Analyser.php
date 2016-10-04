@@ -243,6 +243,8 @@ class Analyser
 
     /**
      * Enable strict order camparison.
+     *
+     * @return Stolt\LeanPackag\Analyser
      */
     public function enableStrictOrderCamparison()
     {
