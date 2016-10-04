@@ -9,6 +9,7 @@ $fixers = [
     'double_arrow_multiline_whitespaces',
     'short_array_syntax',
     'phpdoc_order',
+    'ordered_use',
 ];
 
 return Symfony\CS\Config\Config::create()
