@@ -28,6 +28,6 @@ before_script:
 script:
   # Verify application version and Git tag match
   - composer application-version-guard
-  - composer cs-guard
+  - composer cs-lint
   - if [[ $excludegroup = travis-ci-exclude ]]; then composer test -- --exclude-group travis-ci-exclude; fi
   - if [[ $excludegroup = travis-ci-exclude-56 ]]; then composer test -- --exclude-group travis-ci-exclude-56; fi
