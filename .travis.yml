@@ -17,6 +17,10 @@ matrix:
     - php: nightly
     - php: hhvm
 
+cache:
+  directories:
+    - $HOME/.php-cs-fixer
+
 notifications:
   email: false
 
