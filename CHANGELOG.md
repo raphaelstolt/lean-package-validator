@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.5.1 `2016-10-05`
+- Fix missing export-ignore patterns on existing `.gitattributes` file with no export-ignore entries. Fixes [#16](https://github.com/raphaelstolt/lean-package-validator/issues/16).
+
 #### v1.5.0 `2016-10-04`
 - New `--keep-license` option to allow license files in releases. Closes [#15](https://github.com/raphaelstolt/lean-package-validator/issues/15).
 

@@ -93,6 +93,77 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 16 (https://github.com/raphaelstolt/lean-package-validator/issues/16)
+     */
+    public function gitattributesFileWithNonExportIgnoreContentShowsExpectedContent()
+    {
+        $artifactFilenames = [
+            '.gitattributes',
+            '.gitignore',
+            '.scrutinizer.yml',
+            '.travis.yml',
+            'CHANGELOG.md',
+            'README.md',
+            'composer.json',
+            'phpunit.xml',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests']
+        );
+
+        $gitattributesContent = <<<CONTENT
+# Auto detect text files and perform LF normalization
+*     text=auto
+
+# Force text mode
+*.php text diff=php
+*.xml text
+
+/tests/bugs/*.php diff=php eol=lf
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--enforce-strict-order' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+# Auto detect text files and perform LF normalization
+*     text=auto
+
+# Force text mode
+*.php text diff=php
+*.xml text
+
+/tests/bugs/*.php diff=php eol=lf
+
+.gitattributes export-ignore
+.gitignore export-ignore
+.scrutinizer.yml export-ignore
+.travis.yml export-ignore
+CHANGELOG.md export-ignore
+phpunit.xml export-ignore
+README.md export-ignore
+tests/ export-ignore
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
      * @ticket 13 (https://github.com/raphaelstolt/lean-package-validator/issues/13)
      */
     public function gitattributesIsInSuggestedFileContent()

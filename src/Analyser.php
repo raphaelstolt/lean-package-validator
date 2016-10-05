@@ -338,11 +338,18 @@ class Analyser
                 $this->getPresentExportIgnoresToPreserve($postfixlessExportIgnores);
 
                 $content = $this->getPresentNonExportIgnoresContent();
-                $content = str_replace(
-                    self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER,
-                    $exportIgnoreContent,
-                    $content
-                );
+
+                if (strstr($content, self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER)) {
+                    $content = str_replace(
+                        self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER,
+                        $exportIgnoreContent,
+                        $content
+                    );
+                } else {
+                    $content = $content
+                        . str_repeat($this->preferredEol, 2)
+                        . $exportIgnoreContent;
+                }
             } else {
                 $content = "* text=auto eol=lf"
                     . str_repeat($this->preferredEol, 2)
