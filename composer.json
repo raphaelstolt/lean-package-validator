@@ -30,7 +30,9 @@
         "test": "phpunit",
         "test-with-coverage": "composer test -- --coverage-html coverage-reports",
         "cs-fix": "php-cs-fixer fix . -vv || true",
-        "configure-commit-template": "git config --add commit.template .gitmessage"
+        "cs-guard": "vendor/bin/php-cs-fixer fix --diff --verbose --dry-run",
+        "configure-commit-template": "git config --add commit.template .gitmessage",
+        "application-version-guard": "php bin/application-version --verify-tag-match"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8 || ^5.0",
