@@ -14,10 +14,10 @@ Usage:
   application-version [options]
 
 Options:
-  -c, --current, --current-raw   The current version number
-  --verify-tag-match             Verify application version and Git tag match
-  -v, --version                  The version number to set
-  -h, --help                     Display this help message
+  -c, --current, --current-raw    Display the current version number
+  --verify-tag-match              Verify application version and Git tag match
+  -v, --version <version-number>  The version number to set
+  -h, --help                      Display this help message
 
 HELP;
 
