@@ -92,7 +92,7 @@ Further this Composer script could also be utilised in Travis CI [builds](.travi
 
 #### Running tests
 ``` bash
-composer test
+composer lpv:test
 ```
 
 #### License

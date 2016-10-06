@@ -27,12 +27,12 @@
     "minimum-stability": "stable",
     "bin": ["bin/lean-package-validator"],
     "scripts": {
-        "test": "phpunit",
-        "test-with-coverage": "phpunit --coverage-html coverage-reports",
-        "cs-fix": "php-cs-fixer fix . -vv || true",
-        "cs-lint": "php-cs-fixer fix --diff --verbose --dry-run",
-        "configure-commit-template": "git config --add commit.template .gitmessage",
-        "application-version-guard": "php bin/application-version --verify-tag-match"
+        "lpv:test": "phpunit",
+        "lpv:test-with-coverage": "phpunit --coverage-html coverage-reports",
+        "lpv:cs-fix": "php-cs-fixer fix . -vv || true",
+        "lpv:cs-lint": "php-cs-fixer fix --diff --verbose --dry-run",
+        "lpv:configure-commit-template": "git config --add commit.template .gitmessage",
+        "lpv:application-version-guard": "php bin/application-version --verify-tag-match"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8 || ^5.0",

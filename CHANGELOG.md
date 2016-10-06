@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.??.?? `2016-??-??`
+- Internal Composer scripts have a namespace.
+
 #### v1.5.1 `2016-10-05`
 - Fix missing export-ignore patterns on existing `.gitattributes` file with no export-ignore entries. Fixes [#16](https://github.com/raphaelstolt/lean-package-validator/issues/16).
 
