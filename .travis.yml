@@ -31,7 +31,7 @@ before_script:
   - travis_retry composer install --no-interaction
 
 script:
-  - if [[ $TRAVIS_PULL_REQUEST_BRANCH = master ]]; then echo "Please open pull request from a feature / topic branch" && exit 1; fi
+  - if [[ $TRAVIS_PULL_REQUEST_BRANCH = master ]]; then echo "Please open pull request from a feature / topic branch." && exit 1; fi
   # Verify application version and Git tag match
   - composer lpv:application-version-guard
   - composer lpv:cs-lint
