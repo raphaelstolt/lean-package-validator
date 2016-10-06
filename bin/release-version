@@ -31,13 +31,12 @@ $help = <<<HELP
 This command releases a new version without pushing it:
 
 Usage:
-  release-version [options]
+  release-version [-hi <scheme> m <message> v <version-number>]
 
 Options:
   -i, --increment <scheme>         The scheme (one of: {$incrementSchemeList}) to increment the
                                    release version number by
-  -m, --release-message <message>  The Git commit message [default: {$defaultReleaseMessage}] for the
-                                   release
+  -m, --release-message <message>  The Git commit message for the release [default: "{$defaultReleaseMessage}"]
   -v, --version <version-number>   The version number to release, if set increment scheme is ignored
   -h, --help                       Display this help message
 

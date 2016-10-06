@@ -11,7 +11,7 @@ $help = <<<HELP
 This command sets the version number in the {$shortBinFilePath} file:
 
 Usage:
-  application-version [options]
+  application-version [-hcv <version-number>] [--verify-tag-match]
 
 Options:
   -c, --current, --current-raw    Display the current version number
