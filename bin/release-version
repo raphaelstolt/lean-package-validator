@@ -26,7 +26,7 @@ $acceptedIncrementSchemes = ['major', 'minor', 'patch'];
 $defaultIncrementScheme = 'patch';
 $incrementSchemeList = implode(', ', $acceptedIncrementSchemes);
 
-$options = getopt('v:i::hm', ['version:', 'increment::', 'help', 'release-message']);
+$options = getopt('v:i::hm:', ['version:', 'increment::', 'help', 'release-message:']);
 
 $help = <<<HELP
 This command releases a new version without pushing it:
@@ -142,6 +142,11 @@ if ($overwrittenReleaseMessage === null) {
     $overwrittenReleaseMessage = isset($options['release-message']) ? trim($options['release-message']) : null;
 }
 if ($overwrittenReleaseMessage) {
+    if (strstr('{version}', $overwrittenReleaseMessage) === false) {
+        $warning = 'No {version} placeholder in provided release message '
+            . 'present.';
+        echo $warning . PHP_EOL;
+    }
     $defaultReleaseMessage = $overwrittenReleaseMessage;
 }
 
