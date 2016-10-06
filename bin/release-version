@@ -131,6 +131,12 @@ if ($increment) {
     $version = (new SemVer($currentVersion))->inc($increment)->getVersion();
 }
 
+if (!isset($version)) {
+    $warning = "Could no resolve a version. Aborting release.";
+    echo $warning . PHP_EOL;
+    exit(1);
+}
+
 $overwrittenReleaseMessage = isset($options['m']) ? trim($options['m']) : null;
 if ($overwrittenReleaseMessage === null) {
     $overwrittenReleaseMessage = isset($options['release-message']) ? trim($options['release-message']) : null;
