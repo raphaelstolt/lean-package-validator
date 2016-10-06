@@ -26,14 +26,23 @@ notifications:
   email: false
 
 before_script:
-  - if [[ $TRAVIS_PHP_VERSION != hhvm && $TRAVIS_PHP_VERSION != nightly ]]; then phpenv config-rm xdebug.ini; fi
+  - if [[ $TRAVIS_PHP_VERSION != hhvm && $TRAVIS_PHP_VERSION != nightly ]]; then
+      phpenv config-rm xdebug.ini;
+    fi
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction
 
 script:
-  - if [[ $TRAVIS_PULL_REQUEST_BRANCH = master ]]; then echo "Please open pull request from a feature / topic branch." && exit 1; fi
+  - if [[ $TRAVIS_PULL_REQUEST_BRANCH = master ]]; then
+      echo "Please open pull request from a feature / topic branch."
+      exit 1;
+    fi
   # Verify application version and Git tag match
   - composer lpv:application-version-guard
   - composer lpv:cs-lint
-  - if [[ $excludegroup = travis-ci-exclude ]]; then composer lpv:test -- --exclude-group travis-ci-exclude; fi
-  - if [[ $excludegroup = travis-ci-exclude-56 ]]; then composer lpv:test -- --exclude-group travis-ci-exclude-56; fi
+  - if [[ $excludegroup = travis-ci-exclude ]]; then
+      composer lpv:test -- --exclude-group travis-ci-exclude;
+    fi
+  - if [[ $excludegroup = travis-ci-exclude-56 ]]; then
+      composer lpv:test -- --exclude-group travis-ci-exclude-56;
+    fi
