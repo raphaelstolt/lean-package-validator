@@ -38,8 +38,10 @@ script:
       echo "Please open pull request from a feature / topic branch."
       exit 1;
     fi
-  # Verify application version and Git tag match
-  - composer lpv:application-version-guard
+  # Verify application version and Git tag match on tagged builds
+  - if [[ ! -z "$TRAVIS_TAG" ]]; then
+      composer lpv:application-version-guard;
+    fi
   - composer lpv:cs-lint
   - if [[ $excludegroup = travis-ci-exclude ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude;
