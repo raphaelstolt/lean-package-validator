@@ -31,6 +31,7 @@ before_script:
     fi
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction
+  - travis_retry composer dump-autoload --optimize
 
 script:
   - if [[ $TRAVIS_PULL_REQUEST_BRANCH = master ]]; then
