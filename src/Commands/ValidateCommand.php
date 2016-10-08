@@ -24,6 +24,7 @@ class ValidateCommand extends Command
      * @var string
      */
     protected $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
+
     /**
      * Package analyser.
      *
@@ -39,7 +40,8 @@ class ValidateCommand extends Command
     protected $archiveValidator;
 
     /**
-     * @param Analyser $analyser
+     * @param Analyser  $analyser
+     * @param Validator $archiveValidator
      */
     public function __construct(Analyser $analyser, Validator $archiveValidator)
     {
