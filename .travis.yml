@@ -3,11 +3,16 @@ language: php
 env:
   global:
     - excludegroup=travis-ci-exclude
+    - disable-xdebug=true
 
 matrix:
   include:
     - php: hhvm
+      env: disable-xdebug=false
     - php: nightly
+      env: disable-xdebug=false
+    - php: 7.1
+      env: disable-xdebug=false
     - php: 7.0
     - php: 5.6
       env: excludegroup=travis-ci-exclude-56
@@ -26,7 +31,7 @@ notifications:
   email: false
 
 before_script:
-  - if [[ $TRAVIS_PHP_VERSION != hhvm && $TRAVIS_PHP_VERSION != nightly ]]; then
+  - if [[ $disable-xdebug = true ]]; then
       phpenv config-rm xdebug.ini;
     fi
   - travis_retry composer self-update
