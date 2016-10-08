@@ -1,5 +1,8 @@
 # Changelog
 
+#### v1.6.0 `2016-10-08`
+- New `init` command to create a `.lpv` file with the default glob patterns. Closes [#18](https://github.com/raphaelstolt/lean-package-validator/issues/18).
+
 #### v1.5.2 `2016-10-08`
 - Fix gitignored files are excluded from validation. Fixes [#17](https://github.com/raphaelstolt/lean-package-validator/issues/17).
 - Internal Composer scripts have a namespace.

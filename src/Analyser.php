@@ -31,6 +31,13 @@ class Analyser
     private $ignoredGlobMatches = ['.', '..', '.git', '.DS_Store'];
 
     /**
+     * The default glob patterns.
+     *
+     * @var array
+     */
+    private $defaultGlobPatterns = [];
+
+    /**
      * The .gitattributes glob pattern
      *
      * @var string
@@ -81,7 +88,7 @@ class Analyser
      */
     public function __construct()
     {
-        $globPatterns = [
+        $this->defaultGlobPatterns = [
             '.*',
             '*.lock',
             '*.txt',
@@ -103,7 +110,17 @@ class Analyser
             'RMT'
         ];
 
-        $this->globPattern = '{' . implode(',', $globPatterns) . '}*';
+        $this->globPattern = '{' . implode(',', $this->defaultGlobPatterns) . '}*';
+    }
+
+    /**
+     * Accessor for the default glob patterns.
+     *
+     * @return array
+     */
+    public function getDefaultGlobPatterns()
+    {
+        return $this->defaultGlobPatterns;
     }
 
     /**

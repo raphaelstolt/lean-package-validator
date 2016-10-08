@@ -58,7 +58,7 @@ lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod
 ```
 \* The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,box.json,captainhook.json,*.dist.*,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
 
-The `--glob-pattern-file` option allows you to load patterns, which should be used to match the common repository artifacts, from a given file. You can put a `.lpv` file in the repository which will be used per default and overwrite the default pattern\*. The structure of such a glob pattern file can be taken from the [example](example/.lpv) directory.
+The `--glob-pattern-file` option allows you to load patterns, which should be used to match the common repository artifacts, from a given file. You can put a `.lpv` file in the repository which will be used per default and overwrite the default pattern\*. The structure of such a glob pattern file can be taken from the [example](example/.lpv) directory or be created via `lean-package-validator init`.
 
 ``` bash
 lean-package-validator validate [<directory>] --glob-pattern-file /path/to/glob-pattern-file
@@ -75,6 +75,16 @@ The `--validate-git-archive` option will validate that no common repository arti
 ``` bash
 lean-package-validator validate [<directory>] --validate-git-archive
 ```
+
+#### Additional commands
+
+The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artifacts.
+
+``` bash
+lean-package-validator init [<directory>]
+```
+
+The `--overwrite|-o` option overwrites an existing `.lpv` file.
 
 ## Utilisation via Composer scripts
 To avoid that changes coming from contributions or own modifications slip into release/dist archives it might be helpful to use a guarding [Composer script](https://getcomposer.org/doc/articles/scripts.md), which will be available at everyones fingertips.

@@ -1287,4 +1287,40 @@ CONTENT;
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
+
+    /**
+     * @test
+     * @group glob
+     */
+    public function returnsExpectedDefaultGlobPatterns()
+    {
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+
+        $expectedDefaultGlobPatterns = [
+            '.*',
+            '*.lock',
+            '*.txt',
+            '*.rst',
+            '*.{md,MD}',
+            '*.xml',
+            '*.yml',
+            'box.json',
+            'captainhook.json',
+            '*.dist.*',
+            '{B,b}uild*',
+            '{D,d}oc*',
+            '{T,t}ool*',
+            '{T,t}est*',
+            '{S,s}pec*',
+            '{E,e}xample*',
+            'LICENSE',
+            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
+            'RMT'
+        ];
+
+        $this->assertEquals(
+            $expectedDefaultGlobPatterns,
+            $analyser->getDefaultGlobPatterns()
+        );
+    }
 }

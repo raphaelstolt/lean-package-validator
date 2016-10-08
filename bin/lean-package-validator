@@ -18,6 +18,7 @@ foreach ($autoloads as $autoload) {
 define('WORKING_DIRECTORY', getcwd());
 define('VERSION', '1.5.2');
 
+use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
@@ -28,11 +29,18 @@ $archive = new Archive(
     WORKING_DIRECTORY,
     basename(WORKING_DIRECTORY)
 );
+$analyser = new Analyser;
+
+$initCommand = new InitCommand(
+    $analyser
+);
 $validateCommand = new ValidateCommand(
-    new Analyser,
+    $analyser,
     new Validator($archive)
 );
 
 $application = new Application('Lean package validator', VERSION);
-$application->add($validateCommand);
+$application->addCommands(
+    [$initCommand, $validateCommand]
+);
 $application->run();
