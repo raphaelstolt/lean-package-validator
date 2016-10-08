@@ -88,7 +88,12 @@ By adding the following to the project/micro-package its `composer.json` the ` .
     },
 }
 ```
-Further this Composer script could also be utilised in Travis CI [builds](.travis.yml) similar to the `composer test` script call.
+Further this Composer script could also be utilised in Travis CI [builds](.travis.yml) like shown next.
+
+``` yml
+script:
+  - composer validate-gitattributes
+```
 
 #### Running tests
 ``` bash
