@@ -39,10 +39,8 @@ before_script:
   - travis_retry composer dump-autoload --optimize
 
 script:
-  - if [[ $TRAVIS_PULL_REQUEST_BRANCH = master ]]; then
-      echo "Please open pull request from a feature / topic branch.";
-      exit 1;
-    fi
+  # Use custom script to avoid the risk of terminating the build process
+  - ./bin/travis/fail-non-feature-topic-branch-pull-request
   # Verify application version and Git tag match on tagged builds
   - if [[ ! -z "$TRAVIS_TAG" ]]; then
       composer lpv:application-version-guard;
