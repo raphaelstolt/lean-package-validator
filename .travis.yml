@@ -5,6 +5,9 @@ env:
     - excludegroup=travis-ci-exclude
     - disable-xdebug=true
 
+git:
+  depth: 2
+
 matrix:
   include:
     - php: hhvm
