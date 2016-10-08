@@ -1,4 +1,4 @@
-/vendor
-/coverage-reports
+vendor/
+coverage-reports/
 composer.lock
 .php_cs.cache
