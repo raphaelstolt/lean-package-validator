@@ -1,6 +1,7 @@
 # Changelog
 
-#### v1.??.?? `2016-??-??`
+#### v1.5.2 `2016-10-08`
+- Fix gitignored files are excluded from validation. Fixes [#17](https://github.com/raphaelstolt/lean-package-validator/issues/17).
 - Internal Composer scripts have a namespace.
 
 #### v1.5.1 `2016-10-05`

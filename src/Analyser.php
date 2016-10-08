@@ -315,6 +315,39 @@ class Analyser
     }
 
     /**
+     * Return patterns in .gitignore file.
+     *
+     * @return array
+     */
+    public function getGitignoredPatterns()
+    {
+        $gitignoreFile = $this->getDirectory() . DIRECTORY_SEPARATOR . '.gitignore';
+
+        if (!file_exists($gitignoreFile)) {
+            return [];
+        }
+
+        $gitignoreContent = file_get_contents($gitignoreFile);
+        $eol = $this->detectEol($gitignoreContent);
+
+        $gitignoreLines = preg_split(
+            '/\\r\\n|\\r|\\n/',
+            $gitignoreContent
+        );
+
+        $gitignoredPatterns = [];
+
+        array_filter($gitignoreLines, function ($line) use (&$gitignoredPatterns) {
+            $line = trim($line);
+            if ($line !== '' && strpos($line, '#') === false) {
+                $gitignoredPatterns[] = $line;
+            }
+        });
+
+        return $gitignoredPatterns;
+    }
+
+    /**
      * Return the expected .gitattributes content.
      *
      * @param  array $postfixlessExportIgnores Expected patterns without
@@ -420,8 +453,13 @@ class Analyser
 
         chdir($this->directory);
 
+        $ignoredGlobMatches = array_merge(
+            $this->ignoredGlobMatches,
+            $this->getGitignoredPatterns()
+        );
+
         foreach (glob($this->globPattern, GLOB_BRACE) as $filename) {
-            if (!in_array($filename, $this->ignoredGlobMatches)) {
+            if (!in_array($filename, $ignoredGlobMatches)) {
                 if (is_dir($filename)) {
                     $expectedExportIgnores[] = $filename . '/';
                     continue;

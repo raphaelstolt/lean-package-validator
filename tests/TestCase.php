@@ -97,6 +97,22 @@ class TestCase extends PHPUnit
     }
 
     /**
+     * Create temporary gitignore file.
+     *
+     * @param  string $content Content of file.
+     *
+     * @return integer
+     */
+    protected function createTemporaryGitignoreFile($content)
+    {
+        $temporaryGitignoreFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.gitignore';
+
+        return file_put_contents($temporaryGitignoreFile, $content);
+    }
+
+    /**
      * Create temporary glob pattern (.lpv) file.
      *
      * @param  string $content Content of file.

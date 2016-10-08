@@ -1416,6 +1416,63 @@ CONTENT;
     }
 
     /**
+     * @test
+     * @ticket 17 (https://github.com/raphaelstolt/lean-package-validator/issues/17)
+     */
+    public function gitignoredFilesAreExcludedFromValidation()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            '.php_cs.cache',
+            'composer.lock',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+*    text=auto
+
+.buildignore export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $gitignoreContent = <<<CONTENT
+/vendor/*
+/coverage-reports
+composer.lock
+.php_cs.cache
+
+CONTENT;
+
+        $this->createTemporaryGitignoreFile($gitignoreContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() == 0);
+    }
+
+    /**
      * @return array
      */
     public function optionProvider()

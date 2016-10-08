@@ -1201,4 +1201,90 @@ CONTENT;
         $this->assertTrue($analyser->hasCompleteExportIgnores());
         $this->assertTrue($analyser->hasTextAutoConfiguration());
     }
+
+    /**
+     * @test
+     */
+    public function returnsEmptyPatternsWhenNoGitignoreFilePresent()
+    {
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertEquals([], $analyser->getGitignoredPatterns());
+    }
+
+    /**
+     * @test
+     */
+    public function returnsExpectedGitignoredPatterns()
+    {
+        $gitignoreContent = <<<CONTENT
+# Composer files
+vendor/*
+composer.lock
+
+# Test related files
+coverage-reports/
+
+ # Cache files
+.php_cs.cache
+
+CONTENT;
+
+        $this->createTemporaryGitignoreFile($gitignoreContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+
+        $expectedGitignorePatterns = [
+            'vendor/*',
+            'composer.lock',
+            'coverage-reports/',
+            '.php_cs.cache',
+        ];
+
+        $this->assertEquals(
+            $expectedGitignorePatterns,
+            $analyser->getGitignoredPatterns()
+        );
+    }
+
+    /**
+     * @test
+     * @ticket 17 (https://github.com/raphaelstolt/lean-package-validator/issues/17)
+     */
+    public function presentGitignoredFileIsExcludedFromValidation()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'composer.lock',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.buildignore export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $gitignoreContent = <<<CONTENT
+/vendor/*
+/coverage-reports
+composer.lock
+.php_cs.cache
+
+CONTENT;
+
+        $this->createTemporaryGitignoreFile($gitignoreContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+    }
 }
