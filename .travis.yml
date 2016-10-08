@@ -48,7 +48,10 @@ script:
   - if [[ ! -z "$TRAVIS_TAG" ]]; then
       composer lpv:application-version-guard;
     fi
-  - composer lpv:cs-lint
+  # Verify coding standard compliance only once
+  - if [[ $TRAVIS_PHP_VERSION = 7.1 ]]; then
+      composer lpv:cs-lint;
+    fi
   - if [[ $excludegroup = travis-ci-exclude ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude;
     fi
