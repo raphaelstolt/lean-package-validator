@@ -7,7 +7,7 @@
 The LeanPackageValidator is an utility tool that validates a project/micro-package for it's `leanness`. A project/micro-package is considered `lean` when it's common repository artifacts won’t be included in release/dist archive files.
 
 ## Installation
-The LeanPackageValidator CLI should be installed globally through composer.
+The LeanPackageValidator CLI should be installed globally through Composer.
 
 ``` bash
 composer global require stolt/lean-package-validator
