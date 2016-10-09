@@ -2,7 +2,7 @@
 
 namespace Stolt\LeanPackage\Tests;
 
-use PHPUnit_Framework_TestCase as PHPUnit;
+use PHPUnit\Framework\TestCase as PHPUnit;
 
 class TestCase extends PHPUnit
 {
