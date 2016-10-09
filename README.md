@@ -4,7 +4,7 @@
 ![PHP Version](http://img.shields.io/badge/php-5.6+-ff69b4.svg)
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 
-The LeanPackageValidator is an utility tool that validates a project/micro-package for it's `leanness`. A project/micro-package is considered `lean` when it's common repository artifacts won’t be included in release/dist archive files.
+The LeanPackageValidator is an utility tool that validates a project/micro-package for its `leanness`. A project/micro-package is considered `lean` when its common repository artifacts won’t be included in release/dist archive files.
 
 ## Installation
 The LeanPackageValidator CLI should be installed globally through Composer.
@@ -70,7 +70,7 @@ The `--keep-license` option will allow a license file in the release/dist archiv
 lean-package-validator validate [<directory>] --keep-license
 ```
 
-The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting it's content. With a set `--keep-license` option a license file becomes mandatory and will fail the archive validation if not present.
+The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting its content. With a set `--keep-license` option a license file becomes mandatory and will fail the archive validation if not present.
 
 ``` bash
 lean-package-validator validate [<directory>] --validate-git-archive
@@ -111,7 +111,7 @@ composer lpv:test
 ```
 
 #### License
-This library and it's CLI are licensed under the MIT license. Please see [LICENSE](LICENSE.md) for more details.
+This library and its CLI are licensed under the MIT license. Please see [LICENSE](LICENSE.md) for more details.
 
 #### Changelog
 Please see [CHANGELOG](CHANGELOG.md) for more details.
