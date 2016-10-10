@@ -4,6 +4,7 @@ env:
   global:
     - excludegroup=travis-ci-exclude
     - disable-xdebug=true
+    - lint=false
 
 git:
   depth: 2
@@ -15,7 +16,7 @@ matrix:
     - php: nightly
       env: disable-xdebug=false
     - php: 7.1
-      env: disable-xdebug=false
+      env: disable-xdebug=false lint=true
     - php: 7.0
     - php: 5.6
       env: excludegroup=travis-ci-exclude-56
@@ -49,7 +50,7 @@ script:
       composer lpv:application-version-guard;
     fi
   # Verify coding standard compliance only once
-  - if [[ $TRAVIS_PHP_VERSION = 7.1 ]]; then
+  - if [[ $lint = true ]]; then
       composer lpv:cs-lint;
     fi
   - if [[ $excludegroup = travis-ci-exclude ]]; then
