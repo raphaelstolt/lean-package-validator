@@ -2,9 +2,8 @@ language: php
 
 env:
   global:
-    - excludegroup=travis-ci-exclude
-    - disable-xdebug=true
-    - lint=false
+    - EXCLUDEGROUP=travis-ci-exclude
+    - DISABLE_XDEBUG=true
 
 git:
   depth: 2
@@ -12,14 +11,19 @@ git:
 matrix:
   include:
     - php: hhvm
-      env: disable-xdebug=false
+      env:
+      - DISABLE_XDEBUG=false
     - php: nightly
-      env: disable-xdebug=false
+      env:
+      - DISABLE_XDEBUG=false
     - php: 7.1
-      env: disable-xdebug=false lint=true
+      env:
+      - DISABLE_XDEBUG=false
+      - LINT=true
     - php: 7.0
     - php: 5.6
-      env: excludegroup=travis-ci-exclude-56
+      env:
+      - EXCLUDEGROUP=travis-ci-exclude-56
 
   fast_finish: true
   allow_failures:
@@ -35,7 +39,7 @@ notifications:
   email: false
 
 before_script:
-  - if [[ $disable-xdebug = true ]]; then
+  - if [[ $DISABLE_XDEBUG = true ]]; then
       phpenv config-rm xdebug.ini;
     fi
   - travis_retry composer self-update
@@ -50,12 +54,12 @@ script:
       composer lpv:application-version-guard;
     fi
   # Verify coding standard compliance only once
-  - if [[ $lint = true ]]; then
+  - if [[ $LINT = true ]]; then
       composer lpv:cs-lint;
     fi
-  - if [[ $excludegroup = travis-ci-exclude ]]; then
+  - if [[ $EXCLUDEGROUP = travis-ci-exclude ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude;
     fi
-  - if [[ $excludegroup = travis-ci-exclude-56 ]]; then
+  - if [[ $EXCLUDEGROUP = travis-ci-exclude-56 ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude-56;
     fi
