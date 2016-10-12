@@ -62,6 +62,34 @@ function isWindows() {
 }
 
 /**
+ * Check if all preconditions for a release are met.
+ *
+ * @return boolean
+ */
+function fulfillsPreconditions()
+{
+    echo 'Checking release preconditions' . PHP_EOL;
+
+    $precondictionCommands = [
+        "composer lpv:travis-lint",
+        "composer lpv:cs-lint",
+    ];
+
+    foreach ($precondictionCommands as $command) {
+        echo "> {$command}" . PHP_EOL;
+        exec($command, $output, $returnCode);
+        if (trim($output[0]) !== '') {
+            echo $output[0] . PHP_EOL;
+        }
+        if (intval($returnCode) !== 0) {
+            return false;
+        }
+    }
+
+    return is_repository_in_releaseable_state();
+}
+
+/**
  * Check if repository is in releasable state which is given
  * when no uncommitted files are present.
  *
@@ -152,7 +180,7 @@ if ($overwrittenReleaseMessage) {
 
 $releaseMessage = str_replace('{version}', $version, $defaultReleaseMessage);
 
-if (is_repository_in_releaseable_state()) {
+if (fulfillsPreconditions()) {
     echo 'Releasing ' . $version . PHP_EOL;
 
     $releaseCommands = [
