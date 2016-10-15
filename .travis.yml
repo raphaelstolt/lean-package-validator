@@ -17,9 +17,7 @@ matrix:
       env:
       - DISABLE_XDEBUG=false
     - php: 7.1
-      env:
-      - DISABLE_XDEBUG=false
-      - LINT=true
+      env: DISABLE_XDEBUG=false LINT=true
     - php: 7.0
     - php: 5.6
       env:
