@@ -11,9 +11,9 @@ use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
+use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Tester\CommandTester;
 
 class ValidateCommandTest extends TestCase
 {
