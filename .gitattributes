@@ -1,5 +1,6 @@
 * text=auto eol=lf
 
+.appveyor.yml export-ignore
 .ctl.cache export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
