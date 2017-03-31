@@ -96,6 +96,7 @@ class Analyser
             '*.{md,MD}',
             '*.xml',
             '*.yml',
+            'appveyor.yml',
             'box.json',
             'captainhook.json',
             '*.dist.*',

@@ -1,5 +1,8 @@
 # Changelog
 
+#### [v1.7.0] `2017-03-31`
+- Additional artifacts glob pattern expansion to match AppVeyor configuration files.
+
 #### [v1.6.0] `2016-10-08`
 - New `init` command to create a `.lpv` file with the default glob patterns. Closes [#18](https://github.com/raphaelstolt/lean-package-validator/issues/18).
 
