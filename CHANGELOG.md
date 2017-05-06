@@ -1,5 +1,8 @@
 # Changelog
 
+#### [v1.7.1] `2017-05-06`
+- Fix gitignored files with a pre- and postfixed directory separator are excluded from validation. Fixes [#21](https://github.com/raphaelstolt/lean-package-validator/issues/21).
+
 #### [v1.7.0] `2017-03-31`
 - Additional artifacts glob pattern expansion to match AppVeyor configuration files.
 

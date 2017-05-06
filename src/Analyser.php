@@ -358,6 +358,12 @@ class Analyser
         array_filter($gitignoreLines, function ($line) use (&$gitignoredPatterns) {
             $line = trim($line);
             if ($line !== '' && strpos($line, '#') === false) {
+                if (substr($line, 0, 1) === "/") {
+                    $gitignoredPatterns[] = substr($line, 1);
+                }
+                if (substr($line, -1, 1) === "/") {
+                    $gitignoredPatterns[] = substr($line, 0, -1);
+                }
                 $gitignoredPatterns[] = $line;
             }
         });

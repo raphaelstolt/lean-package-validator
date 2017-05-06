@@ -1236,6 +1236,7 @@ CONTENT;
         $expectedGitignorePatterns = [
             'vendor/*',
             'composer.lock',
+            'coverage-reports',
             'coverage-reports/',
             '.php_cs.cache',
         ];
@@ -1278,6 +1279,50 @@ CONTENT;
 /vendor/*
 /coverage-reports
 composer.lock
+.php_cs.cache
+
+CONTENT;
+
+        $this->createTemporaryGitignoreFile($gitignoreContent);
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+    }
+
+    /**
+     * @test
+     * @ticket 21 (https://github.com/raphaelstolt/lean-package-validator/issues/21)
+     */
+    public function presentGitignoredSpecsCoverageDirectoryIsExcludedFromValidation()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'composer.lock',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs', 'specs-coverage', 'some-other-dir', 'bar']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.buildignore export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $gitignoreContent = <<<CONTENT
+/vendor/*
+/specs-coverage
+composer.lock
+some-other-dir/
+bar
 .php_cs.cache
 
 CONTENT;
