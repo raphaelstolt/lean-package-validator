@@ -59,6 +59,8 @@
 #### v1.0.0 `2016-09-04`
 - Initial release.
 
+[v1.7.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.0...v1.7.1
+[v1.7.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.6.0...v1.7.0
 [v1.6.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.5.2...v1.6.0
 [v1.5.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.5.1...v1.5.2
 [v1.5.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.5.0...v1.5.1
