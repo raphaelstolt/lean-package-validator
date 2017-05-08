@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v1.7.2] - 2017-05-08
+### Fixed
+- Fix non existent export ignored artifacts are excluded from validation. Fixes [#22](https://github.com/raphaelstolt/lean-package-validator/issues/22).
+
 ## [v1.7.1] - 2017-05-06
 ### Fixed
 - Fix gitignored files with a pre- and postfixed directory separator are excluded from validation. Fixes [#21](https://github.com/raphaelstolt/lean-package-validator/issues/21).
@@ -88,7 +92,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.2...HEAD
+[v1.7.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.1...v1.7.2
 [v1.7.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.0...v1.7.1
 [v1.7.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.6.0...v1.7.0
 [v1.6.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.5.2...v1.6.0

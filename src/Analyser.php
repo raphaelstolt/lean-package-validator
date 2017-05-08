@@ -553,7 +553,13 @@ class Analyser
      */
     private function patternHasMatch($globPattern)
     {
-        $globPattern = '{' . trim($globPattern) . '}*';
+        if (substr(trim($globPattern), 0, 1) === '/') {
+            $globPattern = trim(substr($globPattern, 1));
+        } elseif (substr(trim($globPattern), -1) === '/') {
+            $globPattern = trim(substr($globPattern, 0, -1));
+        } else {
+            $globPattern = '{' . trim($globPattern) . '}*';
+        }
 
         $initialWorkingDirectory = getcwd();
         chdir($this->directory);
@@ -630,10 +636,13 @@ class Analyser
         array_filter($gitattributesLines, function ($line) use (&$exportIgnores) {
             if (strstr($line, 'export-ignore', true)) {
                 list($line, $void) = explode('export-ignore', $line);
-                if (substr($line, 0, 1) === '/') {
-                    $line = substr($line, 1);
+                if ($this->patternHasMatch(trim($line))) {
+                    if (substr($line, 0, 1) === '/') {
+                        $line = substr($line, 1);
+                    }
+
+                    return $exportIgnores[] = trim($line);
                 }
-                return $exportIgnores[] = trim($line);
             }
         });
 

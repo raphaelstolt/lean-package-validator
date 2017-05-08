@@ -1076,6 +1076,52 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 22 (https://github.com/raphaelstolt/lean-package-validator/issues/22)
+     */
+    public function nonExistentArtifactsWhichAreExportIgnoredAreIgnoredOnComparison()
+    {
+        $artifactFilenames = [
+            '.gitattributes',
+            'appveyor.yml',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests']
+        );
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+# Do not include the following files when creating repo artifacts, e.g. the zip
+tests/ export-ignore
+non-existent-directory/ export-ignore # non existent artifact directory
+non-existent-file export-ignore # non existent artifact file
+.gitattributes export-ignore
+appveyor.yml export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() === 0);
+    }
+
+    /**
+     * @test
      * @ticket 6 (https://github.com/raphaelstolt/lean-package-validator/issues/6)
      */
     public function strictOrderOfExportIgnoresCanBeEnforced()

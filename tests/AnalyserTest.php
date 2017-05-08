@@ -509,6 +509,18 @@ CONDUCT.md export-ignore
 specs/ export-ignore
 CONTENT;
 
+        $artifactFilenames = [
+'phpspec.yml.dist',
+'.buildignore',
+'.travis.yml',
+'CONDUCT.md',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
         $expectedExportIgnores = [
