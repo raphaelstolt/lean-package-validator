@@ -16,7 +16,7 @@ foreach ($autoloads as $autoload) {
 }
 
 define('WORKING_DIRECTORY', getcwd());
-define('VERSION', '1.7.1');
+define('VERSION', '1.7.2');
 
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;
