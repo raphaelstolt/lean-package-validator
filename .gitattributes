@@ -13,7 +13,7 @@
 bin/application-version export-ignore
 bin/release-version export-ignore
 bin/start-watchman export-ignore
-bin/travis/* export-ignore
+bin/travis/ export-ignore
 CHANGELOG.md export-ignore
 example/ export-ignore
 LICENSE.md export-ignore
