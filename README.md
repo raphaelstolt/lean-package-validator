@@ -14,10 +14,13 @@ The LeanPackageValidator CLI should be installed globally through Composer.
 composer global require stolt/lean-package-validator
 ```
 
-Since the default name of the CLI is quite a mouthful, an alias which can be placed in `~/.aliases`, `~/.zshrc` or the like might come in handy.
+Make sure that the path to your global vendor binaries directory is in your `$PATH`. You can determine the location of your global vendor binaries directory via `composer global config bin-dir --absolute`. This way the `lean-package-validator` executable can be located.
+
+
+Since the default name of the CLI is quite a mouthful, an alias which can be placed in `~/.aliases`, `~/.zshrc` or the like might come in handy. The alias shown next assumes that `$COMPOSER_HOME` is `~/.config/composer` and not `~/.composer`.
 
 ```bash
-alias lpv='$HOME/.composer/vendor/bin/lean-package-validator $@'
+alias lpv='~/.config/composer/vendor/bin/lean-package-validator $@'
 ```
 
 The LeanPackageValidator also can be installed locally to a project which allows further utilisation via [Composer scripts](https://getcomposer.org/doc/articles/scripts.md).
