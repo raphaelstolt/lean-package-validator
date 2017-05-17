@@ -3,6 +3,7 @@
 namespace Stolt\LeanPackage\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
+use Stolt\LeanPackage\Helpers\Str as OsHelper;
 
 class TestCase extends PHPUnit
 {
@@ -15,7 +16,7 @@ class TestCase extends PHPUnit
      */
     protected function setUpTemporaryDirectory()
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+        if ((new OsHelper())->isWindows() === false) {
             ini_set('sys_temp_dir', '/tmp/lpv');
             $this->temporaryDirectory = '/tmp/lpv';
         } else {

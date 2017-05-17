@@ -14,6 +14,7 @@ foreach ($autoloads as $autoload) {
     }
 }
 
+use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use vierbergenlars\SemVer\version as SemVer;
 
 $binApplicationName = 'lean-package-validator';
@@ -96,7 +97,7 @@ function fulfillsPreconditions()
  * @return boolean
  */
 function is_repository_in_releaseable_state() {
-    if (isWindows()) {
+    if ((new OsHelper())->isWindows()) {
         exec('git status --porcelain | FIND /v /c ""', $output);
     } else {
         exec('expr $(git status --porcelain 2>/dev/null | egrep "^(M| M|D| D|\??)" | wc -l)', $output);

@@ -6,6 +6,7 @@ use PharData;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
+use Stolt\LeanPackage\Helpers\Str as OsHelper;
 
 class Archive
 {
@@ -120,7 +121,7 @@ class Archive
     public function isGitCommandAvailable($command = 'git')
     {
         exec('where ' . $command . ' 2>&1', $output, $returnValue);
-        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+        if ((new OsHelper())->isWindows() === false) {
             exec('which ' . $command . ' 2>&1', $output, $returnValue);
         }
 
