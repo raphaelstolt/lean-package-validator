@@ -77,6 +77,7 @@ appveyor.yml
 box.json
 captainhook.json
 *.dist.*
+*.dist
 {B,b}uild*
 {D,d}oc*
 {T,t}ool*

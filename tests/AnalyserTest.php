@@ -1081,6 +1081,40 @@ CONTENT;
 
     /**
      * @test
+     */
+    public function withDistEndingFilesAreNotExportIgnored()
+    {
+        $artifactFilenames = [
+            'SUPPORT.md',
+            'README.md',
+            'humbug.json.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+humbug.json.dist export-ignore
+README.md export-ignore
+SUPPORT.md export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
     public function licenseFileIsNotExportIgnored()
@@ -1365,6 +1399,7 @@ CONTENT;
             'box.json',
             'captainhook.json',
             '*.dist.*',
+            '*.dist',
             '{B,b}uild*',
             '{D,d}oc*',
             '{T,t}ool*',

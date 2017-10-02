@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v1.7.3] - 2017-10-02
+### Fixed
+- Fix dist file pattern to also match `*.dist` files.
+
 ## [v1.7.2] - 2017-05-08
 ### Fixed
 - Fix non existent export ignored artifacts are excluded from validation. Fixes [#22](https://github.com/raphaelstolt/lean-package-validator/issues/22).
