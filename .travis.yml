@@ -15,6 +15,7 @@ matrix:
       dist: trusty
       group: edge
     - php: nightly
+    - php: 7.2
     - php: 7.1
       env:
       - LINT=true
@@ -27,6 +28,7 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
+    - php: 7.2
 
 cache:
   directories:
