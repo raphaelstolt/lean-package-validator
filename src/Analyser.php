@@ -61,6 +61,15 @@ class Analyser
     private $strictOrderComparison = false;
 
     /**
+     * Whether to do a strict alignment comparsion of the export-ignores
+     * in the .gitattributes files against the expected ones
+     * or not.
+     *
+     * @var boolean
+     */
+    private $strictAlignmentComparison = false;
+
+    /**
      * Whether at least one export-ignore pattern has
      * a preceding slash or not.
      *
@@ -82,6 +91,14 @@ class Analyser
      * @var boolean
      */
     private $keepLicense = false;
+
+    /**
+     * Whether to align the export-ignores on create or overwrite
+     * or not.
+     *
+     * @var boolean
+     */
+    private $alignExportIgnores = false;
 
     /**
      * Initialize.
@@ -291,6 +308,28 @@ class Analyser
     }
 
     /**
+     * Enable strict alignment camparison.
+     *
+     * @return Stolt\LeanPackag\Analyser
+     */
+    public function enableStrictAlignmentCamparison()
+    {
+        $this->strictAlignmentComparison = true;
+
+        return $this;
+    }
+
+    /**
+     * Guard for strict alignment camparison.
+     *
+     * @return boolean
+     */
+    public function isStrictAlignmentCamparisonEnabled()
+    {
+        return $this->strictAlignmentComparison === true;
+    }
+
+    /**
      * Keep license file in releases.
      *
      * @return Stolt\LeanPackag\Analyser
@@ -310,6 +349,28 @@ class Analyser
     public function isKeepLicenseEnabled()
     {
         return $this->keepLicense === true;
+    }
+
+    /**
+     * Align export-ignores.
+     *
+     * @return Stolt\LeanPackag\Analyser
+     */
+    public function alignExportIgnores()
+    {
+        $this->alignExportIgnores = true;
+
+        return $this;
+    }
+
+    /**
+     * Guard for aligning export-ignores.
+     *
+     * @return boolean
+     */
+    public function isAlignExportIgnoresEnabled()
+    {
+        return $this->alignExportIgnores === true;
     }
 
     /**
@@ -385,16 +446,25 @@ class Analyser
         if ($postfixlessExportIgnores === []) {
             $postfixlessExportIgnores = $this->collectExpectedExportIgnores();
         }
+
+        if (!$this->hasGitattributesFile() && count($postfixlessExportIgnores) > 0) {
+            $postfixlessExportIgnores[] = '.gitattributes';
+        }
+
         sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if (count($postfixlessExportIgnores) > 0) {
+            if ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentCamparisonEnabled()) {
+                $postfixlessExportIgnores = $this->getAlignedExportIgnoreArtifacts(
+                    $postfixlessExportIgnores
+                );
+            }
+
             $content = implode(" export-ignore" . $this->preferredEol, $postfixlessExportIgnores)
                 . " export-ignore" . $this->preferredEol;
 
             if ($this->hasGitattributesFile()) {
                 $exportIgnoreContent = rtrim($content);
-                $this->getPresentExportIgnoresToPreserve($postfixlessExportIgnores);
-
                 $content = $this->getPresentNonExportIgnoresContent();
 
                 if (strstr($content, self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER)) {
@@ -411,7 +481,6 @@ class Analyser
             } else {
                 $content = "* text=auto eol=lf"
                     . str_repeat($this->preferredEol, 2)
-                    . '.gitattributes export-ignore' . $this->preferredEol
                     . $content;
             }
 
@@ -449,7 +518,7 @@ class Analyser
             &$exportIgnoresToPreserve,
             &$globPatternMatchingExportIgnores
         ) {
-            if (strstr($line, 'export-ignore')) {
+            if (strstr($line, 'export-ignore') && strpos($line, '#') === false) {
                 list($pattern, $void) = explode('export-ignore', $line);
                 if (substr($pattern, 0, 1) === '/') {
                     $pattern = substr($pattern, 1);
@@ -601,7 +670,7 @@ class Analyser
             &$exportIgnoresPlacementPlaceholderSet,
             &$exportIgnoresPlacementPlaceholder
         ) {
-            if (strstr($line, 'export-ignore') === false) {
+            if (strstr($line, 'export-ignore') === false || strstr($line, '#')) {
                 return $nonExportIgnoreLines[] = trim($line);
             } else {
                 if ($exportIgnoresPlacementPlaceholderSet === false) {
@@ -651,7 +720,26 @@ class Analyser
             sort($exportIgnores, SORT_STRING | SORT_FLAG_CASE);
         }
 
-        return $exportIgnores;
+        return array_unique($exportIgnores);
+    }
+
+    /**
+     * @param  array  $artifacts The export-ignore artifacts to align.
+     * @return array
+     */
+    private function getAlignedExportIgnoreArtifacts(array $artifacts)
+    {
+        $longestArtifact = max(array_map('strlen', $artifacts));
+
+        return array_map(function ($artifact) use (&$longestArtifact) {
+            if (strlen($artifact) < $longestArtifact) {
+                return $artifact . str_repeat(
+                    ' ',
+                    $longestArtifact - strlen($artifact)
+                );
+            }
+            return $artifact;
+        }, $artifacts);
     }
 
     /**
@@ -668,6 +756,12 @@ class Analyser
         }
 
         $actualExportIgnores = $this->getPresentExportIgnores();
+
+        if ($this->isStrictAlignmentCamparisonEnabled()) {
+            $expectedExportIgnores = $this->getAlignedExportIgnoreArtifacts(
+                $expectedExportIgnores
+            );
+        }
 
         return array_values($expectedExportIgnores) === array_values($actualExportIgnores);
     }

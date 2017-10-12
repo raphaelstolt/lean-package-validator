@@ -74,6 +74,14 @@ The `--keep-license` option will allow a license file in the release/dist archiv
 lean-package-validator validate [<directory>] --keep-license
 ```
 
+The `--align-export-ignores|-a` option will align the created or overwritten export-ignores for a better readability.
+
+``` bash
+lean-package-validator validate [<directory>] --align-export-ignores --create
+```
+
+The `--enforce-alignment` option will enforce a strict alignment of export-ignores in the .gitattributes file and fail validation if they aren't aligned. Per __default__ no alignment is enforced.
+
 The `--validate-git-archive` option will validate that no common repository artifacts slip into the release/dist archive file. It will do so by creating a `temporary archive` from the current Git `HEAD` and inspecting its content. With a set `--keep-license` option a license file becomes mandatory and will fail the archive validation if not present.
 
 ``` bash

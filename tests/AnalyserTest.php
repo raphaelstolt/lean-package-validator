@@ -153,8 +153,8 @@ CONTENT;
         $expectedGitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
-.gitattributes export-ignore
 .buildignore export-ignore
+.gitattributes export-ignore
 .travis.yml export-ignore
 documentation/ export-ignore
 Makefile export-ignore
@@ -1144,6 +1144,43 @@ CONTENT;
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertTrue($analyser->isKeepLicenseEnabled());
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function exportIgnoresAreAligned()
+    {
+        $artifactFilenames = [
+            'LICENSE.txt',
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes   export-ignore
+LICENSE.txt      export-ignore
+phpspec.yml.dist export-ignore
+README.md        export-ignore
+specs/           export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory)->alignExportIgnores();
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertTrue($analyser->isAlignExportIgnoresEnabled());
         $this->assertEquals(
             $expectedGitattributesContent,
             $actualGitattributesContent

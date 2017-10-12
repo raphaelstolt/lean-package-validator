@@ -76,12 +76,58 @@ Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 Would expect the following .gitattributes file content:
 * text=auto eol=lf
 
-.gitattributes export-ignore
 .buildignore export-ignore
+.gitattributes export-ignore
 .travis.yml export-ignore
 CONDUCT.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     */
+    public function validateOnNonExistentGitattributesFilesSuggestsCreationWithAlignment()
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            '.travis.yml',
+            '.buildignore',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--align-export-ignores' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.buildignore     export-ignore
+.gitattributes   export-ignore
+.travis.yml      export-ignore
+CONDUCT.md       export-ignore
+phpspec.yml.dist export-ignore
+specs/           export-ignore
 
 Use the --create|-c option to create a .gitattributes file with the shown content.
 
@@ -574,6 +620,57 @@ CONTENT;
     /**
      * @test
      */
+    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithAlignment()
+    {
+        $artifactFilenames = ['CONDUCT.md'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--create' => true,
+            '--align-export-ignores' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Created a .gitattributes file with the shown content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md     export-ignore
+specs/         export-ignore
+
+
+CONTENT;
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md     export-ignore
+specs/         export-ignore
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $this->assertStringEqualsFile(
+            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes',
+            $expectedGitattributesContent
+        );
+    }
+
+    /**
+     * @test
+     */
     public function validGitattributesReturnsExpectedStatusCode()
     {
         $artifactFilenames = [
@@ -693,8 +790,8 @@ Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 Would expect the following .gitattributes file content:
 * text=auto eol=lf
 
-.gitattributes export-ignore
 .buildignore export-ignore
+.gitattributes export-ignore
 .travis.yml export-ignore
 CONDUCT.rst export-ignore
 dist/ export-ignore
@@ -969,6 +1066,102 @@ CONTENT;
 
     /**
      * @test
+     */
+    public function incompleteGitattributesFileIsOverwrittenWithAlignment()
+    {
+        $gitattributesContent = <<<CONTENT
+# These files are always considered text and should use LF.
+# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
+
+*.php text eol=lf
+
+# Ignore all non production artifacts with an "export-ignore".
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
+/.styleci.yml       export-ignore
+/.travis.yml        export-ignore
+/.appveyor.yml      export-ignore
+/phpunit.xml.dist export-ignore
+/tests/ export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $artifactFilenames = [
+            '.gitignore',
+            '.travis.yml',
+            '.appveyor.yml',
+            'phpunit.xml.dist',
+            '.styleci.yml',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests', 'docs', 'example']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--overwrite' => true,
+            '-a' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Overwrote it with the shown content:
+# These files are always considered text and should use LF.
+# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
+
+*.php text eol=lf
+
+# Ignore all non production artifacts with an "export-ignore".
+.appveyor.yml    export-ignore
+.gitattributes   export-ignore
+.gitignore       export-ignore
+.styleci.yml     export-ignore
+.travis.yml      export-ignore
+docs/            export-ignore
+example/         export-ignore
+phpunit.xml.dist export-ignore
+tests/           export-ignore
+
+
+CONTENT;
+
+        $expectedGitattributesContent = <<<CONTENT
+# These files are always considered text and should use LF.
+# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
+
+*.php text eol=lf
+
+# Ignore all non production artifacts with an "export-ignore".
+.appveyor.yml    export-ignore
+.gitattributes   export-ignore
+.gitignore       export-ignore
+.styleci.yml     export-ignore
+.travis.yml      export-ignore
+docs/            export-ignore
+example/         export-ignore
+phpunit.xml.dist export-ignore
+tests/           export-ignore
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $this->assertStringEqualsFile(
+            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes',
+            $expectedGitattributesContent
+        );
+    }
+
+    /**
+     * @test
      * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
      * @dataProvider optionProvider
      */
@@ -1118,6 +1311,111 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() === 0);
+    }
+
+    /**
+     * @test
+     */
+    public function strictAlignmentOfExportIgnoresCanBeEnforced()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'Phulpfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.buildignore export-ignore
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+Phulpfile export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--enforce-alignment' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+.buildignore     export-ignore
+.gitattributes   export-ignore
+phpspec.yml.dist export-ignore
+Phulpfile        export-ignore
+specs/           export-ignore
+
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     */
+    public function strictAlignmentAndOrderOfExportIgnoresCanBeEnforced()
+    {
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            'Phulpfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+.buildignore export-ignore
+phpspec.yml.dist export-ignore
+Phulpfile export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--enforce-alignment' => true,
+            '--enforce-strict-order' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+.buildignore     export-ignore
+.gitattributes   export-ignore
+phpspec.yml.dist export-ignore
+Phulpfile        export-ignore
+specs/           export-ignore
+
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
     /**

@@ -76,6 +76,8 @@ class ValidateCommand extends Command
         $createDescription = 'Create a .gitattributes file if not present';
         $enforceStrictOrderDescription = 'Enforce a strict order comparison of '
             . 'export-ignores in the .gitattributes file';
+        $enforceExportIgnoreAligmentDescription = 'Enforce a strict alignment of '
+            . 'export-ignores in the .gitattributes file';
         $overwriteDescription = 'Overwrite existing .gitattributes file '
             . 'with missing export-ignores';
         $validateArchiveDescription = 'Validate Git archive against current HEAD';
@@ -89,6 +91,8 @@ class ValidateCommand extends Command
 
         $keepLicenseDescription = 'Do not export-ignore license file';
 
+        $alignExportIgnoresDescription = 'Align export-ignores on create or overwrite';
+
         $this->addOption('create', 'c', InputOption::VALUE_NONE, $createDescription);
         $this->addOption(
             'enforce-strict-order',
@@ -96,6 +100,13 @@ class ValidateCommand extends Command
             InputOption::VALUE_NONE,
             $enforceStrictOrderDescription
         );
+        $this->addOption(
+            'enforce-alignment',
+            null,
+            InputOption::VALUE_NONE,
+            $enforceExportIgnoreAligmentDescription
+        );
+
         $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, $overwriteDescription);
         $this->addOption(
             'validate-git-archive',
@@ -121,6 +132,12 @@ class ValidateCommand extends Command
             null,
             InputOption::VALUE_NONE,
             $keepLicenseDescription
+        );
+        $this->addOption(
+            'align-export-ignores',
+            'a',
+            InputOption::VALUE_NONE,
+            $alignExportIgnoresDescription
         );
     }
 
@@ -161,10 +178,22 @@ class ValidateCommand extends Command
             $this->analyser->enableStrictOrderCamparison();
         }
 
+        $enforceExportIgnoresAlignment = $input->getOption('enforce-alignment');
+
+        if ($enforceExportIgnoresAlignment) {
+            $this->analyser->enableStrictAlignmentCamparison();
+        }
+
         $keepLicense = $input->getOption('keep-license');
 
         if ($keepLicense) {
             $this->analyser->keepLicense();
+        }
+
+        $alignExportIgnores = $input->getOption('align-export-ignores');
+
+        if ($alignExportIgnores) {
+            $this->analyser->alignExportIgnores();
         }
 
         if ($globPattern) {

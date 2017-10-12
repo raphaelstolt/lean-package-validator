@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Additional `--align-export-ignores|-a` option to align the export-ignores which improves readability. Closes [#23](https://github.com/raphaelstolt/lean-package-validator/issues/23).
+- Additional `--enforce-alignment` option to enforce that all export-ignores are aligned.
 
 ## [v1.7.3] - 2017-10-02
 ### Fixed
