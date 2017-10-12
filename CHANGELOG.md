@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [v1.8.0] - 2017-10-12
 ### Added
 - Additional `--align-export-ignores|-a` option to align the export-ignores which improves readability. Closes [#23](https://github.com/raphaelstolt/lean-package-validator/issues/23).
 - Additional `--enforce-alignment` option to enforce that all export-ignores are aligned.
@@ -99,7 +101,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.3...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.0...HEAD
+[v1.8.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.3...v1.8.0
 [v1.7.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.2...v1.7.3
 [v1.7.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.1...v1.7.2
 [v1.7.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.0...v1.7.1
