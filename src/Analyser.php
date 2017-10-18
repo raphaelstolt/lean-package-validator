@@ -512,11 +512,17 @@ class Analyser
             $gitattributesContent
         );
 
+        $basenamedGlobPatternMatchingExportIgnores = array_map(
+            'basename',
+            $globPatternMatchingExportIgnores
+        );
+
         $exportIgnoresToPreserve = [];
 
         array_filter($gitattributesLines, function ($line) use (
             &$exportIgnoresToPreserve,
-            &$globPatternMatchingExportIgnores
+            &$globPatternMatchingExportIgnores,
+            &$basenamedGlobPatternMatchingExportIgnores
         ) {
             if (strstr($line, 'export-ignore') && strpos($line, '#') === false) {
                 list($pattern, $void) = explode('export-ignore', $line);
@@ -525,7 +531,12 @@ class Analyser
                     $this->hasPrecedingSlashesInExportIgnorePattern = true;
                 }
                 $patternMatches = $this->patternHasMatch($pattern);
-                if ($patternMatches && !in_array(trim($pattern), $globPatternMatchingExportIgnores)) {
+                $pattern = trim($pattern);
+
+                if ($patternMatches
+                    && !in_array($pattern, $globPatternMatchingExportIgnores)
+                    && !in_array($pattern, $basenamedGlobPatternMatchingExportIgnores)
+                ) {
                     return $exportIgnoresToPreserve[] = trim($pattern);
                 }
             }

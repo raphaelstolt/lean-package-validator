@@ -1152,6 +1152,55 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 24 (https://github.com/raphaelstolt/lean-package-validator/issues/24)
+     */
+    public function directoriesOnlyExportIgnoredOnce()
+    {
+        $artifactFilenames = [
+            'LICENSE.md',
+            'README.md',
+            'phpunit.xml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests', 'specs', 'docs']
+        );
+
+
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+LICENSE.md export-ignore
+phpunit.xml.dist export-ignore
+README.md export-ignore
+/specs export-ignore
+/docs/* export-ignore
+/tests export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $expectedGitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+docs/ export-ignore
+LICENSE.md export-ignore
+phpunit.xml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+tests/ export-ignore
+CONTENT;
+
+        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @test
      */
     public function exportIgnoresAreAligned()
     {
