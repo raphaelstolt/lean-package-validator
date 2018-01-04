@@ -26,6 +26,15 @@
     "type": "library",
     "minimum-stability": "stable",
     "bin": ["bin/lean-package-validator"],
+    "scripts-descriptions": {
+        "lpv:travis-lint": "Lints the local Travis CI configuration file.",
+        "lpv:test": "Runs all tests.",
+        "lpv:test-with-coverage": "Runs all tests and measures code coverage.",
+        "lpv:cs-fix": "Fixes coding standard violations.",
+        "lpv:cs-lint": "Checks for coding standard violations.",
+        "lpv:configure-commit-template": "Configures a local commit message template.",
+        "lpv:application-version-guard": "Checks that the application version matches the given Git tag."
+    },
     "scripts": {
         "lpv:travis-lint":  "Stolt\\Composer\\Travis::lint",
         "lpv:test": "phpunit",
