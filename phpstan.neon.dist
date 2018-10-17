@@ -1,0 +1,13 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Constant WORKING_DIRECTORY not found.#'
+        - '#Mockery\\MockInterface#'
+        - '#Mockery\\ExpectationInterface#'
+        - '#array_filter#'
+        - '#cannot be cast to string#'
+        - '#Cannot cast#'

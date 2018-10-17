@@ -59,11 +59,11 @@ class InitCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return void
+     * @return integer
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $directory = $input->getArgument('directory');
+        $directory = (string) $input->getArgument('directory');
         $overwriteDefaultLpvFile = $input->getOption('overwrite');
 
         if ($directory !== WORKING_DIRECTORY) {
@@ -108,6 +108,6 @@ class InitCommand extends Command
         $info = "<info>Created default '$defaultLpvFile' file.</info>";
         $output->writeln($info);
 
-        return true;
+        return 0;
     }
 }

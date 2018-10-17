@@ -86,7 +86,7 @@ class TestCase extends PHPUnit
      *
      * @param  string $content Content of file.
      *
-     * @return integer
+     * @return boolean
      */
     protected function createTemporaryGitattributesFile($content)
     {
@@ -94,7 +94,7 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
 
-        return file_put_contents($temporaryGitattributesFile, $content);
+        return file_put_contents($temporaryGitattributesFile, $content) >= 0;
     }
 
     /**
@@ -102,7 +102,7 @@ class TestCase extends PHPUnit
      *
      * @param  string $content Content of file.
      *
-     * @return integer
+     * @return boolean
      */
     protected function createTemporaryGitignoreFile($content)
     {
@@ -110,7 +110,7 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitignore';
 
-        return file_put_contents($temporaryGitignoreFile, $content);
+        return file_put_contents($temporaryGitignoreFile, $content) >= 0;
     }
 
     /**
@@ -118,7 +118,7 @@ class TestCase extends PHPUnit
      *
      * @param  string $content Content of file.
      *
-     * @return integer
+     * @return boolean
      */
     protected function createTemporaryGlobPatternFile($content)
     {
@@ -126,6 +126,6 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.lpv';
 
-        return file_put_contents($temporaryLpvFile, $content);
+        return file_put_contents($temporaryLpvFile, $content) >= 0;
     }
 }

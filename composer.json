@@ -33,7 +33,8 @@
         "lpv:cs-fix": "Fixes coding standard violations.",
         "lpv:cs-lint": "Checks for coding standard violations.",
         "lpv:configure-commit-template": "Configures a local commit message template.",
-        "lpv:application-version-guard": "Checks that the application version matches the given Git tag."
+        "lpv:application-version-guard": "Checks that the application version matches the given Git tag.",
+        "lpv:static-analyse": "Runs a static code analysis via PHPStan."
     },
     "scripts": {
         "lpv:travis-lint":  "Stolt\\Composer\\Travis::lint",
@@ -42,7 +43,8 @@
         "lpv:cs-fix": "php-cs-fixer fix . -vv || true",
         "lpv:cs-lint": "php-cs-fixer fix --diff --stop-on-violation --verbose --dry-run",
         "lpv:configure-commit-template": "git config --add commit.template .gitmessage",
-        "lpv:application-version-guard": "php bin/application-version --verify-tag-match"
+        "lpv:application-version-guard": "php bin/application-version --verify-tag-match",
+        "lpv:static-analyse": "phpstan analyse --configuration phpstan.neon.dist"
     },
     "config": {
         "sort-packages": true

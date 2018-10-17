@@ -30,7 +30,7 @@ class Validator
     /**
      * Set if license file presence should be validated.
      *
-     * @return Stolt\LeanPackage\Archive\Validator
+     * @return \Stolt\LeanPackage\Archive\Validator
      */
     public function shouldHaveLicenseFile()
     {

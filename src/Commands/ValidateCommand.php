@@ -147,11 +147,11 @@ class ValidateCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return void
+     * @return integer
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $directory = $input->getArgument('directory');
+        $directory = (string) $input->getArgument('directory');
 
         if ($directory !== WORKING_DIRECTORY) {
             try {
@@ -170,7 +170,7 @@ class ValidateCommand extends Command
         $overwriteGitattributesFile = $input->getOption('overwrite');
         $validateArchive = $input->getOption('validate-git-archive');
         $globPattern = $input->getOption('glob-pattern');
-        $globPatternFile = $input->getOption('glob-pattern-file');
+        $globPatternFile = (string) $input->getOption('glob-pattern-file');
 
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
 
@@ -184,7 +184,7 @@ class ValidateCommand extends Command
             $this->analyser->enableStrictAlignmentCamparison();
         }
 
-        $keepLicense = $input->getOption('keep-license');
+        $keepLicense = (boolean) $input->getOption('keep-license');
 
         if ($keepLicense) {
             $this->analyser->keepLicense();
@@ -198,7 +198,7 @@ class ValidateCommand extends Command
 
         if ($globPattern) {
             try {
-                $this->analyser->setGlobPattern($globPattern);
+                $this->analyser->setGlobPattern((string) $globPattern);
             } catch (InvalidGlobPattern $e) {
                 $warning = "Warning: The provided glob pattern "
                     . "'$globPattern' is considered invalid.";
@@ -244,7 +244,7 @@ class ValidateCommand extends Command
 
                         $output->writeln($outputContent);
 
-                        return true;
+                        return 0;
                     } catch (GitattributesCreationFailed $e) {
                         $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
                         $output->writeln($outputContent);
@@ -272,7 +272,7 @@ class ValidateCommand extends Command
                     $info = '<info>The archive file of the current HEAD is considered lean.</info>';
                     $output->writeln($info);
 
-                    return true;
+                    return 0;
                 }
                 $foundUnexpectedArchiveArtifacts = $this->archiveValidator
                     ->getFoundUnexpectedArchiveArtifacts();
@@ -312,7 +312,7 @@ class ValidateCommand extends Command
 
                             $output->writeln($outputContent);
 
-                            return true;
+                            return 0;
                         } catch (GitattributesCreationFailed $e) {
                             $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
                             $output->writeln($outputContent);
@@ -348,7 +348,7 @@ class ValidateCommand extends Command
                 $output->writeln($outputContent);
             }
 
-            return true;
+            return 0;
         }
     }
 

@@ -166,9 +166,9 @@ class Analyser
      * Set the glob pattern file.
      *
      * @param  string $file
-     * @throws Stolt\LeanPackag\Exceptions\NonExistentGlobPatternFile
-     * @throws Stolt\LeanPackag\Exceptions\InvalidGlobPatternFile
-     * @return Stolt\LeanPackag\Analyser
+     * @throws \Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile
+     * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function setGlobPatternFromFile($file)
     {
@@ -177,7 +177,7 @@ class Analyser
             throw new NonExistentGlobPatternFile($message);
         }
 
-        $globPatternContent = file_get_contents($file);
+        $globPatternContent = (string) file_get_contents($file);
 
         $globPatternLines = preg_split(
             '/\\r\\n|\\r|\\n/',
@@ -206,7 +206,7 @@ class Analyser
     /**
      * Guard the set glob pattern.
      *
-     * @throws Stolt\LeanPackag\Exceptions\InvalidGlobPattern
+     * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPattern
      * @return void
      */
     private function guardGlobPattern()
@@ -241,9 +241,9 @@ class Analyser
      * @param string $pattern The glob pattern to use to detect expected
      *                        export-ignores files.
      *
-     * @throws Stolt\LeanPackag\Exceptions\InvalidGlobPattern
+     * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPattern
      *
-     * @return Stolt\LeanPackag\Analyser
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function setGlobPattern($pattern)
     {
@@ -257,15 +257,15 @@ class Analyser
      * Set the directory to analyse.
      *
      * @param  string $directory The directory to analyse.
-     * @throws \RunTimeException
+     * @throws \RuntimeException
      *
-     * @return Stolt\LeanPackag\Analyser
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function setDirectory($directory = __DIR__)
     {
         if (!is_dir($directory)) {
             $message = "Directory {$directory} doesn't exist.";
-            throw new \RunTimeException($message);
+            throw new \RuntimeException($message);
         }
         $this->directory = $directory;
         $this->gitattributesFile = $directory
@@ -288,7 +288,7 @@ class Analyser
     /**
      * Enable strict order camparison.
      *
-     * @return Stolt\LeanPackag\Analyser
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function enableStrictOrderCamparison()
     {
@@ -310,7 +310,7 @@ class Analyser
     /**
      * Enable strict alignment camparison.
      *
-     * @return Stolt\LeanPackag\Analyser
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function enableStrictAlignmentCamparison()
     {
@@ -332,7 +332,7 @@ class Analyser
     /**
      * Keep license file in releases.
      *
-     * @return Stolt\LeanPackag\Analyser
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function keepLicense()
     {
@@ -354,7 +354,7 @@ class Analyser
     /**
      * Align export-ignores.
      *
-     * @return Stolt\LeanPackag\Analyser
+     * @return \Stolt\LeanPackage\Analyser
      */
     public function alignExportIgnores()
     {
@@ -407,7 +407,7 @@ class Analyser
             return [];
         }
 
-        $gitignoreContent = file_get_contents($gitignoreFile);
+        $gitignoreContent = (string) file_get_contents($gitignoreFile);
         $eol = $this->detectEol($gitignoreContent);
 
         $gitignoreLines = preg_split(
@@ -493,13 +493,13 @@ class Analyser
     /**
      * Return export ignores in .gitattributes file to preserve.
      *
-     * @param  array $postfixlessExportIgnores Export ignores matching glob pattern.
+     * @param  array $globPatternMatchingExportIgnores Export ignores matching glob pattern.
      *
      * @return array
      */
     public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores)
     {
-        $gitattributesContent = file_get_contents($this->gitattributesFile);
+        $gitattributesContent = (string) file_get_contents($this->gitattributesFile);
 
         if (preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $gitattributesContent)) {
             $this->hasTextAutoConfiguration = true;
@@ -554,7 +554,7 @@ class Analyser
     {
         $expectedExportIgnores = [];
 
-        $initialWorkingDirectory = getcwd();
+        $initialWorkingDirectory = (string) getcwd();
 
         chdir($this->directory);
 
@@ -642,7 +642,7 @@ class Analyser
             $globPattern = '{' . trim($globPattern) . '}*';
         }
 
-        $initialWorkingDirectory = getcwd();
+        $initialWorkingDirectory = (string) getcwd();
         chdir($this->directory);
 
         $matches = glob($globPattern, GLOB_BRACE);
@@ -664,7 +664,7 @@ class Analyser
             return '';
         }
 
-        $gitattributesContent = file_get_contents($this->gitattributesFile);
+        $gitattributesContent = (string) file_get_contents($this->gitattributesFile);
         $eol = $this->detectEol($gitattributesContent);
 
         $gitattributesLines = preg_split(
@@ -706,7 +706,7 @@ class Analyser
             return [];
         }
 
-        $gitattributesContent = file_get_contents($this->gitattributesFile);
+        $gitattributesContent = (string) file_get_contents($this->gitattributesFile);
 
         $gitattributesLines = preg_split(
             '/\\r\\n|\\r|\\n/',

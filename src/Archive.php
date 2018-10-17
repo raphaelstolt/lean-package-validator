@@ -55,7 +55,7 @@ class Archive
     /**
      * Set if license file presence should be validated.
      *
-     * @return Stolt\LeanPackage\Archive
+     * @return \Stolt\LeanPackage\Archive
      */
     public function shouldHaveLicenseFile()
     {
@@ -161,23 +161,25 @@ class Archive
         $hasLicenseFile = false;
 
         foreach ($archive as $archiveFile) {
-            if ($archiveFile->isDir()) {
-                $file = basename($archiveFile) . '/';
+            if ($archiveFile instanceof \SplFileInfo) {
+                if ($archiveFile->isDir()) {
+                    $file = basename($archiveFile) . '/';
+                    if (in_array($file, $unexpectedArtifacts)) {
+                        $foundUnexpectedArtifacts[] = $file;
+                    }
+                    continue;
+                }
+
+                $file = basename($archiveFile);
+                if ($this->validateLicenseFilePresence()) {
+                    if (preg_match('/(License.*)/i', $file)) {
+                        $hasLicenseFile = true;
+                    }
+                }
+
                 if (in_array($file, $unexpectedArtifacts)) {
                     $foundUnexpectedArtifacts[] = $file;
                 }
-                continue;
-            }
-
-            $file = basename($archiveFile);
-            if ($this->validateLicenseFilePresence()) {
-                if (preg_match('/(License.*)/i', $file)) {
-                    $hasLicenseFile = true;
-                }
-            }
-
-            if (in_array($file, $unexpectedArtifacts)) {
-                $foundUnexpectedArtifacts[] = $file;
             }
         }
 

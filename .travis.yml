@@ -16,6 +16,8 @@ matrix:
       group: edge
     - php: nightly
     - php: 7.2
+      env:
+      - STATIC_ANALYSE=true
     - php: 7.1
       env:
       - LINT=true
@@ -53,6 +55,11 @@ script:
   # Verify coding standard compliance only once
   - if [[ $LINT = true ]]; then
       composer lpv:cs-lint;
+    fi
+  # Do static code analyse only once
+  - if [[ $STATIC_ANALYSE = true ]]; then
+      composer require --dev phpstan/phpstan;
+      composer lpv:static-analyse;
     fi
   - if [[ $EXCLUDEGROUP = travis-ci-exclude ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude;

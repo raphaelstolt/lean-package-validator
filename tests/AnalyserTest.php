@@ -105,7 +105,7 @@ CONTENT;
     public function analyseOnNonExistingDirectoryThrowsExpectedException()
     {
         $nonExistingDirectory = '/tmp/non-existing_directory';
-        $this->expectException(\RunTimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
             "Directory {$nonExistingDirectory} doesn't exist."
         );

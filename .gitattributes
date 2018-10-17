@@ -17,6 +17,7 @@ bin/travis/ export-ignore
 CHANGELOG.md export-ignore
 example/ export-ignore
 LICENSE.md export-ignore
+phpstan.neon.dist export-ignore
 phpunit.xml.dist export-ignore
 README.md export-ignore
 tests/ export-ignore
