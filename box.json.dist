@@ -1,0 +1,16 @@
+{
+    "chmod": "0755",
+    "main": "bin/lean-package-validator",
+    "output": "bin/lean-package-validator.phar",
+
+    "directories": ["src"],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": ["tests"],
+            "in": "vendor"
+         }
+    ],
+
+    "stub": true
+}

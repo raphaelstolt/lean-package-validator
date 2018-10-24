@@ -19,6 +19,7 @@ matrix:
     - php: 7.2
       env:
       - STATIC_ANALYSE=true
+      - EXECUTE_DEPLOYMENT=true
     - php: 7.1
       env:
       - LINT=true
@@ -69,3 +70,19 @@ script:
   - if [[ $EXCLUDEGROUP = travis-ci-exclude-56 ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude-56;
     fi
+
+before_deploy:
+  - curl -LSs https://box-project.github.io/box2/installer.php | php
+  - php -d phar.readonly=0 box.phar build
+  - composer lpv:application-phar-version-guard
+
+deploy:
+  provider: releases
+  api_key:
+    secure: rol9z0gDIkyfs9Gad2L2p7saWFzC+CECx7nF81Cgqmu3c6qBsYllO9Fz/2H0Jggcwq1boy78PJeAZ2WNXnFk7zmsStMEYk5qMffYsrZI4xz90i9P/+377bx1n8XqaKza/7Cbnuu4Idda5DXn9Jx0EmSE+SFS2/4Ank5lTSCjKo+p0wJK5PWP3d4SVwdtvqJQT9uEDjIELvQW6ari3jErGGuXfXOfHbbxHb3Bc/a+9Xe50r+U/49JvI75XT/GW1eFzUv/o3CvJIX0s5YxUKCTFbCtxlDke3NMA+wYEU+nNWwmEMaXC/5eE32fwQI4daJoOCgqYD9eB7Mfw/mCDudi4NwzetPp2+KEjThUPxhzPNmqF3H/SyA1WvZd9MJZNDuG86rQVdqNryg+xNDzb5DTEqwI44NdUZzpmssrbGL85MBh5ZSX31XOzE2FIihoh611ui58OrWrb7AZYbcjZUqS2wkKt+ROHXMAwwXzUZoOMo3JdGq8+Keo3hXM6PYYcseBli7WgIZ+uv8eaS9lKz49A3hr/JzjK53SpiF3mEa0y9PizjaZ6agKnMcc+s2D4rmRBFb0ag1QveUk1kA5TEXEAB4HsH599Iv33zyt4v1MFPIIRC2w4yo6NGSJhE+w5fsohlfCRhf8C7bqWZJiPBg0TpBGq6qflv++rymQltfMohs=
+  file: bin/lean-package-validator.phar
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: raphaelstolt/lean-package-validator
+    condition: "$EXECUTE_DEPLOYMENT"

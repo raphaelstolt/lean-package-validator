@@ -11,9 +11,11 @@
 .php_cs export-ignore
 .travis.yml export-ignore
 bin/application-version export-ignore
+bin/lean-package-validator.phar export-ignore
 bin/release-version export-ignore
 bin/start-watchman export-ignore
 bin/travis/ export-ignore
+box.json.dist export-ignore
 CHANGELOG.md export-ignore
 example/ export-ignore
 LICENSE.md export-ignore
