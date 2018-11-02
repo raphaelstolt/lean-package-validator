@@ -24,7 +24,7 @@ if (false === $autoloaded) {
 }
 
 define('WORKING_DIRECTORY', getcwd());
-define('VERSION', '1.8.1');
+define('VERSION', '1.9.0');
 
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;

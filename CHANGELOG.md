@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v1.9.0] - 2018-11-03
+### Added
+- Enabled distribution via PHAR. Closes [#27](https://github.com/raphaelstolt/lean-package-validator/issues/27).
+
 ## [v1.8.1] - 2017-10-18
 ### Fixed
 - Matched directories e.g. `tests` or `specs` are export-ignored only once. Closes [#24](https://github.com/raphaelstolt/lean-package-validator/issues/24).
@@ -105,7 +109,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.9.0...HEAD
+[v1.9.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.1...v1.9.0
 [v1.8.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.0...v1.8.1
 [v1.8.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.3...v1.8.0
 [v1.7.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.7.2...v1.7.3

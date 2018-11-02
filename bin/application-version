@@ -89,13 +89,16 @@ if (array_key_exists('verify-tag-match', $options)) {
         exit(1);
     }
 
-    $applicationVersion = 'v' . get_phar_version($pharFile);
-    $guardedExecutable = 'Phar';
+    $guardedExecutable = 'application';
+
+    if ($options['verify-tag-match'] === 'phar') {
+        $guardedExecutable = 'Phar';
+        $applicationVersion = 'v' . get_phar_version($pharFile);
+    }
 
     if ($options['verify-tag-match'] === false
         || $options['verify-tag-match'] === 'bin'
     ) {
-        $guardedExecutable = 'application';
         $applicationVersion = 'v' . get_application_version($binFile);
     }
 
