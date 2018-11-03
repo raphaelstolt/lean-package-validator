@@ -4,6 +4,7 @@
 [![Version](http://img.shields.io/packagist/v/stolt/lean-package-validator.svg?style=flat)](https://packagist.org/packages/stolt/lean-package-validator)
 ![PHP Version](http://img.shields.io/badge/php-5.6+-ff69b4.svg)
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
+[![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
 
 The LeanPackageValidator is an utility tool that validates a project/micro-package for its `leanness`. A project/micro-package is considered `lean` when its common repository artifacts won’t be included in release/dist archive files.
 
