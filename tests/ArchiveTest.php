@@ -52,7 +52,6 @@ class ArchiveTest extends TestCase
     /**
      * @test
      * @group travis-ci-exclude
-     * @group travis-ci-exclude-56
      */
     public function isGitCommandAvailableReturnsTrueOnExistingCommand()
     {
@@ -129,7 +128,6 @@ class ArchiveTest extends TestCase
 
     /**
      * @test
-     * @group travis-ci-exclude-56
      */
     public function compareArchiveReturnsExpectedFoundUnexpectedArtifacts()
     {
@@ -150,7 +148,6 @@ class ArchiveTest extends TestCase
 
     /**
      * @test
-     * @group travis-ci-exclude-56
      */
     public function compareArchiveReturnsNoFoundUnexpectedArtifactsOnLeanArchive()
     {
@@ -172,7 +169,6 @@ class ArchiveTest extends TestCase
     /**
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     * @group travis-ci-exclude-56
      */
     public function compareArchiveThrowsExpectedExceptionWhenLicenseFileIsMissing()
     {
@@ -192,7 +188,6 @@ class ArchiveTest extends TestCase
     /**
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     * @group travis-ci-exclude-56
      */
     public function compareArchiveDoesNotThrowsExceptionOnPresentLicenseFile()
     {

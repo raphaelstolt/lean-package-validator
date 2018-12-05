@@ -23,10 +23,6 @@ matrix:
     - php: 7.1
       env:
       - LINT=true
-    - php: 7.0
-    - php: 5.6
-      env:
-      - EXCLUDEGROUP=travis-ci-exclude-56
 
   fast_finish: true
   allow_failures:
@@ -66,9 +62,6 @@ script:
     fi
   - if [[ $EXCLUDEGROUP = travis-ci-exclude ]]; then
       composer lpv:test -- --exclude-group travis-ci-exclude;
-    fi
-  - if [[ $EXCLUDEGROUP = travis-ci-exclude-56 ]]; then
-      composer lpv:test -- --exclude-group travis-ci-exclude-56;
     fi
 
 before_deploy:
