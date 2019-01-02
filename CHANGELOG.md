@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [v2.0.0] - 2019-01-01
+## [v2.0.0] - 2019-01-02
 ### Removed
 - Removed support for PHP `5.6` and `7.0.`. Closes [#29](https://github.com/raphaelstolt/lean-package-validator/issues/29).
 
