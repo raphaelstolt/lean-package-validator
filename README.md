@@ -6,7 +6,7 @@
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
 
-The LeanPackageValidator is an utility tool that validates a project/micro-package for its `leanness`. A project/micro-package is considered `lean` when its common repository artifacts won’t be included in release/dist archive files.
+The LeanPackageValidator is an utility tool that validates a project/micro-package for its `leanness`. A project/micro-package is considered `lean` when its common repository artifacts won't be included in release assets.
 
 ## Installation
 The LeanPackageValidator CLI should be installed globally through Composer.
@@ -126,10 +126,10 @@ composer lpv:test
 ```
 
 #### License
-This library and its CLI are licensed under the MIT license. Please see [LICENSE](LICENSE.md) for more details.
+This library and its CLI are licensed under the MIT license. Please see [LICENSE.md](LICENSE.md) for more details.
 
 #### Changelog
-Please see [CHANGELOG](CHANGELOG.md) for more details.
+Please see [CHANGELOG.md](CHANGELOG.md) for more details.
 
 #### Contributing
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for more details.
+Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for more details.
