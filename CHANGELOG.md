@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v2.0.2] - 2019-09-04
+- Added zend-stdlib glob fallback for alpine based systems.
+
 ## [v2.0.1] - 2019-09-04
 - Upgraded development dependencies
 - Fixed appearing static analysis errors

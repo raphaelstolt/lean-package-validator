@@ -5,6 +5,7 @@ namespace Stolt\LeanPackage;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Zend\Stdlib\Glob;
 
 class Analyser
 {
@@ -563,7 +564,7 @@ class Analyser
             $this->getGitignoredPatterns()
         );
 
-        $globMatches = glob($this->globPattern, GLOB_BRACE);
+        $globMatches = Glob::glob($this->globPattern, Glob::GLOB_BRACE);
 
         if (!is_array($globMatches)) {
             return $expectedExportIgnores;
@@ -651,7 +652,7 @@ class Analyser
         $initialWorkingDirectory = (string) getcwd();
         chdir($this->directory);
 
-        $matches = glob($globPattern, GLOB_BRACE);
+        $matches = Glob::glob($globPattern, Glob::GLOB_BRACE);
 
         chdir($initialWorkingDirectory);
 
