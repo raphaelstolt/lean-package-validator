@@ -14,7 +14,7 @@ class AnalyserTest extends TestCase
     /**
      * Set up test environment.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
     }
@@ -24,7 +24,7 @@ class AnalyserTest extends TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
@@ -1031,6 +1031,8 @@ CONTENT;
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('[fdofodsppfosdp]');
+        // TODO: Fix smelly test
+        $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
     /**
@@ -1042,6 +1044,8 @@ CONTENT;
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{*.ymk, test.php}*');
+        // TODO: Fix smelly test
+        $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
     /**
@@ -1077,6 +1081,8 @@ CONTENT;
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{{{M,m}ake,{B,b}ox,{V,v}agrant}file,RMT}');
+        // TODO: Fix smelly test
+        $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
     /**

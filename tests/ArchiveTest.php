@@ -11,7 +11,7 @@ use Stolt\LeanPackage\Tests\TestCase;
 
 class ArchiveTest extends TestCase
 {
-    public function setUp()
+    public function setUp():void
     {
         $this->setUpTemporaryDirectory();
     }
@@ -21,7 +21,7 @@ class ArchiveTest extends TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown():void
     {
         if (is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);

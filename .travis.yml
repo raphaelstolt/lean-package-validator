@@ -6,14 +6,10 @@ env:
     - DISABLE_XDEBUG=true
 
 git:
-  depth: 2
+  depth: 1
 
 matrix:
   include:
-    - php: hhvm
-      sudo: required
-      dist: trusty
-      group: edge
     - php: nightly
     - php: 7.3
     - php: 7.2
@@ -27,8 +23,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - php: nightly
-    - php: 7.3
-    - php: hhvm
+    - php: 7.1
 
 cache:
   directories:

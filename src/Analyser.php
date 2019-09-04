@@ -563,7 +563,13 @@ class Analyser
             $this->getGitignoredPatterns()
         );
 
-        foreach (glob($this->globPattern, GLOB_BRACE) as $filename) {
+        $globMatches = glob($this->globPattern, GLOB_BRACE);
+
+        if (!is_array($globMatches)) {
+            return $expectedExportIgnores;
+        }
+
+        foreach ($globMatches as $filename) {
             if (!in_array($filename, $ignoredGlobMatches)) {
                 if (is_dir($filename)) {
                     $expectedExportIgnores[] = $filename . '/';
