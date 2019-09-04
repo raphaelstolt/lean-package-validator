@@ -120,7 +120,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.2...HEAD
+[v2.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.1...v2.0.2
+[v2.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.9.0...v2.0.0
 [v1.9.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.1...v1.9.0
 [v1.8.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.0...v1.8.1
