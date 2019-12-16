@@ -2,8 +2,8 @@ parameters:
     level: max
     paths:
         - src
-        - tests
     reportUnmatchedIgnoredErrors: false
+    checkMissingIterableValueType: false
     ignoreErrors:
         - '#Constant WORKING_DIRECTORY not found.#'
         - '#Mockery\\MockInterface#'

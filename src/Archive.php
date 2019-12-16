@@ -114,7 +114,7 @@ class Archive
     /**
      * Is the Git command available?
      *
-     * @paramk string $command The command to check availabilty of. Defaults to git.
+     * @param string $command The command to check availabilty of. Defaults to git.
      *
      * @return boolean
      */

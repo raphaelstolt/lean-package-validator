@@ -355,6 +355,7 @@ class ValidateCommand extends Command
     /**
      * Check if a glob pattern file is setable.
      *
+     * @param string $file The glob pattern file to check.
      * @return boolean
      */
     protected function isGlobPatternFileSetable($file)
@@ -369,6 +370,7 @@ class ValidateCommand extends Command
     /**
      * Check if a glob pattern file was provided.
      *
+     * @param string $file The glob pattern file provided.
      * @return boolean
      */
     protected function isGlobPatternFileProvided($file)
