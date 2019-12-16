@@ -4,8 +4,8 @@ platform: x86
 
 environment:
     matrix:
+        - php_ver_target: 7.4
         - php_ver_target: 7.2
-        - php_ver_target: 7.1
 
 cache:
     - C:\php -> .appveyor.yml

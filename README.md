@@ -2,7 +2,7 @@
 [![Build Status](https://secure.travis-ci.org/raphaelstolt/lean-package-validator.png)](http://travis-ci.org/raphaelstolt/lean-package-validator)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/raphaelstolt/lean-package-validator?svg=true)](https://ci.appveyor.com/project/raphaelstolt/lean-package-validator)
 [![Version](http://img.shields.io/packagist/v/stolt/lean-package-validator.svg?style=flat)](https://packagist.org/packages/stolt/lean-package-validator)
-![PHP Version](https://img.shields.io/badge/php-7.1+-ff69b4.svg)
+![PHP Version](https://img.shields.io/badge/php-7.2+-ff69b4.svg)
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
 
