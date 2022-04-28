@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v3.0.0] - 2022-04-28
+### Removed
+- Removed support for PHP `7.3` and `7.2`.
+### Added
+- Introduced GitHub Actions.
+
 ## [v2.1.0] - 2019-12-16
 ### Removed
 - Removed support for PHP `7.1`.
@@ -124,7 +130,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.0...HEAD
+[v3.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.1.0...v3.0.0
+[v2.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.2...v2.1.0
+[v2.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.1...v2.0.2
+[v2.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.9.0...v2.0.0
 [v1.9.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.1...v1.9.0
 [v1.8.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v1.8.0...v1.8.1
