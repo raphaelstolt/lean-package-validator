@@ -12,3 +12,4 @@ parameters:
         - '#array_filter#'
         - '#cannot be cast to string#'
         - '#Cannot cast#'
+        - '#is never read#'

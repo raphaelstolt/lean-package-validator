@@ -13,7 +13,7 @@ class CommandTester extends ConsoleCommandTester
      *
      * @return string The display
      */
-    public function getDisplay($normalize = true)
+    public function getDisplay($normalize = true):string
     {
         return parent::getDisplay($normalize);
     }
@@ -32,7 +32,7 @@ class CommandTester extends ConsoleCommandTester
      *
      * @return int The command exit code
      */
-    public function execute(array $input, array $options = ['decorated' => false])
+    public function execute(array $input, array $options = ['decorated' => false]):int
     {
         return parent::execute($input, $options);
     }

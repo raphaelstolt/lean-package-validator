@@ -2,10 +2,10 @@
 
 namespace Stolt\LeanPackage;
 
+use Laminas\Stdlib\Glob;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
-use Zend\Stdlib\Glob;
 
 class Analyser
 {
