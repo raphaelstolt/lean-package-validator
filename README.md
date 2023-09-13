@@ -31,6 +31,12 @@ composer require --dev stolt/lean-package-validator
 ```
 
 As of release `v1.9.0` it's also possible to install and use the LeanPackageValidator via a PHAR [file](https://github.com/raphaelstolt/lean-package-validator/releases/tag/v1.9.0).
+Therefor download a released version i.e. v1.9.0 and move it to `/usr/local/bin` as shown next.
+
+``` bash
+wget https://github.com/raphaelstolt/lean-package-validator/releases/download/v1.9.0/lean-package-validator.phar
+mv lean-package-validator.phar /usr/local/bin/lean-package-validator
+```
 
 ## Usage
 Run the LeanPackageValidator CLI within or against a project/micro-package directory and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in a `.gitattributes` file against a set of common repository artifacts. If no `.gitattributes` file is present it will suggest to create one.
