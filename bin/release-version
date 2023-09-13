@@ -14,8 +14,9 @@ foreach ($autoloads as $autoload) {
     }
 }
 
+use Composer\Semver\Comparator;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
-use vierbergenlars\SemVer\version as SemVer;
+use PHLAK\SemVer\Version;
 
 $binApplicationName = 'lean-package-validator';
 $binFile = __DIR__ . DIRECTORY_SEPARATOR . $binApplicationName;
@@ -130,7 +131,7 @@ if ($version === null) {
 }
 
 if ($version) {
-    if (SemVer::lte($version, $currentVersion)) {
+    if (Comparator::lessThanOrEqualTo($version, $currentVersion)) {
         echo "Earlier version '{$version}' provided." . PHP_EOL;
         exit(1);
     }
@@ -156,7 +157,17 @@ if ($increment) {
         exit(1);
     }
 
-    $version = (new SemVer($currentVersion))->inc($increment)->getVersion();
+    switch ($increment) {
+        case 'major':
+            $version = (new Version($currentVersion))->incrementMajor()->__toString();
+            break;
+        case 'minor':
+            $version = (new Version($currentVersion))->incrementMinor()->__toString();
+            break;
+        case 'patch':
+            $version = (new Version($currentVersion))->incrementPatch()->__toString();
+            break;
+    }
 }
 
 if (!isset($version)) {
