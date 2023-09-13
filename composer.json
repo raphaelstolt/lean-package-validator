@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "symfony/console": "^v6.0.8||^v5.4.8",
         "laminas/laminas-stdlib": "^3.7"
     },
