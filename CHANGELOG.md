@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v3.0.1] - 2023-09-26
+### Removed
+- Removed support for PHP `7.4`.
+### Added
+- Header in generated or modified `.gitattributes` file.
+
 ## [v3.0.0] - 2022-04-28
 ### Removed
 - Removed support for PHP `7.3` and `7.2`.
@@ -130,7 +136,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.1...HEAD
+[v3.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.0...v3.0.1
 [v3.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.1.0...v3.0.0
 [v2.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.2...v2.1.0
 [v2.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.1...v2.0.2
