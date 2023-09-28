@@ -297,12 +297,12 @@ class ValidateCommand extends Command
 
                 $info = '<error>The archive file of the current HEAD is not considered lean.</error>'
                     . PHP_EOL . PHP_EOL . 'Seems like the following artifacts slipped in:<info>' . PHP_EOL
-                    . implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
+                    . \implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
 
-                if (count($this->archiveValidator->getFoundUnexpectedArchiveArtifacts()) === 1) {
+                if (\count($this->archiveValidator->getFoundUnexpectedArchiveArtifacts()) === 1) {
                     $info = '<error>The archive file of the current HEAD is not considered lean.</error>'
                         . PHP_EOL . PHP_EOL . 'Seems like the following artifact slipped in:<info>' . PHP_EOL
-                        . implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
+                        . \implode(PHP_EOL, $foundUnexpectedArchiveArtifacts) . '</info>' . PHP_EOL;
                 }
             } catch (NoLicenseFilePresent $e) {
                 $errorMessage = 'The archive file of the current HEAD '
@@ -403,7 +403,7 @@ class ValidateCommand extends Command
      */
     protected function isDefaultGlobPatternFilePresent()
     {
-        return file_exists($this->defaultLpvFile);
+        return \file_exists($this->defaultLpvFile);
     }
 
     /**
@@ -439,7 +439,7 @@ class ValidateCommand extends Command
         $content = 'Would expect the following .gitattributes file content:' . PHP_EOL
             . '<info>' . $expectedGitattributesFileContent . '</info>';
 
-        return str_repeat(PHP_EOL, 2) . $content;
+        return \str_repeat(PHP_EOL, 2) . $content;
     }
 
     /**

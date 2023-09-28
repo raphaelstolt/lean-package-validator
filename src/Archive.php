@@ -104,7 +104,7 @@ class Archive
     public function hasHead()
     {
         if ($this->isGitCommandAvailable()) {
-            exec('git show-ref --head 2>&1', $output, $returnValue);
+            \exec('git show-ref --head 2>&1', $output, $returnValue);
             return $returnValue === 0;
         }
 
@@ -120,9 +120,9 @@ class Archive
      */
     public function isGitCommandAvailable($command = 'git')
     {
-        exec('where ' . $command . ' 2>&1', $output, $returnValue);
+        \exec('where ' . $command . ' 2>&1', $output, $returnValue);
         if ((new OsHelper())->isWindows() === false) {
-            exec('which ' . $command . ' 2>&1', $output, $returnValue);
+            \exec('which ' . $command . ' 2>&1', $output, $returnValue);
         }
 
         return $returnValue === 0;
@@ -139,7 +139,7 @@ class Archive
     {
         if ($this->hasHead()) {
             $command = 'git archive -o ' . $this->getFilename() . ' HEAD 2>&1';
-            exec($command, $output, $returnValue);
+            \exec($command, $output, $returnValue);
 
             return $returnValue === 0;
         }
@@ -163,21 +163,21 @@ class Archive
         foreach ($archive as $archiveFile) {
             if ($archiveFile instanceof \SplFileInfo) {
                 if ($archiveFile->isDir()) {
-                    $file = basename($archiveFile) . '/';
-                    if (in_array($file, $unexpectedArtifacts)) {
+                    $file = \basename($archiveFile) . '/';
+                    if (\in_array($file, $unexpectedArtifacts)) {
                         $foundUnexpectedArtifacts[] = $file;
                     }
                     continue;
                 }
 
-                $file = basename($archiveFile);
+                $file = \basename($archiveFile);
                 if ($this->validateLicenseFilePresence()) {
-                    if (preg_match('/(License.*)/i', $file)) {
+                    if (\preg_match('/(License.*)/i', $file)) {
                         $hasLicenseFile = true;
                     }
                 }
 
-                if (in_array($file, $unexpectedArtifacts)) {
+                if (\in_array($file, $unexpectedArtifacts)) {
                     $foundUnexpectedArtifacts[] = $file;
                 }
             }
@@ -187,7 +187,7 @@ class Archive
             throw new NoLicenseFilePresent('No license file present in archive.');
         }
 
-        sort($foundUnexpectedArtifacts, SORT_STRING | SORT_FLAG_CASE);
+        \sort($foundUnexpectedArtifacts, SORT_STRING | SORT_FLAG_CASE);
 
         return $foundUnexpectedArtifacts;
     }
@@ -199,8 +199,8 @@ class Archive
      */
     public function removeArchive()
     {
-        if (file_exists($this->getFilename())) {
-            return unlink($this->getFilename());
+        if (\file_exists($this->getFilename())) {
+            return \unlink($this->getFilename());
         }
 
         return false;

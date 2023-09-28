@@ -81,7 +81,7 @@ class InitCommand extends Command
 
         $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
 
-        if (file_exists($defaultLpvFile) && $overwriteDefaultLpvFile === false) {
+        if (\file_exists($defaultLpvFile) && $overwriteDefaultLpvFile === false) {
             $warning = 'Warning: A default .lpv file already exists.';
             $outputContent = '<error>' . $warning . '</error>';
             $output->writeln($outputContent);
@@ -90,7 +90,7 @@ class InitCommand extends Command
         }
 
         $defaultGlobPatterns = $this->analyser->getDefaultGlobPatterns();
-        $lpvFileContent = implode("\n", $defaultGlobPatterns);
+        $lpvFileContent = \implode("\n", $defaultGlobPatterns);
 
         $bytesWritten = file_put_contents(
             $defaultLpvFile,

@@ -27,8 +27,8 @@ class InitCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
-        if (!defined('WORKING_DIRECTORY')) {
-            define('WORKING_DIRECTORY', $this->temporaryDirectory);
+        if (!\defined('WORKING_DIRECTORY')) {
+            \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
         $this->application = $this->getApplication();
     }
@@ -40,7 +40,7 @@ class InitCommandTest extends TestCase
      */
     protected function tearDown(): void
     {
-        if (is_dir($this->temporaryDirectory)) {
+        if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
     }
@@ -92,7 +92,7 @@ CONTENT;
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() == 0);
         $this->assertFileExists($expectedDefaultLpvFile);
-        $this->assertEquals($expectedDefaultLpvFileContent, file_get_contents($expectedDefaultLpvFile));
+        $this->assertEquals($expectedDefaultLpvFileContent, \file_get_contents($expectedDefaultLpvFile));
     }
 
     /**
@@ -135,7 +135,7 @@ CONTENT;
         $expectedDefaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.lpv';
-        touch($expectedDefaultLpvFile);
+        \touch($expectedDefaultLpvFile);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -161,7 +161,7 @@ CONTENT;
         $expectedDefaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.lpv';
-        touch($expectedDefaultLpvFile);
+        \touch($expectedDefaultLpvFile);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);

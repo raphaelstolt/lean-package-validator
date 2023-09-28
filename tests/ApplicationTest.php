@@ -14,7 +14,7 @@ class ApplicationTest extends PHPUnit
     {
         $binaryCommand = 'php bin/lean-package-validator';
 
-        exec($binaryCommand, $output, $returnValue);
+        \exec($binaryCommand, $output, $returnValue);
 
         $this->assertStringStartsWith(
             'Lean package validator',

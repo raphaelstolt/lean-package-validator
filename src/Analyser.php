@@ -130,7 +130,7 @@ class Analyser
             'RMT'
         ];
 
-        $this->globPattern = '{' . implode(',', $this->defaultGlobPatterns) . '}*';
+        $this->globPattern = '{' . \implode(',', $this->defaultGlobPatterns) . '}*';
     }
 
     /**
@@ -173,26 +173,26 @@ class Analyser
      */
     public function setGlobPatternFromFile($file)
     {
-        if (!is_file($file)) {
+        if (!\is_file($file)) {
             $message = "Glob pattern file {$file} doesn't exist.";
             throw new NonExistentGlobPatternFile($message);
         }
 
-        $globPatternContent = (string) file_get_contents($file);
+        $globPatternContent = (string) \file_get_contents($file);
 
-        $globPatternLines = preg_split(
+        $globPatternLines = \preg_split(
             '/\\r\\n|\\r|\\n/',
             $globPatternContent
         );
 
         $globPatterns = [];
-        array_filter($globPatternLines, function ($line) use (&$globPatterns) {
-            if (trim($line) !== '') {
-                $globPatterns[] = trim($line);
+        \array_filter($globPatternLines, function ($line) use (&$globPatterns) {
+            if (\trim($line) !== '') {
+                $globPatterns[] = \trim($line);
             }
         });
 
-        $globPattern = '{' . implode(',', $globPatterns) . '}*';
+        $globPattern = '{' . \implode(',', $globPatterns) . '}*';
 
         try {
             $this->setGlobPattern($globPattern);
@@ -214,20 +214,20 @@ class Analyser
     {
         $invalidGlobPattern = false;
 
-        if (substr($this->globPattern, 0) !== '{'
-            && (substr($this->globPattern, -1) !== '}' && substr($this->globPattern, -2) !== '}*')) {
+        if (\substr($this->globPattern, 0) !== '{'
+            && (\substr($this->globPattern, -1) !== '}' && \substr($this->globPattern, -2) !== '}*')) {
             $invalidGlobPattern = true;
         }
 
-        $bracesContent = trim(substr($this->globPattern, 1, -1));
+        $bracesContent = \trim(\substr($this->globPattern, 1, -1));
 
         if (empty($bracesContent)) {
             $invalidGlobPattern = true;
         }
 
-        $globPatterns = explode(',', $bracesContent);
+        $globPatterns = \explode(',', $bracesContent);
 
-        if (count($globPatterns) == 1) {
+        if (\count($globPatterns) == 1) {
             $invalidGlobPattern = true;
         }
 
@@ -248,7 +248,7 @@ class Analyser
      */
     public function setGlobPattern($pattern)
     {
-        $this->globPattern = trim($pattern);
+        $this->globPattern = \trim($pattern);
         $this->guardGlobPattern();
 
         return $this;
@@ -264,7 +264,7 @@ class Analyser
      */
     public function setDirectory($directory = __DIR__)
     {
-        if (!is_dir($directory)) {
+        if (!\is_dir($directory)) {
             $message = "Directory {$directory} doesn't exist.";
             throw new \RuntimeException($message);
         }
@@ -391,8 +391,8 @@ class Analyser
      */
     public function hasGitattributesFile()
     {
-        return file_exists($this->gitattributesFile) &&
-            is_readable($this->gitattributesFile);
+        return \file_exists($this->gitattributesFile) &&
+            \is_readable($this->gitattributesFile);
     }
 
     /**
@@ -404,28 +404,28 @@ class Analyser
     {
         $gitignoreFile = $this->getDirectory() . DIRECTORY_SEPARATOR . '.gitignore';
 
-        if (!file_exists($gitignoreFile)) {
+        if (!\file_exists($gitignoreFile)) {
             return [];
         }
 
-        $gitignoreContent = (string) file_get_contents($gitignoreFile);
+        $gitignoreContent = (string) \file_get_contents($gitignoreFile);
         $eol = $this->detectEol($gitignoreContent);
 
-        $gitignoreLines = preg_split(
+        $gitignoreLines = \preg_split(
             '/\\r\\n|\\r|\\n/',
             $gitignoreContent
         );
 
         $gitignoredPatterns = [];
 
-        array_filter($gitignoreLines, function ($line) use (&$gitignoredPatterns) {
-            $line = trim($line);
-            if ($line !== '' && strpos($line, '#') === false) {
-                if (substr($line, 0, 1) === "/") {
-                    $gitignoredPatterns[] = substr($line, 1);
+        \array_filter($gitignoreLines, function ($line) use (&$gitignoredPatterns) {
+            $line = \trim($line);
+            if ($line !== '' && \strpos($line, '#') === false) {
+                if (\substr($line, 0, 1) === "/") {
+                    $gitignoredPatterns[] = \substr($line, 1);
                 }
-                if (substr($line, -1, 1) === "/") {
-                    $gitignoredPatterns[] = substr($line, 0, -1);
+                if (\substr($line, -1, 1) === "/") {
+                    $gitignoredPatterns[] = \substr($line, 0, -1);
                 }
                 $gitignoredPatterns[] = $line;
             }
@@ -448,40 +448,40 @@ class Analyser
             $postfixlessExportIgnores = $this->collectExpectedExportIgnores();
         }
 
-        if (!$this->hasGitattributesFile() && count($postfixlessExportIgnores) > 0) {
+        if (!$this->hasGitattributesFile() && \count($postfixlessExportIgnores) > 0) {
             $postfixlessExportIgnores[] = '.gitattributes';
         }
 
-        sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
+        \sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
-        if (count($postfixlessExportIgnores) > 0) {
+        if (\count($postfixlessExportIgnores) > 0) {
             if ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentCamparisonEnabled()) {
                 $postfixlessExportIgnores = $this->getAlignedExportIgnoreArtifacts(
                     $postfixlessExportIgnores
                 );
             }
 
-            $content = implode(" export-ignore" . $this->preferredEol, $postfixlessExportIgnores)
+            $content = \implode(" export-ignore" . $this->preferredEol, $postfixlessExportIgnores)
                 . " export-ignore" . $this->preferredEol;
 
             if ($this->hasGitattributesFile()) {
-                $exportIgnoreContent = rtrim($content);
+                $exportIgnoreContent = \rtrim($content);
                 $content = $this->getPresentNonExportIgnoresContent();
 
-                if (strstr($content, self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER)) {
-                    $content = str_replace(
+                if (\strstr($content, self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER)) {
+                    $content = \str_replace(
                         self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER,
                         $exportIgnoreContent,
                         $content
                     );
                 } else {
                     $content = $content
-                        . str_repeat($this->preferredEol, 2)
+                        . \str_repeat($this->preferredEol, 2)
                         . $exportIgnoreContent;
                 }
             } else {
                 $content = "* text=auto eol=lf"
-                    . str_repeat($this->preferredEol, 2)
+                    . \str_repeat($this->preferredEol, 2)
                     . $content;
             }
 
@@ -500,45 +500,45 @@ class Analyser
      */
     public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores)
     {
-        $gitattributesContent = (string) file_get_contents($this->gitattributesFile);
+        $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
 
-        if (preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $gitattributesContent)) {
+        if (\preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $gitattributesContent)) {
             $this->hasTextAutoConfiguration = true;
         }
 
         $eol = $this->detectEol($gitattributesContent);
 
-        $gitattributesLines = preg_split(
+        $gitattributesLines = \preg_split(
             '/\\r\\n|\\r|\\n/',
             $gitattributesContent
         );
 
-        $basenamedGlobPatternMatchingExportIgnores = array_map(
+        $basenamedGlobPatternMatchingExportIgnores = \array_map(
             'basename',
             $globPatternMatchingExportIgnores
         );
 
         $exportIgnoresToPreserve = [];
 
-        array_filter($gitattributesLines, function ($line) use (
+        \array_filter($gitattributesLines, function ($line) use (
             &$exportIgnoresToPreserve,
             &$globPatternMatchingExportIgnores,
             &$basenamedGlobPatternMatchingExportIgnores
         ) {
-            if (strstr($line, 'export-ignore') && strpos($line, '#') === false) {
-                list($pattern, $void) = explode('export-ignore', $line);
-                if (substr($pattern, 0, 1) === '/') {
-                    $pattern = substr($pattern, 1);
+            if (\strstr($line, 'export-ignore') && \strpos($line, '#') === false) {
+                list($pattern, $void) = \explode('export-ignore', $line);
+                if (\substr($pattern, 0, 1) === '/') {
+                    $pattern = \substr($pattern, 1);
                     $this->hasPrecedingSlashesInExportIgnorePattern = true;
                 }
                 $patternMatches = $this->patternHasMatch($pattern);
-                $pattern = trim($pattern);
+                $pattern = \trim($pattern);
 
                 if ($patternMatches
-                    && !in_array($pattern, $globPatternMatchingExportIgnores)
-                    && !in_array($pattern, $basenamedGlobPatternMatchingExportIgnores)
+                    && !\in_array($pattern, $globPatternMatchingExportIgnores)
+                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores)
                 ) {
-                    return $exportIgnoresToPreserve[] = trim($pattern);
+                    return $exportIgnoresToPreserve[] = \trim($pattern);
                 }
             }
         });
@@ -555,24 +555,24 @@ class Analyser
     {
         $expectedExportIgnores = [];
 
-        $initialWorkingDirectory = (string) getcwd();
+        $initialWorkingDirectory = (string) \getcwd();
 
-        chdir($this->directory);
+        \chdir($this->directory);
 
-        $ignoredGlobMatches = array_merge(
+        $ignoredGlobMatches = \array_merge(
             $this->ignoredGlobMatches,
             $this->getGitignoredPatterns()
         );
 
         $globMatches = Glob::glob($this->globPattern, Glob::GLOB_BRACE);
 
-        if (!is_array($globMatches)) {
+        if (!\is_array($globMatches)) {
             return $expectedExportIgnores;
         }
 
         foreach ($globMatches as $filename) {
-            if (!in_array($filename, $ignoredGlobMatches)) {
-                if (is_dir($filename)) {
+            if (!\in_array($filename, $ignoredGlobMatches)) {
+                if (\is_dir($filename)) {
                     $expectedExportIgnores[] = $filename . '/';
                     continue;
                 }
@@ -580,23 +580,23 @@ class Analyser
             }
         }
 
-        chdir($initialWorkingDirectory);
+        \chdir($initialWorkingDirectory);
 
         if ($this->hasGitattributesFile()) {
-            $expectedExportIgnores = array_merge(
+            $expectedExportIgnores = \array_merge(
                 $expectedExportIgnores,
                 $this->getPresentExportIgnoresToPreserve($expectedExportIgnores)
             );
         }
 
-        sort($expectedExportIgnores, SORT_STRING | SORT_FLAG_CASE);
+        \sort($expectedExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if ($this->isKeepLicenseEnabled()) {
             $licenseLessExpectedExportIgnores = [];
-            array_filter($expectedExportIgnores, function ($exportIgnore) use (
+            \array_filter($expectedExportIgnores, function ($exportIgnore) use (
                 &$licenseLessExpectedExportIgnores
             ) {
-                if (!preg_match('/(License.*)/i', $exportIgnore)) {
+                if (!\preg_match('/(License.*)/i', $exportIgnore)) {
                     $licenseLessExpectedExportIgnores[] = $exportIgnore;
                 }
             });
@@ -604,7 +604,7 @@ class Analyser
             $expectedExportIgnores = $licenseLessExpectedExportIgnores;
         }
 
-        return array_unique($expectedExportIgnores);
+        return \array_unique($expectedExportIgnores);
     }
 
     /**
@@ -621,7 +621,7 @@ class Analyser
         $eols = ["\n", "\r", "\n\r", "\r\n"];
 
         foreach ($eols as $eol) {
-            if (($count = substr_count($content, $eol)) >= $maxCount) {
+            if (($count = \substr_count($content, $eol)) >= $maxCount) {
                 $maxCount = $count;
                 $preferredEol = $eol;
             }
@@ -641,22 +641,22 @@ class Analyser
      */
     private function patternHasMatch($globPattern)
     {
-        if (substr(trim($globPattern), 0, 1) === '/') {
-            $globPattern = trim(substr($globPattern, 1));
-        } elseif (substr(trim($globPattern), -1) === '/') {
-            $globPattern = trim(substr($globPattern, 0, -1));
+        if (\substr(\trim($globPattern), 0, 1) === '/') {
+            $globPattern = \trim(\substr($globPattern, 1));
+        } elseif (\substr(\trim($globPattern), -1) === '/') {
+            $globPattern = \trim(\substr($globPattern, 0, -1));
         } else {
-            $globPattern = '{' . trim($globPattern) . '}*';
+            $globPattern = '{' . \trim($globPattern) . '}*';
         }
 
-        $initialWorkingDirectory = (string) getcwd();
-        chdir($this->directory);
+        $initialWorkingDirectory = (string) \getcwd();
+        \chdir($this->directory);
 
         $matches = Glob::glob($globPattern, Glob::GLOB_BRACE);
 
-        chdir($initialWorkingDirectory);
+        \chdir($initialWorkingDirectory);
 
-        return is_array($matches) && count($matches) > 0;
+        return \is_array($matches) && \count($matches) > 0;
     }
 
     /**
@@ -671,10 +671,10 @@ class Analyser
             return '';
         }
 
-        $gitattributesContent = (string) file_get_contents($this->gitattributesFile);
+        $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
         $eol = $this->detectEol($gitattributesContent);
 
-        $gitattributesLines = preg_split(
+        $gitattributesLines = \preg_split(
             '/\\r\\n|\\r|\\n/',
             $gitattributesContent
         );
@@ -683,13 +683,13 @@ class Analyser
         $exportIgnoresPlacementPlaceholderSet = false;
         $exportIgnoresPlacementPlaceholder = self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
 
-        array_filter($gitattributesLines, function ($line) use (
+        \array_filter($gitattributesLines, function ($line) use (
             &$nonExportIgnoreLines,
             &$exportIgnoresPlacementPlaceholderSet,
             &$exportIgnoresPlacementPlaceholder
         ) {
-            if (strstr($line, 'export-ignore') === false || strstr($line, '#')) {
-                return $nonExportIgnoreLines[] = trim($line);
+            if (\strstr($line, 'export-ignore') === false || \strstr($line, '#')) {
+                return $nonExportIgnoreLines[] = \trim($line);
             } else {
                 if ($exportIgnoresPlacementPlaceholderSet === false) {
                     $exportIgnoresPlacementPlaceholderSet = true;
@@ -698,7 +698,7 @@ class Analyser
             }
         });
 
-        return implode($eol, $nonExportIgnoreLines);
+        return \implode($eol, $nonExportIgnoreLines);
     }
 
     /**
@@ -713,32 +713,32 @@ class Analyser
             return [];
         }
 
-        $gitattributesContent = (string) file_get_contents($this->gitattributesFile);
+        $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
 
-        $gitattributesLines = preg_split(
+        $gitattributesLines = \preg_split(
             '/\\r\\n|\\r|\\n/',
             $gitattributesContent
         );
 
         $exportIgnores = [];
-        array_filter($gitattributesLines, function ($line) use (&$exportIgnores) {
-            if (strstr($line, 'export-ignore', true)) {
-                list($line, $void) = explode('export-ignore', $line);
-                if ($this->patternHasMatch(trim($line))) {
-                    if (substr($line, 0, 1) === '/') {
-                        $line = substr($line, 1);
+        \array_filter($gitattributesLines, function ($line) use (&$exportIgnores) {
+            if (\strstr($line, 'export-ignore', true)) {
+                list($line, $void) = \explode('export-ignore', $line);
+                if ($this->patternHasMatch(\trim($line))) {
+                    if (\substr($line, 0, 1) === '/') {
+                        $line = \substr($line, 1);
                     }
 
-                    return $exportIgnores[] = trim($line);
+                    return $exportIgnores[] = \trim($line);
                 }
             }
         });
 
         if ($this->isStrictOrderCamparisonEnabled() === false) {
-            sort($exportIgnores, SORT_STRING | SORT_FLAG_CASE);
+            \sort($exportIgnores, SORT_STRING | SORT_FLAG_CASE);
         }
 
-        return array_unique($exportIgnores);
+        return \array_unique($exportIgnores);
     }
 
     /**
@@ -747,13 +747,13 @@ class Analyser
      */
     private function getAlignedExportIgnoreArtifacts(array $artifacts)
     {
-        $longestArtifact = max(array_map('strlen', $artifacts));
+        $longestArtifact = \max(\array_map('strlen', $artifacts));
 
-        return array_map(function ($artifact) use (&$longestArtifact) {
-            if (strlen($artifact) < $longestArtifact) {
-                return $artifact . str_repeat(
+        return \array_map(function ($artifact) use (&$longestArtifact) {
+            if (\strlen($artifact) < $longestArtifact) {
+                return $artifact . \str_repeat(
                     ' ',
-                    $longestArtifact - strlen($artifact)
+                    $longestArtifact - \strlen($artifact)
                 );
             }
             return $artifact;
@@ -781,6 +781,6 @@ class Analyser
             );
         }
 
-        return array_values($expectedExportIgnores) === array_values($actualExportIgnores);
+        return \array_values($expectedExportIgnores) === \array_values($actualExportIgnores);
     }
 }

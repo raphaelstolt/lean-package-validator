@@ -26,7 +26,7 @@ class AnalyserTest extends TestCase
      */
     protected function tearDown(): void
     {
-        if (is_dir($this->temporaryDirectory)) {
+        if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
     }
@@ -413,7 +413,7 @@ CONTENT;
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
 
-        touch($temporaryGitattributesFile);
+        \touch($temporaryGitattributesFile);
 
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
 
@@ -431,7 +431,7 @@ CONTENT;
             . DIRECTORY_SEPARATOR
             . '.nope';
 
-        touch($temporaryGitattributesFile);
+        \touch($temporaryGitattributesFile);
 
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
 
@@ -971,7 +971,7 @@ CONTENT;
 
         $actualExportIgnores = $analyser->collectExpectedExportIgnores();
 
-        sort($artifactFilenamesMatchingGlob, SORT_STRING | SORT_FLAG_CASE);
+        \sort($artifactFilenamesMatchingGlob, SORT_STRING | SORT_FLAG_CASE);
 
         $this->assertEquals(
             $artifactFilenamesMatchingGlob,
@@ -1001,7 +1001,7 @@ CONTENT;
 
         $actualExportIgnores = $analyser->collectExpectedExportIgnores();
 
-        sort($artifactFilenamesMatchingGlob);
+        \sort($artifactFilenamesMatchingGlob);
 
         $this->assertEquals(
             $artifactFilenamesMatchingGlob,

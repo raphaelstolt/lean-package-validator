@@ -28,8 +28,8 @@ class ValidateCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
-        if (!defined('WORKING_DIRECTORY')) {
-            define('WORKING_DIRECTORY', $this->temporaryDirectory);
+        if (!\defined('WORKING_DIRECTORY')) {
+            \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
         $this->application = $this->getApplication();
     }
@@ -41,7 +41,7 @@ class ValidateCommandTest extends TestCase
      */
     protected function tearDown(): void
     {
-        if (is_dir($this->temporaryDirectory)) {
+        if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
     }
@@ -1885,7 +1885,7 @@ CONTENT;
 
         $archive = new Archive(
             $this->temporaryDirectory,
-            basename($this->temporaryDirectory)
+            \basename($this->temporaryDirectory)
         );
 
         $analyserCommand = new ValidateCommand(
@@ -1923,7 +1923,7 @@ CONTENT;
         $application = new Application();
         $archive = new Archive(
             $this->temporaryDirectory,
-            basename($this->temporaryDirectory)
+            \basename($this->temporaryDirectory)
         );
 
         $analyserCommand = new ValidateCommand(

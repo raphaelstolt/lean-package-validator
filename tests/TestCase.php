@@ -17,16 +17,16 @@ class TestCase extends PHPUnit
     protected function setUpTemporaryDirectory()
     {
         if ((new OsHelper())->isWindows() === false) {
-            ini_set('sys_temp_dir', '/tmp/lpv');
+            \ini_set('sys_temp_dir', '/tmp/lpv');
             $this->temporaryDirectory = '/tmp/lpv';
         } else {
-            $this->temporaryDirectory = sys_get_temp_dir()
+            $this->temporaryDirectory = \sys_get_temp_dir()
                 . DIRECTORY_SEPARATOR
                 . 'lpv';
         }
 
-        if (!file_exists($this->temporaryDirectory)) {
-            mkdir($this->temporaryDirectory);
+        if (!\file_exists($this->temporaryDirectory)) {
+            \mkdir($this->temporaryDirectory);
         }
     }
 
@@ -44,13 +44,13 @@ class TestCase extends PHPUnit
 
         foreach ($files as $fileinfo) {
             if ($fileinfo->isDir()) {
-                @rmdir($fileinfo->getRealPath());
+                @\rmdir($fileinfo->getRealPath());
                 continue;
             }
-            @unlink($fileinfo->getRealPath());
+            @\unlink($fileinfo->getRealPath());
         }
 
-        @rmdir($directory);
+        @\rmdir($directory);
     }
 
     /**
@@ -68,15 +68,15 @@ class TestCase extends PHPUnit
             $artifactFile = $this->temporaryDirectory
                 . DIRECTORY_SEPARATOR
                 . $file;
-            touch($artifactFile);
+            \touch($artifactFile);
         }
 
-        if (is_array($directories) && count($directories) > 0) {
+        if (\is_array($directories) && \count($directories) > 0) {
             foreach ($directories as $directory) {
                 $artifactDirectory = $this->temporaryDirectory
                     . DIRECTORY_SEPARATOR
                     . $directory;
-                mkdir($artifactDirectory);
+                \mkdir($artifactDirectory);
             }
         }
     }
@@ -94,7 +94,7 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
 
-        return file_put_contents($temporaryGitattributesFile, $content) >= 0;
+        return \file_put_contents($temporaryGitattributesFile, $content) >= 0;
     }
 
     /**
@@ -110,7 +110,7 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitignore';
 
-        return file_put_contents($temporaryGitignoreFile, $content) >= 0;
+        return \file_put_contents($temporaryGitignoreFile, $content) >= 0;
     }
 
     /**
@@ -126,6 +126,6 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.lpv';
 
-        return file_put_contents($temporaryLpvFile, $content) >= 0;
+        return \file_put_contents($temporaryLpvFile, $content) >= 0;
     }
 }

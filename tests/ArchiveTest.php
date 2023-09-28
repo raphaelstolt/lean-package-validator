@@ -23,7 +23,7 @@ class ArchiveTest extends TestCase
      */
     protected function tearDown():void
     {
-        if (is_dir($this->temporaryDirectory)) {
+        if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
     }

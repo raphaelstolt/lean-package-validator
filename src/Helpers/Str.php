@@ -13,7 +13,7 @@ class Str
      */
     public function isWindows($os = PHP_OS)
     {
-        if (strtoupper(substr($os, 0, 3)) !== 'WIN') {
+        if (\strtoupper(\substr($os, 0, 3)) !== 'WIN') {
             return false;
         }
 
