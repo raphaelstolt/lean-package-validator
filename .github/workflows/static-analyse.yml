@@ -1,10 +1,10 @@
-name: static-analyse-cli
+name: static-analyse
 
 on: push
 
 jobs:
     tests:
-        name: static-analyse-cli
+        name: static-analyse
         runs-on: ubuntu-latest
 
         strategy:

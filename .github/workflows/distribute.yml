@@ -1,4 +1,4 @@
-name: distribute-cli
+name: distribute
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
     tests:
-        name: distribute-cli
+        name: distribute
         runs-on: ubuntu-latest
 
         strategy:

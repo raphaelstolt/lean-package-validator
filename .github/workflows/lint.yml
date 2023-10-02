@@ -1,10 +1,10 @@
-name: lint-cli
+name: lint
 
 on: push
 
 jobs:
     tests:
-        name: lint-cli
+        name: lint
         runs-on: ubuntu-latest
 
         strategy:
