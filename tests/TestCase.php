@@ -94,7 +94,7 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
 
-        return \file_put_contents($temporaryGitattributesFile, $content) >= 0;
+        return file_put_contents($temporaryGitattributesFile, $content) >= 0;
     }
 
     /**
@@ -110,7 +110,7 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitignore';
 
-        return \file_put_contents($temporaryGitignoreFile, $content) >= 0;
+        return file_put_contents($temporaryGitignoreFile, $content) >= 0;
     }
 
     /**
@@ -126,6 +126,6 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.lpv';
 
-        return \file_put_contents($temporaryLpvFile, $content) >= 0;
+        return file_put_contents($temporaryLpvFile, $content) >= 0;
     }
 }

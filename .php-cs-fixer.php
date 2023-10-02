@@ -11,6 +11,10 @@ $rules = [
     '@PSR2' => true,
     'phpdoc_order' => true,
     'ordered_imports' => true,
+    'native_function_invocation' => [
+        'include' => ['@internal'],
+        'exclude' => ['file_put_contents']
+    ]
 ];
 
 $cacheDir = getenv('HOME') ? getenv('HOME') : __DIR__;
