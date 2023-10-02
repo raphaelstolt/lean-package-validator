@@ -64,14 +64,14 @@ The `--overwrite|-o` option overwrites an existing `.gitattributes` file when th
 lean-package-validator validate [<directory>] --overwrite
 ```
 
-The `--glob-pattern` option allows you to overwrite the default pattern\* used to match common repository artifacts. The amount of pattern in the grouping braces is expected to be `>1`. As shown next this utility could thereby also be used for projects (i.e. Python) outside of the PHP ecosystem.
+The `--glob-pattern` option allows you to overwrite the default pattern used to match common repository artifacts. The amount of pattern in the grouping braces is expected to be `>1`. As shown next this utility could thereby also be used for projects (i.e. Python) outside of the PHP ecosystem.
 
 ``` bash
 lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod],dist/}'
 ```
-\* The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,appveyor.yml,box.json,captainhook.json,*.dist.*,*.dist,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
+The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,appveyor.yml,box.json,captainhook.json,*.dist.*,*.dist,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
 
-The `--glob-pattern-file` option allows you to load patterns, which should be used to match the common repository artifacts, from a given file. You can put a `.lpv` file in the repository which will be used per default and overwrite the default pattern\*. The structure of such a glob pattern file can be taken from the [example](example/.lpv) directory or be created via `lean-package-validator init`.
+The `--glob-pattern-file` option allows you to load patterns, which should be used to match the common repository artifacts, from a given file. You can put a `.lpv` file in the repository which will be used per default and overwrite the default pattern. The structure of such a glob pattern file can be taken from the [example](example/.lpv) directory or be created via `lean-package-validator init`.
 
 ``` bash
 lean-package-validator validate [<directory>] --glob-pattern-file /path/to/glob-pattern-file
