@@ -215,9 +215,14 @@ class ValidateCommand extends Command
 
                 return 1;
             }
-        } elseif ($this->isGlobPatternFileSetable($globPatternFile)) {
+        } elseif($this->isGlobPatternFileSetable($globPatternFile)) {
             try {
-                $this->analyser->setGlobPatternFromFile($globPatternFile);
+                if ($this->isDefaultGlobPatternFilePresent()) {
+                    $this->analyser->setGlobPatternFromFile($this->defaultLpvFile);
+                }
+                if ($globPatternFile) {
+                    $this->analyser->setGlobPatternFromFile($globPatternFile);
+                }
             } catch (NonExistentGlobPatternFile $e) {
                 $warning = "Warning: The provided glob pattern file "
                     . "'$globPatternFile' doesn't exist.";

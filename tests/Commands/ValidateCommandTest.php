@@ -1531,7 +1531,8 @@ CONTENT;
         $artifactFilenames = [
             '.buildignore',
             'phpspec.yml.dist',
-            'Phulpfile'
+            'Phulpfile',
+            '.lpv'
         ];
 
         $this->createTemporaryFiles(
@@ -1627,6 +1628,61 @@ CONTENT;
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
             '--glob-pattern-file' => $temporaryLpvFile,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() === 0);
+    }
+
+    /**
+     * @test
+     * @group glob
+     * @ticket 35 https://github.com/raphaelstolt/lean-package-validator/issues/35
+     */
+    public function presentLpvPatternFileIsUsed()
+    {
+        $artifactFilenames = [
+            'a.txt',
+            'b.rst',
+            'Vagrantfile'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['example']
+        );
+
+        $gitattributesContent = <<<CONTENT
+* text=auto
+
+example/ export-ignore
+a.txt export-ignore
+b.rst export-ignore
+Vagrantfile export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $lpvContent = <<<CONTENT
+*.txt
+*file
+example
+
+CONTENT;
+
+        $this->createTemporaryGlobPatternFile($lpvContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
         ]);
 
         $expectedDisplay = <<<CONTENT

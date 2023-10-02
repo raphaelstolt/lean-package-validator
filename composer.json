@@ -39,7 +39,7 @@
     },
     "scripts": {
         "lpv:test": "phpunit",
-        "lpv:test-with-coverage": "phpunit --coverage-html coverage-reports",
+        "lpv:test-with-coverage": "export XDEBUG_MODE=coverage && phpunit --coverage-html coverage-reports",
         "lpv:cs-fix": "php-cs-fixer --allow-risky=yes fix . -vv || true",
         "lpv:cs-lint": "php-cs-fixer fix --diff --stop-on-violation --verbose --dry-run --allow-risky=yes",
         "lpv:configure-commit-template": "git config --add commit.template .gitmessage",
