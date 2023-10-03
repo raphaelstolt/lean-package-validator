@@ -107,7 +107,7 @@ lean-package-validator init [<directory>]
 
 The `--overwrite|-o` option overwrites an existing `.lpv` file.
 
-## Utilisation via Composer scripts
+## Utilisation via Composer scripts or it's dedicated GitHub Action
 To avoid that changes coming from contributions or own modifications slip into release/dist archives it might be helpful to use a guarding [Composer script](https://getcomposer.org/doc/articles/scripts.md), which will be available at everyone's fingertips.
 
 By adding the following to the project/micro-package its `composer.json` the ` .gitattributes` file can now be easily validated via `composer validate-gitattributes`.
@@ -119,6 +119,8 @@ By adding the following to the project/micro-package its `composer.json` the ` .
     },
 }
 ```
+
+For utilising a dedicated GitHub Action have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
 
 #### Running tests
 ``` bash
