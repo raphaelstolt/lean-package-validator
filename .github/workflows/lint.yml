@@ -15,7 +15,7 @@ jobs:
 
         steps:
             -   name: Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v4
 
             -   name: Install PHP
                 uses: shivammathur/setup-php@v2
@@ -27,3 +27,9 @@ jobs:
 
             -   name: Check coding styles
                 run: composer run-script lpv:cs-lint
+
+            -   name: Check leanness of package
+                uses: raphaelstolt/lean-package-validator-action@v0.1.0
+                with:
+                    php-version: "${{ matrix.php }}"
+                    lpv-version: "3.0.0"
