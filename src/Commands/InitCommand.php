@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
@@ -75,11 +77,16 @@ class InitCommand extends Command
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                 return 1;
             }
         }
 
         $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
+
+        $verboseOutput = "+ Checking .lpv file existence in " . WORKING_DIRECTORY . ".";
+        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if (\file_exists($defaultLpvFile) && $overwriteDefaultLpvFile === false) {
             $warning = 'Warning: A default .lpv file already exists.';
@@ -96,6 +103,9 @@ class InitCommand extends Command
             $defaultLpvFile,
             $lpvFileContent
         );
+
+        $verboseOutput = '+ Writing default glob pattern to .lpv file in ' . WORKING_DIRECTORY . '.';
+        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if ($bytesWritten === false) {
             $warning = 'Warning: The creation of the default .lpv file failed.';

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Commands;
 
+use SplFileInfo;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
@@ -169,9 +172,14 @@ class ValidateCommand extends Command
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                 return 1;
             }
         }
+
+        $verboseOutput = '+ Scanning directory ' . $directory . '.';
+        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         $createGitattributesFile = $input->getOption('create');
         $overwriteGitattributesFile = $input->getOption('overwrite');
@@ -183,28 +191,44 @@ class ValidateCommand extends Command
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
 
         if ($enforceStrictOrderComparison) {
+            $verboseOutput = '+ Enforcing strict order comparison.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
             $this->analyser->enableStrictOrderCamparison();
         }
 
         $enforceExportIgnoresAlignment = $input->getOption('enforce-alignment');
 
         if ($enforceExportIgnoresAlignment) {
+            $verboseOutput = '+ Enforcing alignment comparison.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
             $this->analyser->enableStrictAlignmentCamparison();
         }
 
         $keepLicense = (boolean) $input->getOption('keep-license');
 
         if ($keepLicense) {
+            $verboseOutput = '+ Keeping the license file.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
             $this->analyser->keepLicense();
         }
 
         $alignExportIgnores = $input->getOption('align-export-ignores');
 
         if ($alignExportIgnores) {
+            $verboseOutput = '+ Aligning the export-ignores.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
             $this->analyser->alignExportIgnores();
         }
+
         if ($globPattern || $globPattern === '') {
             try {
+                $verboseOutput = "+ Using glob pattern <info>$globPattern</info>.";
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
                 $this->analyser->setGlobPattern((string) $globPattern);
             } catch (InvalidGlobPattern $e) {
                 $warning = "Warning: The provided glob pattern "
@@ -212,14 +236,20 @@ class ValidateCommand extends Command
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                 return 1;
             }
         } elseif($this->isGlobPatternFileSetable($globPatternFile)) {
             try {
                 if ($this->isDefaultGlobPatternFilePresent()) {
-                    $this->analyser->setGlobPatternFromFile($this->defaultLpvFile);
+                    $this->analyser->setGlobPatternFromFile($globPatternFile);
                 }
                 if ($globPatternFile) {
+                    $globPatternFileInfo = new SplFileInfo($globPatternFile);
+                    $verboseOutput = '+ Using ' . $globPatternFileInfo->getBasename() . ' file as glob pattern input.';
+                    $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
                     $this->analyser->setGlobPatternFromFile($globPatternFile);
                 }
             } catch (NonExistentGlobPatternFile $e) {
@@ -228,6 +258,8 @@ class ValidateCommand extends Command
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                 return 1;
             } catch (InvalidGlobPatternFile $e) {
                 $warning = "Warning: The provided glob pattern file "
@@ -235,9 +267,14 @@ class ValidateCommand extends Command
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                 return 1;
             }
         }
+
+        $verboseOutput = '+ Checking .gitattribute file existence in ' . WORKING_DIRECTORY . '.';
+        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if (!$this->analyser->hasGitattributesFile()) {
             $warning = 'Warning: There is no .gitattributes file present in '
@@ -246,6 +283,9 @@ class ValidateCommand extends Command
 
             $expectedGitattributesFileContent = $this->analyser
                 ->getExpectedGitattributesContent();
+
+            $verboseOutput = '+ Getting expected .gitattribute file content.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
             if ($expectedGitattributesFileContent !== '') {
                 if ($createGitattributesFile || $overwriteGitattributesFile) {
@@ -270,9 +310,15 @@ class ValidateCommand extends Command
                     } catch (GitattributesCreationFailed $e) {
                         $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
                         $output->writeln($outputContent);
+
+                        $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                         return 1;
                     }
                 } else {
+                    $verboseOutput = '+ Suggesting .gitattribute file content.';
+                    $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
                     $outputContent .= $this->getSuggestGitattributesFileCreationOptionOutput(
                         $expectedGitattributesFileContent
                     );
@@ -290,6 +336,9 @@ class ValidateCommand extends Command
             return 1;
         } elseif ($validateArchive) {
             try {
+                $verboseOutput = '+ Validating Git archive.';
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
                 if ($this->isValidArchive($keepLicense)) {
                     $info = '<info>The archive file of the current HEAD is considered lean.</info>';
                     $output->writeln($info);
@@ -312,6 +361,9 @@ class ValidateCommand extends Command
                 $errorMessage = 'The archive file of the current HEAD '
                     . 'is considered invalid due to a missing license file.';
                 $info = '<error>' . $errorMessage . '</error>' . PHP_EOL;
+
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
                 $this->archiveValidator->getArchive()->removeArchive();
             }
 
@@ -319,44 +371,59 @@ class ValidateCommand extends Command
 
             return 1;
         } else {
+            $verboseOutput = '+ Analysing the .gitattribute content.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
             if ($this->analyser->hasCompleteExportIgnores() === false) {
                 $outputContent = '<error>The present .gitattributes file is considered invalid.</error>';
 
-                if ($this->analyser->hasCompleteExportIgnores() === false) {
-                    $expectedGitattributesFileContent = $this->analyser
-                        ->getExpectedGitattributesContent();
+                $verboseOutput = "+ Gathering expected .gitattribute content.";
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-                    if ($createGitattributesFile || $overwriteGitattributesFile) {
-                        try {
-                            $outputContent .= $this->overwriteGitattributesFile(
-                                $expectedGitattributesFileContent
-                            );
+                $expectedGitattributesFileContent = $this->analyser
+                    ->getExpectedGitattributesContent();
 
-                            $output->writeln($outputContent);
-
-                            return 0;
-                        } catch (GitattributesCreationFailed $e) {
-                            $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
-                            $output->writeln($outputContent);
-
-                            return 1;
+                if ($createGitattributesFile || $overwriteGitattributesFile) {
+                    try {
+                        $verboseOutput = "+ Trying to create expected .gitattribute file.";
+                        if ($overwriteGitattributesFile) {
+                            $verboseOutput = "+ Trying to overwrite existing .gitattribute file with expected content.";
                         }
+                        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+                        $outputContent .= $this->overwriteGitattributesFile(
+                            $expectedGitattributesFileContent
+                        );
+
+                        $output->writeln($outputContent);
+
+                        return 0;
+                    } catch (GitattributesCreationFailed $e) {
+                        $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
+                        $output->writeln($outputContent);
+
+                        $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
+                        return 1;
                     }
-
-                    $outputContent .= $this->getExpectedGitattributesFileContentOutput(
-                        $expectedGitattributesFileContent
-                    );
-
-                    $output->writeln($outputContent);
-
-                    return 1;
                 }
+
+                $outputContent .= $this->getExpectedGitattributesFileContentOutput(
+                    $expectedGitattributesFileContent
+                );
+
+                $output->writeln($outputContent);
+
+                return 1;
             }
 
             $info = '<info>The present .gitattributes file is considered valid.</info>';
             $output->writeln($info);
 
             if ($this->analyser->hasPrecedingSlashesInExportIgnorePattern()) {
+                $verboseOutput = '+ Checking for preceding slashes in export-ignore statements.';
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
                 $warning = "Warning: At least one export-ignore pattern has a leading '/', "
                     . $warning = 'which is considered as a smell.';
                 $outputContent = '<error>' . $warning . '</error>';
@@ -364,6 +431,8 @@ class ValidateCommand extends Command
             }
 
             if ($this->analyser->hasTextAutoConfiguration() === false) {
+                $verboseOutput = '+ Checking for text auto configuration.';
+
                 $warning = 'Warning: Missing a text auto configuration. '
                     . 'Consider adding one.';
                 $outputContent = '<error>' . $warning . '</error>';

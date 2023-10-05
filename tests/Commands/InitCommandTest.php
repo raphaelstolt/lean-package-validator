@@ -1,18 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests\Commands;
 
 use phpmock\functions\FixedValueFunction;
 use phpmock\MockBuilder;
 use Stolt\LeanPackage\Analyser;
-use Stolt\LeanPackage\Archive;
-use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\InitCommand;
-use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
-use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class InitCommandTest extends TestCase
 {
@@ -151,6 +150,33 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
+     */
+    public function verboseOutputIsAvailableWhenDesired()
+    {
+        $expectedDefaultLpvFile = $this->temporaryDirectory
+            . DIRECTORY_SEPARATOR
+            . '.lpv';
+        \touch($expectedDefaultLpvFile);
+
+        $command = $this->application->find('init');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            ['command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY],
+            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]
+        );
+
+        $expectedDisplay = <<<CONTENT
++ Checking .lpv file existence in /tmp/lpv.
+Warning: A default .lpv file already exists.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
     }
 
     /**
