@@ -879,6 +879,31 @@ CONTENT;
 
     /**
      * @test
+     * @group glob
+     * @ticket 38 (https://github.com/raphaelstolt/lean-package-validator/issues/38)
+     */
+    public function missingGlobPatternProducesUserFriendlyErrorMessage()
+    {
+        $missingGlobPattern = '';
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--glob-pattern' => $missingGlobPattern,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: The provided glob pattern '{$missingGlobPattern}' is considered invalid.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
      */
     public function overwriteOptionOnNonExistentGitattributesFileImplicatesCreate()
     {

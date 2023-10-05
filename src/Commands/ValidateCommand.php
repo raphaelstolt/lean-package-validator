@@ -203,8 +203,7 @@ class ValidateCommand extends Command
         if ($alignExportIgnores) {
             $this->analyser->alignExportIgnores();
         }
-
-        if ($globPattern) {
+        if ($globPattern || $globPattern === '') {
             try {
                 $this->analyser->setGlobPattern((string) $globPattern);
             } catch (InvalidGlobPattern $e) {
