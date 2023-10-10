@@ -139,6 +139,47 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 39 (https://github.com/raphaelstolt/lean-package-validator/issues/19)
+     */
+    public function showsDifferenceBetweenActualAndExpectedGitattributesContent()
+    {
+        $artifactFilenames = [
+            '.gitattributes',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['.github']
+        );
+
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--diff' => true,
+        ]);
+
+        $actualDisplayRows = array_values(explode(PHP_EOL, $commandTester->getDisplay()));
+
+        $expectedDiffRows = ['--- Original', '+++ Expected', '@@ -1 +1,2 @@'];
+
+        foreach ($expectedDiffRows as $expectedDiffRow) {
+            $this->assertContains($expectedDiffRow, $actualDisplayRows);
+        }
+
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+
+    /**
+     * @test
      * @ticket 16 (https://github.com/raphaelstolt/lean-package-validator/issues/16)
      */
     public function gitattributesFileWithNonExportIgnoreContentShowsExpectedContent()

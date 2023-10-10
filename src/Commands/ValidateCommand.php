@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands;
 
+use SebastianBergmann\Diff\Differ;
+use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 use SplFileInfo;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive\Validator;
@@ -85,6 +87,7 @@ class ValidateCommand extends Command
             . 'with missing export-ignores';
         $validateArchiveDescription = 'Validate Git archive against current HEAD';
         $omitHeaderDescription = 'Omit adding a header to created or modified .gitattributes file';
+        $diffDescription = 'Show difference between expected and actual .gitattributes content';
 
         $exampleGlobPattern = '{.*,*.md}';
         $globPatternDescription = 'Use this glob pattern e.g. <comment>'
@@ -149,6 +152,12 @@ class ValidateCommand extends Command
             InputOption::VALUE_NONE,
             $omitHeaderDescription
         );
+        $this->addOption(
+            'diff',
+            null,
+            InputOption::VALUE_NONE,
+            $diffDescription
+        );
     }
 
     /**
@@ -187,6 +196,7 @@ class ValidateCommand extends Command
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
         $omitHeader = $input->getOption('omit-header');
+        $showDifference = $input->getOption('diff');
 
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
 
@@ -408,6 +418,15 @@ class ValidateCommand extends Command
                     }
                 }
 
+                if ($showDifference) {
+                    $actual = $this->analyser->getPresentGitAttributesContent();
+                    $builder = new UnifiedDiffOutputBuilder(
+                        "--- Original" . PHP_EOL . "+++ Expected" . PHP_EOL,
+                        true
+                    );
+                    $differ = new Differ($builder);
+                    $expectedGitattributesFileContent = $differ->diff($actual, $expectedGitattributesFileContent);
+                }
                 $outputContent .= $this->getExpectedGitattributesFileContentOutput(
                     $expectedGitattributesFileContent
                 );

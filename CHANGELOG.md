@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 ### Added
+- Added `--diff` option to show differences between expected and actual .gitattributes content. Closes [#39](https://github.com/raphaelstolt/lean-package-validator/issues/39).
 - Added verbose output. Closes [#37](https://github.com/raphaelstolt/lean-package-validator/issues/37).
 
 ### Fixed

@@ -437,12 +437,10 @@ class Analyser
     /**
      * Return the expected .gitattributes content.
      *
-     * @param  array $postfixlessExportIgnores Expected patterns without
-     *                                         an export-ignore postfix.
-     *
+     * @param array $postfixlessExportIgnores Expected patterns without an export-ignore postfix.
      * @return string
      */
-    public function getExpectedGitattributesContent(array $postfixlessExportIgnores = [])
+    public function getExpectedGitattributesContent(array $postfixlessExportIgnores = []): string
     {
         if ($postfixlessExportIgnores === []) {
             $postfixlessExportIgnores = $this->collectExpectedExportIgnores();
@@ -660,12 +658,24 @@ class Analyser
     }
 
     /**
+     * @return string
+     */
+    public function getPresentGitAttributesContent(): string
+    {
+        if ($this->hasGitattributesFile() === false) {
+            return '';
+        }
+
+        return (string) \file_get_contents($this->gitattributesFile);
+    }
+
+    /**
      * Get the present non export-ignore entries of
      * the .gitattributes file.
      *
      * @return string
      */
-    public function getPresentNonExportIgnoresContent()
+    public function getPresentNonExportIgnoresContent(): string
     {
         if ($this->hasGitattributesFile() === false) {
             return '';
@@ -707,7 +717,7 @@ class Analyser
      *
      * @return array
      */
-    public function getPresentExportIgnores()
+    public function getPresentExportIgnores(): array
     {
         if ($this->hasGitattributesFile() === false) {
             return [];
