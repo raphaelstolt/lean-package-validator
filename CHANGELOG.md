@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [v3.1.0] - 2023-10-10
 ### Added
+- Global .gitignore'd files are excluded from validation. Closes [#36](https://github.com/raphaelstolt/lean-package-validator/issues/36).
 - Added `--diff` option to show differences between expected and actual .gitattributes content. Closes [#39](https://github.com/raphaelstolt/lean-package-validator/issues/39).
 - Added verbose output. Closes [#37](https://github.com/raphaelstolt/lean-package-validator/issues/37).
 
@@ -142,7 +145,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## v1.0.0 - 2016-09-04
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.1.0...HEAD
+[v3.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.1...v3.1.0
 [v3.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.0...v3.0.1
 [v3.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.1.0...v3.0.0
 [v2.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v2.0.2...v2.1.0

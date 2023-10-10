@@ -396,14 +396,30 @@ class Analyser
     }
 
     /**
-     * Return patterns in .gitignore file.
-     *
      * @return array
      */
-    public function getGitignoredPatterns()
+    public function getGlobalGitignorePatterns(): array
     {
-        $gitignoreFile = $this->getDirectory() . DIRECTORY_SEPARATOR . '.gitignore';
+        $gitConfigGetCommand = 'git config --get core.excludesfile';
 
+        \exec($gitConfigGetCommand, $output, $statusCode);
+
+        if ($statusCode !== 0) {
+            return [];
+        }
+
+        $homeDirectory = \getenv('HOME') ? \getenv('HOME') : __DIR__;
+        $excludesFile = \str_replace('~', $homeDirectory, \trim($output[0]));
+
+        return $this->getGitignorePatterns($excludesFile);
+    }
+
+    /**
+     * @param string $gitignoreFile
+     * @return array
+     */
+    private function getGitignorePatterns(string $gitignoreFile): array
+    {
         if (!\file_exists($gitignoreFile)) {
             return [];
         }
@@ -432,6 +448,18 @@ class Analyser
         });
 
         return $gitignoredPatterns;
+    }
+
+    /**
+     * Return patterns in .gitignore file.
+     *
+     * @return array
+     */
+    public function getGitignoredPatterns(): array
+    {
+        $gitignoreFile = $this->getDirectory() . DIRECTORY_SEPARATOR . '.gitignore';
+
+        return $this->getGitignorePatterns($gitignoreFile);
     }
 
     /**
@@ -559,7 +587,8 @@ class Analyser
 
         $ignoredGlobMatches = \array_merge(
             $this->ignoredGlobMatches,
-            $this->getGitignoredPatterns()
+            $this->getGitignoredPatterns(),
+            $this->getGlobalGitignorePatterns()
         );
 
         $globMatches = Glob::glob($this->globPattern, Glob::GLOB_BRACE);

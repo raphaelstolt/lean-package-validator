@@ -166,7 +166,7 @@ CONTENT;
             '--diff' => true,
         ]);
 
-        $actualDisplayRows = array_values(explode(PHP_EOL, $commandTester->getDisplay()));
+        $actualDisplayRows = \array_values(\explode(PHP_EOL, $commandTester->getDisplay()));
 
         $expectedDiffRows = ['--- Original', '+++ Expected', '@@ -1 +1,2 @@'];
 
@@ -184,6 +184,16 @@ CONTENT;
      */
     public function gitattributesFileWithNonExportIgnoreContentShowsExpectedContent()
     {
+        $mock = Mockery::mock(
+            'Stolt\LeanPackage\Analyser[getGlobalGitignorePatterns]'
+        );
+        $mock->shouldReceive('getGlobalGitignorePatterns')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn([]);
+
+        $application = $this->getApplicationWithMockedAnalyser($mock);
+
         $artifactFilenames = [
             '.gitattributes',
             '.gitignore',
@@ -213,7 +223,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $command = $this->application->find('validate');
+        $command = $application->find('validate');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
