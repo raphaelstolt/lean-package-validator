@@ -17,7 +17,7 @@ $rules = [
     ]
 ];
 
-$cacheDir = getenv('HOME') ? getenv('HOME') : __DIR__;
+$cacheDir = \getenv('HOME') ? \getenv('HOME') : __DIR__;
 
 $config = new Config();
 

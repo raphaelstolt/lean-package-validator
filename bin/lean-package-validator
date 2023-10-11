@@ -9,12 +9,10 @@ $autoloads = [
     __DIR__ . '/vendor/autoload.php',
 ];
 
-foreach ($autoloads as $autoload) {
-    if (file_exists($autoload)) {
-        require $autoload;
-        $autoloaded = true;
-        break;
-    }
+foreach (\array_filter($autoloads, 'file_exists') as $autoload) {
+    require $autoload;
+    $autoloaded = true;
+    break;
 }
 
 if (false === $autoloaded) {
@@ -23,8 +21,8 @@ if (false === $autoloaded) {
    exit(1);
 }
 
-define('WORKING_DIRECTORY', getcwd());
-define('VERSION', '3.10.0');
+\define('WORKING_DIRECTORY', \getcwd());
+\define('VERSION', '3.10.0');
 
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;
