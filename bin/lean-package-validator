@@ -33,10 +33,7 @@ use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Symfony\Component\Console\Application;
 
-$archive = new Archive(
-    WORKING_DIRECTORY,
-    basename(WORKING_DIRECTORY)
-);
+$archive = new Archive(WORKING_DIRECTORY);
 $analyser = new Analyser;
 
 $initCommand = new InitCommand(

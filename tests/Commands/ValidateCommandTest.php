@@ -2016,8 +2016,7 @@ CONTENT;
         $application = new Application();
 
         $archive = new Archive(
-            $this->temporaryDirectory,
-            \basename($this->temporaryDirectory)
+            $this->temporaryDirectory
         );
 
         $analyserCommand = new ValidateCommand(
@@ -2054,8 +2053,7 @@ CONTENT;
     {
         $application = new Application();
         $archive = new Archive(
-            $this->temporaryDirectory,
-            \basename($this->temporaryDirectory)
+            $this->temporaryDirectory
         );
 
         $analyserCommand = new ValidateCommand(

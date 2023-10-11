@@ -43,10 +43,13 @@ class Archive
      * @param string $directory The directory of the repository to archive.
      * @param string $name      The extensionless name of the repository archive.
      */
-    public function __construct($directory, $name)
+    public function __construct(string $directory, string $name = '')
     {
         $this->directory = $directory;
         $this->name = $name;
+        if ('' === $name) {
+            $this->name = \basename($directory);
+        }
         $this->filename = $directory
             . DIRECTORY_SEPARATOR
             . $name . '.tar.gz';
