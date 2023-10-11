@@ -97,6 +97,29 @@ The `--validate-git-archive` option will validate that no common repository arti
 lean-package-validator validate [<directory>] --validate-git-archive
 ```
 
+The `--diff` option will show a visual diff betweeen the actual and expected .gitattributes content.
+
+``` bash
+lean-package-validator validate --diff
+
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+--- Original
++++ Expected
+@@ -7,9 +7,8 @@
+ .github/ export-ignore
+ .gitignore export-ignore
+ .gitmessage export-ignore
+ .php-cs-fixer.php export-ignore
+-.phpunit.result.cache export-ignore
++.idea/ export-ignore
+ bin/application-version export-ignore
+ bin/lean-package-validator.phar export-ignore
+ bin/release-version export-ignore
+```
+
+
 #### Additional commands
 
 The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artifacts.
