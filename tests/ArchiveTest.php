@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests;
 
 use Mockery;
@@ -7,11 +9,10 @@ use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
-use Stolt\LeanPackage\Tests\TestCase;
 
 class ArchiveTest extends TestCase
 {
-    public function setUp():void
+    public function setUp(): void
     {
         $this->setUpTemporaryDirectory();
     }
@@ -21,7 +22,7 @@ class ArchiveTest extends TestCase
      *
      * @return void
      */
-    protected function tearDown():void
+    protected function tearDown(): void
     {
         if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
@@ -31,7 +32,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function filenameHasAnAccessor()
+    public function filenameHasAnAccessor(): void
     {
         $analyser = new Archive(__DIR__, 'foo');
 
@@ -44,7 +45,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function isGitCommandAvailableReturnsFalseOnNonExistingCommand()
+    public function isGitCommandAvailableReturnsFalseOnNonExistingCommand(): void
     {
         $this->assertFalse((new Archive(__DIR__, 'foo'))->isGitCommandAvailable('no-way-i-exists'));
     }
@@ -53,7 +54,7 @@ class ArchiveTest extends TestCase
      * @test
      * @group travis-ci-exclude
      */
-    public function isGitCommandAvailableReturnsTrueOnExistingCommand()
+    public function isGitCommandAvailableReturnsTrueOnExistingCommand(): void
     {
         $this->assertTrue((new Archive(__DIR__, 'foo'))->isGitCommandAvailable('ping'));
     }
@@ -61,7 +62,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function hasHeadThrowsExpectedExceptionWhenGitCommandNotAvailable()
+    public function hasHeadThrowsExpectedExceptionWhenGitCommandNotAvailable(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive[isGitCommandAvailable]',
@@ -82,7 +83,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function createArchiveThrowsExpectedExceptionWhenNoGitHeadPresent()
+    public function createArchiveThrowsExpectedExceptionWhenNoGitHeadPresent(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive[hasHead]',
@@ -103,7 +104,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function removeArchiveRemovesArchive()
+    public function removeArchiveRemovesArchive(): void
     {
         $this->createTemporaryFiles(
             ['archive-tmp.tar.gz']
@@ -118,7 +119,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function removeArchiveRemovesArchiveReturnsFalseOnNonExtistentFile()
+    public function removeArchiveRemovesArchiveReturnsFalseOnNonExtistentFile(): void
     {
         $removed = (new Archive($this->temporaryDirectory, 'archive-nonexistent'))
             ->removeArchive();
@@ -129,7 +130,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function compareArchiveReturnsExpectedFoundUnexpectedArtifacts()
+    public function compareArchiveReturnsExpectedFoundUnexpectedArtifacts(): void
     {
         $unexpectedArtifacts = [
             '.travis.yml',
@@ -149,7 +150,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function compareArchiveReturnsNoFoundUnexpectedArtifactsOnLeanArchive()
+    public function compareArchiveReturnsNoFoundUnexpectedArtifactsOnLeanArchive(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
 
@@ -170,7 +171,7 @@ class ArchiveTest extends TestCase
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function compareArchiveThrowsExpectedExceptionWhenLicenseFileIsMissing()
+    public function compareArchiveThrowsExpectedExceptionWhenLicenseFileIsMissing(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
 
@@ -189,7 +190,7 @@ class ArchiveTest extends TestCase
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function compareArchiveDoesNotThrowsExceptionOnPresentLicenseFile()
+    public function compareArchiveDoesNotThrowsExceptionOnPresentLicenseFile(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
 
@@ -204,7 +205,7 @@ class ArchiveTest extends TestCase
     /**
      * @test
      */
-    public function getUnexpectedArchiveArtifactsDelegatesWork()
+    public function getUnexpectedArchiveArtifactsDelegatesWork(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive[createArchive,compareArchive,removeArchive]',

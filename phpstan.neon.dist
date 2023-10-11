@@ -2,6 +2,7 @@ parameters:
     level: max
     paths:
         - src
+        - tests
     reportUnmatchedIgnoredErrors: false
     checkMissingIterableValueType: false
     ignoreErrors:
@@ -13,3 +14,4 @@ parameters:
         - '#cannot be cast to string#'
         - '#Cannot cast#'
         - '#is never read#'
+        - '#Comparison operation ">="#'

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests\Helpers;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,7 @@ class StrTest extends TestCase
      * @test
      * @group unit
      */
-    public function canDetermineIfWindowsOrNot()
+    public function canDetermineIfWindowsOrNot(): void
     {
         $osHelper = new OsHelper();
         if ($osHelper->isWindows()) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests;
 
 use Mockery;
@@ -7,7 +9,6 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
-use Stolt\LeanPackage\Tests\TestCase;
 
 class AnalyserTest extends TestCase
 {
@@ -34,7 +35,7 @@ class AnalyserTest extends TestCase
     /**
      * @test
      */
-    public function hasCompleteExportIgnoresFailsOnEmptyExportIgnores()
+    public function hasCompleteExportIgnoresFailsOnEmptyExportIgnores(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
         $this->assertFalse(
@@ -45,7 +46,7 @@ class AnalyserTest extends TestCase
     /**
      * @test
      */
-    public function hasCompleteExportIgnoresFailsOnNonExistingGitattributesFile()
+    public function hasCompleteExportIgnoresFailsOnNonExistingGitattributesFile(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Analyser[hasGitattributesFile]'
@@ -66,7 +67,7 @@ class AnalyserTest extends TestCase
     /**
      * @test
      */
-    public function returnsTrueWhenDirectoryHasCompleteExportIgnores()
+    public function returnsTrueWhenDirectoryHasCompleteExportIgnores(): void
     {
         $gitattributesContent = <<<CONTENT
 phpspec.yml.dist export-ignore
@@ -102,7 +103,7 @@ CONTENT;
     /**
      * @test
      */
-    public function analyseOnNonExistingDirectoryThrowsExpectedException()
+    public function analyseOnNonExistingDirectoryThrowsExpectedException(): void
     {
         $nonExistingDirectory = '/tmp/non-existing_directory';
         $this->expectException(\RuntimeException::class);
@@ -115,7 +116,7 @@ CONTENT;
     /**
      * @test
      */
-    public function gitattributesFileHasAnAccessor()
+    public function gitattributesFileHasAnAccessor(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
         $expectedGitattributesFilePath = $this->temporaryDirectory
@@ -131,7 +132,7 @@ CONTENT;
     /**
      * @test
      */
-    public function directoryHasAnAccessor()
+    public function directoryHasAnAccessor(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
         $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
@@ -140,7 +141,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsExpectedGitattributesContent()
+    public function returnsExpectedGitattributesContent(): void
     {
         $artifactsWithoutExportIgnore = [
             'README.md',
@@ -177,7 +178,7 @@ CONTENT;
     /**
      * @test
      */
-    public function expectedFileMatchesAreInExpectedGitattributesContent()
+    public function expectedFileMatchesAreInExpectedGitattributesContent(): void
     {
         $artifactFilenames = [
             'Vagrantfile',
@@ -212,7 +213,7 @@ CONTENT;
     /**
      * @test
      */
-    public function nonExportIgnoresContentIsEmptyForNonexistentGitattributesFile()
+    public function nonExportIgnoresContentIsEmptyForNonexistentGitattributesFile(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
 
@@ -222,7 +223,7 @@ CONTENT;
     /**
      * @test
      */
-    public function nonExportIgnoresContentOfGitattributesFileIsReturned()
+    public function nonExportIgnoresContentOfGitattributesFileIsReturned(): void
     {
         $gitattributesContent = <<<CONTENT
 # Auto-detect text files, ensure they use LF.
@@ -266,7 +267,7 @@ CONTENT;
     /**
      * @test
      */
-    public function getExpectedGitattributesContentKeepsNonExportIgnoreEntries()
+    public function getExpectedGitattributesContentKeepsNonExportIgnoreEntries(): void
     {
         $artifactsWithoutExportIgnore = [
             'README.md',
@@ -327,7 +328,7 @@ CONTENT;
     /**
      * @test
      */
-    public function addsAutoEolToGitattributesContentWhenNoGitattributesFilePresent()
+    public function addsAutoEolToGitattributesContentWhenNoGitattributesFilePresent(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -356,7 +357,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsEmptyExpectedGitattributesContent()
+    public function returnsEmptyExpectedGitattributesContent(): void
     {
         $artifactFilenames = [
             'NOPE',
@@ -379,7 +380,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsFalseWhenGitattributesFileHasGaps()
+    public function returnsFalseWhenGitattributesFileHasGaps(): void
     {
         $gitattributesContent = <<<CONTENT
 phpspec.yml.dist export-ignore
@@ -407,7 +408,7 @@ CONTENT;
     /**
      * @test
      */
-    public function hasGitattributesFileOnExistingGitattributesFile()
+    public function hasGitattributesFileOnExistingGitattributesFile(): void
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -425,7 +426,7 @@ CONTENT;
     /**
      * @test
      */
-    public function hasGitattributesFileFailsOnNonExistingGitattributesFile()
+    public function hasGitattributesFileFailsOnNonExistingGitattributesFile(): void
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -443,7 +444,7 @@ CONTENT;
     /**
      * @test
      */
-    public function collectExpectedExportIgnoresReturnsExpectedEntries()
+    public function collectExpectedExportIgnoresReturnsExpectedEntries(): void
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -482,7 +483,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsAnEmptyArrayOnNonExistingGitattributesFile()
+    public function returnsAnEmptyArrayOnNonExistingGitattributesFile(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
 
@@ -497,7 +498,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsExpectedPresentExportIgnores()
+    public function returnsExpectedPresentExportIgnores(): void
     {
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
@@ -544,7 +545,7 @@ CONTENT;
     /**
      * @test
      */
-    public function nonExportIgnoresContentHasPlaceholderForExportIgnoresPlacement()
+    public function nonExportIgnoresContentHasPlaceholderForExportIgnoresPlacement(): void
     {
         $gitattributesContent = <<<CONTENT
 # A head comment
@@ -589,7 +590,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsExpectedGitattributesContentWithPreservedLocation()
+    public function returnsExpectedGitattributesContentWithPreservedLocation(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -652,7 +653,7 @@ CONTENT;
      * @test
      * @ticket 5 (https://github.com/raphaelstolt/lean-package-validator/issues/5)
      */
-    public function varyingOrderDoesNotFailCompletenessCheck()
+    public function varyingOrderDoesNotFailCompletenessCheck(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -690,7 +691,7 @@ CONTENT;
      * @test
      * @ticket 6 (https://github.com/raphaelstolt/lean-package-validator/issues/6)
      */
-    public function varyingOrderDoesFailCompletenessCheckWhenEnforced()
+    public function varyingOrderDoesFailCompletenessCheckWhenEnforced(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -728,7 +729,7 @@ CONTENT;
     /**
      * @test
      */
-    public function notPatternMatchingExportIgnoresArePreservedAssumedFileExists()
+    public function notPatternMatchingExportIgnoresArePreservedAssumedFileExists(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -782,7 +783,7 @@ CONTENT;
     /**
      * @test
      */
-    public function nonPatternsMatchingButMatchingExistingFilesArePreservedExportIgnores()
+    public function nonPatternsMatchingButMatchingExistingFilesArePreservedExportIgnores(): void
     {
         $artifactFilenames = [
             'changelog-generator',
@@ -834,7 +835,7 @@ CONTENT;
     /**
      * @test
      */
-    public function notPatternMatchingExportIgnoresDoNotFailCompletenessCheck()
+    public function notPatternMatchingExportIgnoresDoNotFailCompletenessCheck(): void
     {
         $artifactFilenames = [
             'changelog-generator',
@@ -870,7 +871,7 @@ CONTENT;
      * @group glob
      * @ticket 14 (https://github.com/raphaelstolt/lean-package-validator/issues/14)
      */
-    public function captainHookConfigurationFileIsInDefaultPattern()
+    public function captainHookConfigurationFileIsInDefaultPattern(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -904,7 +905,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function nonExistingGlobPatternFileThrowsExpectedException()
+    public function nonExistingGlobPatternFileThrowsExpectedException(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
         $globPatternFile = $fixturesDirectory . DIRECTORY_SEPARATOR . '.non-existent-lpv';
@@ -921,7 +922,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function emptyGlobPatternFileThrowsExpectedException()
+    public function emptyGlobPatternFileThrowsExpectedException(): void
     {
         $temporaryLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -941,7 +942,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function defaultExportIgnoresGlobPatternIsOverwritableFromFile()
+    public function defaultExportIgnoresGlobPatternIsOverwritableFromFile(): void
     {
         $temporaryLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -983,7 +984,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function defaultExportIgnoresGlobPatternIsOverwritable()
+    public function defaultExportIgnoresGlobPatternIsOverwritable(): void
     {
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
@@ -1013,10 +1014,10 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function emptyGlobPatternThrowsExpectedException()
+    public function emptyGlobPatternThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
-        $analyser = (new Analyser())
+        (new Analyser())
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('');
     }
@@ -1025,7 +1026,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function invalidGlobPatternBracesThrowsExpectedException()
+    public function invalidGlobPatternBracesThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
         $analyser = (new Analyser())
@@ -1039,7 +1040,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function wildcardAfterBracesIsNotRaisingAnException()
+    public function wildcardAfterBracesIsNotRaisingAnException(): void
     {
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
@@ -1052,7 +1053,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function emptyGlobPatternBracesContentThrowsExpectedException()
+    public function emptyGlobPatternBracesContentThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
         $analyser = (new Analyser())
@@ -1064,7 +1065,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function singleGlobPatternThrowsExpectedException()
+    public function singleGlobPatternThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
         $analyser = (new Analyser())
@@ -1076,7 +1077,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function globPatternWithEnclosedBracesAreConsideredValid()
+    public function globPatternWithEnclosedBracesAreConsideredValid(): void
     {
         $analyser = (new Analyser())
             ->setDirectory($this->temporaryDirectory)
@@ -1088,7 +1089,7 @@ CONTENT;
     /**
      * @test
      */
-    public function withDistEndingFilesAreNotExportIgnored()
+    public function withDistEndingFilesAreNotExportIgnored(): void
     {
         $artifactFilenames = [
             'SUPPORT.md',
@@ -1123,7 +1124,7 @@ CONTENT;
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function licenseFileIsNotExportIgnored()
+    public function licenseFileIsNotExportIgnored(): void
     {
         $artifactFilenames = [
             'LICENSE.txt',
@@ -1160,7 +1161,7 @@ CONTENT;
      * @test
      * @ticket 24 (https://github.com/raphaelstolt/lean-package-validator/issues/24)
      */
-    public function directoriesOnlyExportIgnoredOnce()
+    public function directoriesOnlyExportIgnoredOnce(): void
     {
         $artifactFilenames = [
             'LICENSE.md',
@@ -1208,7 +1209,7 @@ CONTENT;
     /**
      * @test
      */
-    public function exportIgnoresAreAligned()
+    public function exportIgnoresAreAligned(): void
     {
         $artifactFilenames = [
             'LICENSE.txt',
@@ -1246,7 +1247,7 @@ CONTENT;
      * @test
      * @ticket 4 (https://github.com/raphaelstolt/lean-package-validator/issues/4)
      */
-    public function precedingSlashesAreDetected()
+    public function precedingSlashesAreDetected(): void
     {
         $artifactFilenames = [
             'changelog-generator',
@@ -1281,7 +1282,7 @@ CONTENT;
      * @test
      * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
      */
-    public function missingTextAutoConfigurationIsDetected()
+    public function missingTextAutoConfigurationIsDetected(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -1311,7 +1312,7 @@ CONTENT;
      * @test
      * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
      */
-    public function presentTextAutoConfigurationIsDetected()
+    public function presentTextAutoConfigurationIsDetected(): void
     {
         $artifactFilenames = [
             'README.md',
@@ -1343,7 +1344,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsEmptyPatternsWhenNoGitignoreFilePresent()
+    public function returnsEmptyPatternsWhenNoGitignoreFilePresent(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
         $this->assertEquals([], $analyser->getGitignoredPatterns());
@@ -1352,7 +1353,7 @@ CONTENT;
     /**
      * @test
      */
-    public function returnsExpectedGitignoredPatterns()
+    public function returnsExpectedGitignoredPatterns(): void
     {
         $gitignoreContent = <<<CONTENT
 # Composer files
@@ -1389,7 +1390,7 @@ CONTENT;
      * @test
      * @ticket 17 (https://github.com/raphaelstolt/lean-package-validator/issues/17)
      */
-    public function presentGitignoredFileIsExcludedFromValidation()
+    public function presentGitignoredFileIsExcludedFromValidation(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1431,7 +1432,7 @@ CONTENT;
      * @test
      * @ticket 21 (https://github.com/raphaelstolt/lean-package-validator/issues/21)
      */
-    public function presentGitignoredSpecsCoverageDirectoryIsExcludedFromValidation()
+    public function presentGitignoredSpecsCoverageDirectoryIsExcludedFromValidation(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1475,7 +1476,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function returnsExpectedDefaultGlobPatterns()
+    public function returnsExpectedDefaultGlobPatterns(): void
     {
         $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
 

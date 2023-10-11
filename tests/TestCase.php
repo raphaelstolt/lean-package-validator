@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
@@ -7,7 +9,7 @@ use Stolt\LeanPackage\Helpers\Str as OsHelper;
 
 class TestCase extends PHPUnit
 {
-    protected $temporaryDirectory;
+    protected string $temporaryDirectory;
 
     /**
      * Set up temporary directory.
@@ -35,13 +37,14 @@ class TestCase extends PHPUnit
      *
      * @return void
      */
-    protected function removeDirectory($directory)
+    protected function removeDirectory(string $directory): void
     {
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST
         );
 
+        /** @var \SplFileInfo $fileinfo */
         foreach ($files as $fileinfo) {
             if ($fileinfo->isDir()) {
                 @\rmdir($fileinfo->getRealPath());
@@ -88,13 +91,16 @@ class TestCase extends PHPUnit
      *
      * @return boolean
      */
-    protected function createTemporaryGitattributesFile($content)
+    protected function createTemporaryGitattributesFile($content): bool
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
 
-        return file_put_contents($temporaryGitattributesFile, $content) >= 0;
+
+        $bytesWritten = file_put_contents($temporaryGitattributesFile, $content);
+
+        return  $bytesWritten >= 0;
     }
 
     /**

@@ -47,7 +47,7 @@ class InitCommandTest extends TestCase
     /**
      * @test
      */
-    public function createsExpectedDefaultLpvFile()
+    public function createsExpectedDefaultLpvFile(): void
     {
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -98,7 +98,7 @@ CONTENT;
      * @test
      * @runInSeparateProcess
      */
-    public function failingInitReturnsExpectedStatusCode()
+    public function failingInitReturnsExpectedStatusCode(): void
     {
         $builder = new MockBuilder();
         $builder->setNamespace('Stolt\LeanPackage\Commands')
@@ -129,7 +129,7 @@ CONTENT;
     /**
      * @test
      */
-    public function existingDefaultLpvFileIsNotOverwritten()
+    public function existingDefaultLpvFileIsNotOverwritten(): void
     {
         $expectedDefaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -155,7 +155,7 @@ CONTENT;
     /**
      * @test
      */
-    public function verboseOutputIsAvailableWhenDesired()
+    public function verboseOutputIsAvailableWhenDesired(): void
     {
         $expectedDefaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -182,7 +182,7 @@ CONTENT;
     /**
      * @test
      */
-    public function existingDefaultLpvFileIsOverwrittenWhenDesired()
+    public function existingDefaultLpvFileIsOverwrittenWhenDesired(): void
     {
         $expectedDefaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -210,7 +210,7 @@ CONTENT;
     /**
      * @return \Symfony\Component\Console\Application
      */
-    protected function getApplication()
+    protected function getApplication(): Application
     {
         $application = new Application();
         $application->add(new InitCommand(new Analyser));

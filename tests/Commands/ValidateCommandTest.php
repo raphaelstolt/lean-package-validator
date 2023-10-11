@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests\Commands;
 
 use Mockery;
@@ -9,7 +11,6 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
-use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
@@ -49,7 +50,7 @@ class ValidateCommandTest extends TestCase
     /**
      * @test
      */
-    public function validateOnNonExistentGitattributesFilesSuggestsCreation()
+    public function validateOnNonExistentGitattributesFilesSuggestsCreation(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -94,7 +95,7 @@ CONTENT;
     /**
      * @test
      */
-    public function validateOnNonExistentGitattributesFilesSuggestsCreationWithAlignment()
+    public function validateOnNonExistentGitattributesFilesSuggestsCreationWithAlignment(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -141,7 +142,7 @@ CONTENT;
      * @test
      * @ticket 39 (https://github.com/raphaelstolt/lean-package-validator/issues/19)
      */
-    public function showsDifferenceBetweenActualAndExpectedGitattributesContent()
+    public function showsDifferenceBetweenActualAndExpectedGitattributesContent(): void
     {
         $artifactFilenames = [
             '.gitattributes',
@@ -182,7 +183,7 @@ CONTENT;
      * @test
      * @ticket 16 (https://github.com/raphaelstolt/lean-package-validator/issues/16)
      */
-    public function gitattributesFileWithNonExportIgnoreContentShowsExpectedContent()
+    public function gitattributesFileWithNonExportIgnoreContentShowsExpectedContent(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Analyser[getGlobalGitignorePatterns]'
@@ -263,7 +264,7 @@ CONTENT;
      * @test
      * @ticket 13 (https://github.com/raphaelstolt/lean-package-validator/issues/13)
      */
-    public function gitattributesIsInSuggestedFileContent()
+    public function gitattributesIsInSuggestedFileContent(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -305,7 +306,7 @@ CONTENT;
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function licenseIsInSuggestedFileContentPerDefault()
+    public function licenseIsInSuggestedFileContentPerDefault(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -349,7 +350,7 @@ CONTENT;
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function licenseIsNotInSuggestedFileContent()
+    public function licenseIsNotInSuggestedFileContent(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -394,7 +395,7 @@ CONTENT;
      * @group glob
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function licenseIsNotInSuggestedFileContentWithCustomGlobPattern()
+    public function licenseIsNotInSuggestedFileContentWithCustomGlobPattern(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -439,7 +440,7 @@ CONTENT;
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function presentExportIgnoredLicenseWithKeepLicenseOptionInvalidatesResult()
+    public function presentExportIgnoredLicenseWithKeepLicenseOptionInvalidatesResult(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -492,7 +493,7 @@ CONTENT;
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function archiveWithoutLicenseFileIsConsideredInvalid()
+    public function archiveWithoutLicenseFileIsConsideredInvalid(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, shouldHaveLicenseFile]',
@@ -540,7 +541,7 @@ CONTENT;
      * @test
      * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
      */
-    public function archiveWithLicenseFileIsConsideredValid()
+    public function archiveWithLicenseFileIsConsideredValid(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, shouldHaveLicenseFile]',
@@ -586,7 +587,7 @@ CONTENT;
     /**
      * @test
      */
-    public function failingGitattributesFilesCreationReturnsExpectedStatusCode()
+    public function failingGitattributesFilesCreationReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
 
@@ -631,7 +632,7 @@ CONTENT;
     /**
      * @test
      */
-    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithoutHeader()
+    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithoutHeader(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
 
@@ -672,7 +673,7 @@ CONTENT;
     /**
      * @test
      */
-    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOne()
+    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOne(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
 
@@ -714,7 +715,7 @@ CONTENT;
     /**
      * @test
      */
-    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithAlignment()
+    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithAlignment(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
 
@@ -769,7 +770,7 @@ CONTENT;
     /**
      * @test
      */
-    public function validGitattributesReturnsExpectedStatusCode()
+    public function validGitattributesReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -813,7 +814,7 @@ CONTENT;
     /**
      * @test
      */
-    public function invalidGitattributesReturnsExpectedStatusCode()
+    public function invalidGitattributesReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -859,7 +860,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function optionalGlobPatternIsApplied()
+    public function optionalGlobPatternIsApplied(): void
     {
         $artifactFilenames = [
             'CONDUCT.rst',
@@ -908,7 +909,7 @@ CONTENT;
      * @test
      * @group glob
      */
-    public function usageOfInvalidGlobFailsValidation()
+    public function usageOfInvalidGlobFailsValidation(): void
     {
         $failingGlobPattern = '{single-pattern*}';
         $command = $this->application->find('validate');
@@ -933,7 +934,7 @@ CONTENT;
      * @group glob
      * @ticket 38 (https://github.com/raphaelstolt/lean-package-validator/issues/38)
      */
-    public function missingGlobPatternProducesUserFriendlyErrorMessage()
+    public function missingGlobPatternProducesUserFriendlyErrorMessage(): void
     {
         $missingGlobPattern = '';
         $command = $this->application->find('validate');
@@ -956,7 +957,7 @@ CONTENT;
     /**
      * @test
      */
-    public function overwriteOptionOnNonExistentGitattributesFileImplicatesCreate()
+    public function overwriteOptionOnNonExistentGitattributesFileImplicatesCreate(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
 
@@ -998,7 +999,7 @@ CONTENT;
     /**
      * @test
      */
-    public function leanArchiveIsConsideredLean()
+    public function leanArchiveIsConsideredLean(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate]',
@@ -1037,7 +1038,7 @@ CONTENT;
     /**
      * @test
      */
-    public function notLeanArchiveIsNotConsideredLeanPlural()
+    public function nonLeanArchiveIsNotConsideredLeanPlural(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, getFoundUnexpectedArchiveArtifacts]',
@@ -1086,7 +1087,7 @@ CONTENT;
     /**
      * @test
      */
-    public function notLeanArchiveIsNotConsideredLeanSingular()
+    public function nonLeanArchiveIsNotConsideredLeanSingular(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, getFoundUnexpectedArchiveArtifacts]',
@@ -1134,7 +1135,7 @@ CONTENT;
     /**
      * @test
      */
-    public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed()
+    public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed(): void
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Analyser[getExpectedGitattributesContent]'
@@ -1167,7 +1168,7 @@ CONTENT;
     /**
      * @test
      */
-    public function invalidDirectoryAgumentReturnsExpectedStatusCode()
+    public function invalidDirectoryAgumentReturnsExpectedStatusCode(): void
     {
         $nonExistentDirectoryOrFile = WORKING_DIRECTORY
             . DIRECTORY_SEPARATOR
@@ -1192,7 +1193,7 @@ CONTENT;
     /**
      * @test
      */
-    public function incompleteGitattributesFileIsOverwrittenWithAlignment()
+    public function incompleteGitattributesFileIsOverwrittenWithAlignment(): void
     {
         $gitattributesContent = <<<CONTENT
 # These files are always considered text and should use LF.
@@ -1289,8 +1290,9 @@ CONTENT;
      * @test
      * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
      * @dataProvider optionProvider
+     * @param string $option
      */
-    public function incompleteGitattributesFileIsOverwritten($option)
+    public function incompleteGitattributesFileIsOverwritten(string $option): void
     {
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
@@ -1341,7 +1343,7 @@ CONTENT;
      * @test
      * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
      */
-    public function failingGitattributesFilesOverwriteReturnsExpectedStatusCode()
+    public function failingGitattributesFilesOverwriteReturnsExpectedStatusCode(): void
     {
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
@@ -1396,7 +1398,7 @@ CONTENT;
      * @test
      * @ticket 22 (https://github.com/raphaelstolt/lean-package-validator/issues/22)
      */
-    public function nonExistentArtifactsWhichAreExportIgnoredAreIgnoredOnComparison()
+    public function nonExistentArtifactsWhichAreExportIgnoredAreIgnoredOnComparison(): void
     {
         $artifactFilenames = [
             '.gitattributes',
@@ -1441,7 +1443,7 @@ CONTENT;
     /**
      * @test
      */
-    public function strictAlignmentOfExportIgnoresCanBeEnforced()
+    public function strictAlignmentOfExportIgnoresCanBeEnforced(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1493,7 +1495,7 @@ CONTENT;
     /**
      * @test
      */
-    public function strictAlignmentAndOrderOfExportIgnoresCanBeEnforced()
+    public function strictAlignmentAndOrderOfExportIgnoresCanBeEnforced(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1547,7 +1549,7 @@ CONTENT;
      * @test
      * @ticket 6 (https://github.com/raphaelstolt/lean-package-validator/issues/6)
      */
-    public function strictOrderOfExportIgnoresCanBeEnforced()
+    public function strictOrderOfExportIgnoresCanBeEnforced(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1602,7 +1604,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function givenGlobPatternTakesPrecedenceOverDefaultGlobPatternFile()
+    public function givenGlobPatternTakesPrecedenceOverDefaultGlobPatternFile(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1660,7 +1662,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function presentGlobPatternFileTakesPrecedenceOverDefaultGlobPattern()
+    public function presentGlobPatternFileTakesPrecedenceOverDefaultGlobPattern(): void
     {
         $artifactFilenames = [
             'a.txt',
@@ -1720,7 +1722,7 @@ CONTENT;
      * @group glob
      * @ticket 35 https://github.com/raphaelstolt/lean-package-validator/issues/35
      */
-    public function presentLpvPatternFileIsUsed()
+    public function presentLpvPatternFileIsUsed(): void
     {
         $artifactFilenames = [
             'a.txt',
@@ -1775,7 +1777,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function providedNonExistentGlobPatternFileFailsValidation()
+    public function providedNonExistentGlobPatternFileFailsValidation(): void
     {
         $gitattributesContent = <<<CONTENT
 .gitattributes export-ignore
@@ -1810,7 +1812,7 @@ CONTENT;
      * @group glob
      * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
      */
-    public function providedInvalidGlobPatternFileFailsValidation()
+    public function providedInvalidGlobPatternFileFailsValidation(): void
     {
         $gitattributesContent = <<<CONTENT
 .gitattributes export-ignore
@@ -1851,7 +1853,7 @@ CONTENT;
      * @test
      * @ticket 4 (https://github.com/raphaelstolt/lean-package-validator/issues/4)
      */
-    public function precedingSlashesInExportIgnorePatternsRaiseAWarning()
+    public function precedingSlashesInExportIgnorePatternsRaiseAWarning(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1899,7 +1901,7 @@ CONTENT;
      * @test
      * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
      */
-    public function missingTextAutoConfigurationRaisesAWarning()
+    public function missingTextAutoConfigurationRaisesAWarning(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -1944,7 +1946,7 @@ CONTENT;
      * @test
      * @ticket 17 (https://github.com/raphaelstolt/lean-package-validator/issues/17)
      */
-    public function gitignoredFilesAreExcludedFromValidation()
+    public function gitignoredFilesAreExcludedFromValidation(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -2000,7 +2002,7 @@ CONTENT;
     /**
      * @return array
      */
-    public static function optionProvider()
+    public static function optionProvider(): array
     {
         return [
             ['--overwrite'],
@@ -2011,7 +2013,7 @@ CONTENT;
     /**
      * @return \Symfony\Component\Console\Application
      */
-    protected function getApplicationWithMockedAnalyser(MockInterface $mockedAnalyser)
+    protected function getApplicationWithMockedAnalyser(MockInterface $mockedAnalyser): Application
     {
         $application = new Application();
 
@@ -2032,7 +2034,7 @@ CONTENT;
     /**
      * @return \Symfony\Component\Console\Application
      */
-    protected function getApplicationWithMockedArchiveValidator(MockInterface $mockedArchiveValidator)
+    protected function getApplicationWithMockedArchiveValidator(MockInterface $mockedArchiveValidator): Application
     {
         $application = new Application();
 
@@ -2049,7 +2051,7 @@ CONTENT;
     /**
      * @return \Symfony\Component\Console\Application
      */
-    protected function getApplication()
+    protected function getApplication(): Application
     {
         $application = new Application();
         $archive = new Archive(

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
@@ -10,7 +12,7 @@ class ApplicationTest extends PHPUnit
      * @test
      * @group integration
      */
-    public function executableIsAvailable()
+    public function executableIsAvailable(): void
     {
         $binaryCommand = 'php bin/lean-package-validator';
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stolt\LeanPackage\Tests\Archive;
 
 use Mockery;
@@ -33,7 +35,7 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function getFoundUnexpectedArchiveArtifactsOnNonValidatedArchiveThrowsExpectedException()
+    public function getFoundUnexpectedArchiveArtifactsOnNonValidatedArchiveThrowsExpectedException(): void
     {
         $archive = new Archive($this->temporaryDirectory, 'archive-tmp');
 
@@ -48,7 +50,7 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function ranValidateAllowsAccessorCallOnUnexpectedArchiveArtifacts()
+    public function ranValidateAllowsAccessorCallOnUnexpectedArchiveArtifacts(): void
     {
         $unexpectedArchiveArtifacts = ['mock-foo'];
 
@@ -73,7 +75,7 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function findingUnexpectedArchiveArtifactsFailsValidation()
+    public function findingUnexpectedArchiveArtifactsFailsValidation(): void
     {
         $unexpectedArchiveArtifacts = ['mock-foo'];
 
