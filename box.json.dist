@@ -1,5 +1,7 @@
 {
-    "directories": ["src"],
+    "$schema": "res/schema.json",
+    "directories": ["src", "vendor/symfony/console/Resources"],
+    "force-autodiscovery": true,
     "finder": [
         {
             "name": "*.php",
