@@ -283,7 +283,7 @@ class ValidateCommand extends Command
             }
         }
 
-        $verboseOutput = '+ Checking .gitattribute file existence in ' . WORKING_DIRECTORY . '.';
+        $verboseOutput = '+ Checking .gitattribute file existence in ' . $directory . '.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if (!$this->analyser->hasGitattributesFile()) {
