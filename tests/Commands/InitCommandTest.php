@@ -171,7 +171,7 @@ CONTENT;
         );
 
         $expectedDisplay = <<<CONTENT
-+ Checking .lpv file existence in /tmp/lpv.
++ Checking .lpv file existence in {$this->temporaryDirectory}.
 Warning: A default .lpv file already exists.
 
 CONTENT;
