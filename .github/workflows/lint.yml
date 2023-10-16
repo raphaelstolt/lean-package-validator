@@ -28,8 +28,5 @@ jobs:
             -   name: Check coding styles
                 run: composer run-script lpv:cs-lint
 
-#            -   name: Check leanness of package
-#                uses: raphaelstolt/lean-package-validator-action@v0.1.0
-#                with:
-#                    php-version: "${{ matrix.php }}"
-#                    lpv-version: "3.0.0"
+            -   name: Check leanness of package
+                run: composer run-script lpv:validate-gitattributes
