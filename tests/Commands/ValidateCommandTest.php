@@ -1288,6 +1288,62 @@ CONTENT;
 
     /**
      * @test
+     * @ticket 41 (https://github.com/raphaelstolt/lean-package-validator/issues/41)
+     */
+    public function staleExportIgnoresAreConsideredAsInvalid(): void
+    {
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.editorconfig export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
+CHANGELOG.md export-ignore
+LICENSE.md export-ignore
+tests/ export-ignore
+stale-non-existent-dir/ export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $artifactFilenames = ['.editorconfig', '.gitattributes', 'CHANGELOG.md', 'LICENSE.md'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['.github', 'tests']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--diff' => true,
+            '--report-stale-export-ignores' => true
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+--- Original
++++ Expected
+@@ -6,4 +6,3 @@
+ CHANGELOG.md export-ignore
+ LICENSE.md export-ignore
+ tests/ export-ignore
+-stale-non-existent-dir/ export-ignore
+
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
+
+    /**
+     * @test
      * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
      * @dataProvider optionProvider
      * @param string $option

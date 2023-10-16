@@ -97,7 +97,7 @@ The `--validate-git-archive` option will validate that no common repository arti
 lean-package-validator validate [<directory>] --validate-git-archive
 ```
 
-The `--diff` option will show a visual diff betweeen the actual and expected .gitattributes content.
+The `--diff` option will show a visual diff between the actual and expected .gitattributes content.
 
 ``` bash
 lean-package-validator validate --diff
@@ -119,6 +119,8 @@ Would expect the following .gitattributes file content:
  bin/release-version export-ignore
 ```
 
+The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing non-existent
+repository artifacts. In combination with the `--diff` option these will be shown in the output.
 
 #### Additional commands
 

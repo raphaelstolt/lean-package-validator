@@ -62,6 +62,15 @@ class Analyser
     private $strictOrderComparison = false;
 
     /**
+     * Whether to do a strict comparsion for stale export-ignores
+     * in the .gitattributes files against the expected ones
+     * or not.
+     *
+     * @var boolean
+     */
+    private $staleExportIgnoresCamparison = false;
+
+    /**
      * Whether to do a strict alignment comparsion of the export-ignores
      * in the .gitattributes files against the expected ones
      * or not.
@@ -306,6 +315,28 @@ class Analyser
     public function isStrictOrderCamparisonEnabled()
     {
         return $this->strictOrderComparison === true;
+    }
+
+    /**
+     * Enable stale export ignores camparison.
+     *
+     * @return \Stolt\LeanPackage\Analyser
+     */
+    public function enableStaleExportIgnoresCamparison()
+    {
+        $this->staleExportIgnoresCamparison = true;
+
+        return $this;
+    }
+
+    /**
+     * Guard for stale export ignores camparison.
+     *
+     * @return boolean
+     */
+    public function isStaleExportIgnoresCamparisonEnabled()
+    {
+        return $this->staleExportIgnoresCamparison === true;
     }
 
     /**
@@ -744,9 +775,10 @@ class Analyser
      * Get the present export-ignore entries of
      * the .gitattributes file.
      *
+     * @param bool $applyGlob
      * @return array
      */
-    public function getPresentExportIgnores(): array
+    public function getPresentExportIgnores(bool $applyGlob = true): array
     {
         if ($this->hasGitattributesFile() === false) {
             return [];
@@ -760,15 +792,27 @@ class Analyser
         );
 
         $exportIgnores = [];
-        \array_filter($gitattributesLines, function ($line) use (&$exportIgnores) {
+        \array_filter($gitattributesLines, function ($line) use (&$exportIgnores, &$applyGlob) {
             if (\strstr($line, 'export-ignore', true)) {
                 list($line, $void) = \explode('export-ignore', $line);
-                if ($this->patternHasMatch(\trim($line))) {
-                    if (\substr($line, 0, 1) === '/') {
-                        $line = \substr($line, 1);
-                    }
+                if ($applyGlob) {
+                    if ($this->patternHasMatch(\trim($line))) {
+                        if (\substr($line, 0, 1) === '/') {
+                            $line = \substr($line, 1);
+                        }
 
-                    return $exportIgnores[] = \trim($line);
+                        return $exportIgnores[] = \trim($line);
+                    }
+                } else {
+                    if ($this->patternHasMatch(\trim($line))) {
+                        if (\substr($line, 0, 1) === '/') {
+                            $line = \substr($line, 1);
+                        }
+
+                        return $exportIgnores[] = \trim($line);
+                    } else {
+                        return $exportIgnores[] = \trim($line);
+                    }
                 }
             }
         });
@@ -800,11 +844,10 @@ class Analyser
     }
 
     /**
-     * Is existing .gitattributes file has all export-ignore(s).
+     * Is existing .gitattributes file having all export-ignore(s).
      *
-     * @return boolean
      */
-    public function hasCompleteExportIgnores()
+    public function hasCompleteExportIgnores(): bool
     {
         $expectedExportIgnores = $this->collectExpectedExportIgnores();
 
@@ -814,10 +857,24 @@ class Analyser
 
         $actualExportIgnores = $this->getPresentExportIgnores();
 
+        if ($this->isStaleExportIgnoresCamparisonEnabled()) {
+            $staleExportIgnores = [];
+            $unfilteredExportIgnores = $this->getPresentExportIgnores(false);
+            foreach ($unfilteredExportIgnores as $unfilteredExportIgnore) {
+                if (false === \file_exists($unfilteredExportIgnore)) {
+                    $staleExportIgnores[] = $unfilteredExportIgnore;
+                }
+            }
+        }
+
         if ($this->isStrictAlignmentCamparisonEnabled()) {
             $expectedExportIgnores = $this->getAlignedExportIgnoreArtifacts(
                 $expectedExportIgnores
             );
+        }
+
+        if ($this->isStaleExportIgnoresCamparisonEnabled()) {
+            $actualExportIgnores = \array_merge($actualExportIgnores, $staleExportIgnores);
         }
 
         return \array_values($expectedExportIgnores) === \array_values($actualExportIgnores);

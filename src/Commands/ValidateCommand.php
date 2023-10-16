@@ -88,6 +88,7 @@ class ValidateCommand extends Command
         $validateArchiveDescription = 'Validate Git archive against current HEAD';
         $omitHeaderDescription = 'Omit adding a header to created or modified .gitattributes file';
         $diffDescription = 'Show difference between expected and actual .gitattributes content';
+        $reportStaleExportIgnoresDescription = 'Filter stale export-ignores referencing non existent artifacts. Requires --diff option to be set';
 
         $exampleGlobPattern = '{.*,*.md}';
         $globPatternDescription = 'Use this glob pattern e.g. <comment>'
@@ -158,6 +159,12 @@ class ValidateCommand extends Command
             InputOption::VALUE_NONE,
             $diffDescription
         );
+        $this->addOption(
+            'report-stale-export-ignores',
+            null,
+            InputOption::VALUE_NONE,
+            $reportStaleExportIgnoresDescription
+        );
     }
 
     /**
@@ -197,6 +204,7 @@ class ValidateCommand extends Command
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
         $omitHeader = $input->getOption('omit-header');
         $showDifference = $input->getOption('diff');
+        $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
 
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
 
@@ -205,6 +213,13 @@ class ValidateCommand extends Command
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
             $this->analyser->enableStrictOrderCamparison();
+        }
+
+        if ($reportStaleExportIgnores) {
+            $verboseOutput = '+ Enforcing stale export ignores comparison.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+            $this->analyser->enableStaleExportIgnoresCamparison();
         }
 
         $enforceExportIgnoresAlignment = $input->getOption('enforce-alignment');
@@ -427,6 +442,7 @@ class ValidateCommand extends Command
                     $differ = new Differ($builder);
                     $expectedGitattributesFileContent = $differ->diff($actual, $expectedGitattributesFileContent);
                 }
+
                 $outputContent .= $this->getExpectedGitattributesFileContentOutput(
                     $expectedGitattributesFileContent
                 );
