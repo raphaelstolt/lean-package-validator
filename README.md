@@ -33,7 +33,7 @@ As of release `v1.9.0` it's also possible to install and use the LeanPackageVali
 Therefor download a released version i.e. v1.9.0 and move it to `/usr/local/bin` as shown next.
 
 ``` bash
-wget https://github.com/raphaelstolt/lean-package-validator/releases/download/v1.9.0/lean-package-validator.phar
+wget --quiet https://github.com/raphaelstolt/lean-package-validator/releases/download/v1.9.0/lean-package-validator.phar
 mv lean-package-validator.phar /usr/local/bin/lean-package-validator
 ```
 
