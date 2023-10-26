@@ -1,12 +1,10 @@
 * text=auto eol=lf
 
-.ctl.cache export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
 .github/ export-ignore
 .gitignore export-ignore
 .gitmessage export-ignore
-.gub export-ignore
 .php-cs-fixer.php export-ignore
 .phpunit.result.cache export-ignore
 bin/application-version export-ignore
