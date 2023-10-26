@@ -141,7 +141,7 @@ CONTENT;
 
     /**
      * @test
-     * @ticket 39 (https://github.com/raphaelstolt/lean-package-validator/issues/19)
+     * @ticket 39 (https://github.com/raphaelstolt/lean-package-validator/issues/39)
      */
     public function showsDifferenceBetweenActualAndExpectedGitattributesContent(): void
     {
@@ -1780,7 +1780,7 @@ CONTENT;
     /**
      * @test
      * @group glob
-     * @ticket 35 https://github.com/raphaelstolt/lean-package-validator/issues/35
+     * @ticket 35 (https://github.com/raphaelstolt/lean-package-validator/issues/35)
      */
     public function presentLpvPatternFileIsUsed(): void
     {
