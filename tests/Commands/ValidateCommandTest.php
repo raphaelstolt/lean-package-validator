@@ -585,7 +585,7 @@ The archive file of the current HEAD is considered lean.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -668,7 +668,7 @@ specs/ export-ignore
 CONTENT;
 
         $this->assertEquals($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
         );
@@ -710,7 +710,7 @@ specs/ export-ignore
 CONTENT;
 
         $this->assertEquals($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
         );
@@ -764,7 +764,7 @@ specs/         export-ignore
 CONTENT;
 
         $this->assertEquals($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertStringEqualsFile(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes',
             $expectedGitattributesContent
@@ -812,7 +812,7 @@ The present .gitattributes file is considered valid.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -994,7 +994,7 @@ specs/ export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
         );
@@ -1036,7 +1036,7 @@ The archive file of the current HEAD is considered lean.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -1283,7 +1283,7 @@ tests/           export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertStringEqualsFile(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes',
             $expectedGitattributesContent
@@ -1393,7 +1393,7 @@ version-increase-command export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
         );
@@ -1497,7 +1497,7 @@ The present .gitattributes file is considered valid.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() === 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -1714,7 +1714,7 @@ The present .gitattributes file is considered valid.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() === 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -1774,7 +1774,7 @@ The present .gitattributes file is considered valid.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() === 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -1829,7 +1829,7 @@ The present .gitattributes file is considered valid.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() === 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -1954,7 +1954,7 @@ Warning: At least one export-ignore pattern has a leading '/', which is consider
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -1999,7 +1999,7 @@ Warning: Missing a text auto configuration. Consider adding one.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
@@ -2056,7 +2056,7 @@ The present .gitattributes file is considered valid.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**

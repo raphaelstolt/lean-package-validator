@@ -89,7 +89,7 @@ RMT
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists($expectedDefaultLpvFile);
         $this->assertEquals($expectedDefaultLpvFileContent, \file_get_contents($expectedDefaultLpvFile));
     }
@@ -203,7 +203,7 @@ Created default '{$expectedDefaultLpvFile}' file.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() == 0);
+        $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists($expectedDefaultLpvFile);
     }
 
