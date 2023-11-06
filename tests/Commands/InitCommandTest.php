@@ -121,7 +121,7 @@ Warning: The creation of the default .lpv file failed.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() !== 0);
 
         $mock->disable();
     }
@@ -131,10 +131,10 @@ CONTENT;
      */
     public function existingDefaultLpvFileIsNotOverwritten(): void
     {
-        $expectedDefaultLpvFile = $this->temporaryDirectory
+        $defaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.lpv';
-        \touch($expectedDefaultLpvFile);
+        \touch($defaultLpvFile);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -149,7 +149,7 @@ Warning: A default .lpv file already exists.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() !== 0);
     }
 
     /**
@@ -157,10 +157,17 @@ CONTENT;
      */
     public function verboseOutputIsAvailableWhenDesired(): void
     {
-        $expectedDefaultLpvFile = $this->temporaryDirectory
+        $defaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.lpv';
-        \touch($expectedDefaultLpvFile);
+
+        $expectedDisplay = <<<CONTENT
++ Checking .lpv file existence in {$this->temporaryDirectory}.
+Warning: A default .lpv file already exists.
+
+CONTENT;
+
+        \touch($defaultLpvFile);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -170,13 +177,8 @@ CONTENT;
             ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]
         );
 
-        $expectedDisplay = <<<CONTENT
-+ Checking .lpv file existence in {$this->temporaryDirectory}.
-Warning: A default .lpv file already exists.
-
-CONTENT;
-
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() !== 0);
     }
 
     /**

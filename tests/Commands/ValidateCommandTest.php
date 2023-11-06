@@ -187,17 +187,17 @@ CONTENT;
      * @test
      * @ticket 16 (https://github.com/raphaelstolt/lean-package-validator/issues/16)
      */
-    public function gitattributesFileWithNonExportIgnoreContentShowsExpectedContent(): void
+    public function gitattributesFileWithNoExportIgnoresContentShowsExpectedContent(): void
     {
-        $mock = Mockery::mock(
+        $analyserMock = Mockery::mock(
             'Stolt\LeanPackage\Analyser[getGlobalGitignorePatterns]'
         );
-        $mock->shouldReceive('getGlobalGitignorePatterns')
+        $analyserMock->shouldReceive('getGlobalGitignorePatterns')
             ->once()
             ->withAnyArgs()
             ->andReturn([]);
 
-        $application = $this->getApplicationWithMockedAnalyser($mock);
+        $application = $this->getApplicationWithMockedAnalyser($analyserMock);
 
         $artifactFilenames = [
             '.gitattributes',
@@ -234,6 +234,7 @@ CONTENT;
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
             '--enforce-strict-order' => true,
+            '--enforce-alignment' => true,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -249,14 +250,14 @@ Would expect the following .gitattributes file content:
 
 /tests/bugs/*.php diff=php eol=lf
 
-.gitattributes export-ignore
-.gitignore export-ignore
+.gitattributes   export-ignore
+.gitignore       export-ignore
 .scrutinizer.yml export-ignore
-.travis.yml export-ignore
-CHANGELOG.md export-ignore
-phpunit.xml export-ignore
-README.md export-ignore
-tests/ export-ignore
+.travis.yml      export-ignore
+CHANGELOG.md     export-ignore
+phpunit.xml      export-ignore
+README.md        export-ignore
+tests/           export-ignore
 
 CONTENT;
 
@@ -2071,7 +2072,8 @@ CONTENT;
     }
 
     /**
-     * @return \Symfony\Component\Console\Application
+     * @param MockInterface $mockedAnalyser
+     * @return Application
      */
     protected function getApplicationWithMockedAnalyser(MockInterface $mockedAnalyser): Application
     {
@@ -2092,7 +2094,8 @@ CONTENT;
     }
 
     /**
-     * @return \Symfony\Component\Console\Application
+     * @param MockInterface $mockedArchiveValidator
+     * @return Application
      */
     protected function getApplicationWithMockedArchiveValidator(MockInterface $mockedArchiveValidator): Application
     {
