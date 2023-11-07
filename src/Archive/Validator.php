@@ -10,12 +10,12 @@ class Validator
     /**
      * @var \Stolt\LeanPackage\Archive
      */
-    private $archive;
+    private Archive $archive;
 
     /**
      * @var boolean
      */
-    private $ranValidate = false;
+    private bool $ranValidate = false;
 
     /**
      * Initialise.
@@ -32,7 +32,7 @@ class Validator
      *
      * @return \Stolt\LeanPackage\Archive\Validator
      */
-    public function shouldHaveLicenseFile()
+    public function shouldHaveLicenseFile(): Validator
     {
         $this->archive->shouldHaveLicenseFile();
 
@@ -44,7 +44,7 @@ class Validator
      *
      * @return \Stolt\LeanPackage\Archive
      */
-    public function getArchive()
+    public function getArchive(): Archive
     {
         return $this->archive;
     }
@@ -52,11 +52,13 @@ class Validator
     /**
      * Validate archive against unexpected artifacts.
      *
-     * @param  array $unexpectedArtifacts Artifacts not expected in archive.
+     * @param array $unexpectedArtifacts Artifacts not expected in archive.
      *
+     * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
+     * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
      * @return boolean
      */
-    public function validate(array $unexpectedArtifacts)
+    public function validate(array $unexpectedArtifacts): bool
     {
         $foundUnexpectedArtifacts = $this->archive->getUnexpectedArchiveArtifacts(
             $unexpectedArtifacts
@@ -77,7 +79,7 @@ class Validator
      *
      * @return array
      */
-    public function getFoundUnexpectedArchiveArtifacts()
+    public function getFoundUnexpectedArchiveArtifacts(): array
     {
         if ($this->ranValidate === false) {
             $message = 'Git archive ' . $this->archive->getFilename()

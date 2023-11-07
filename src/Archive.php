@@ -13,29 +13,29 @@ class Archive
     /**
      * @var string
      */
-    private $directory;
+    private string $directory;
 
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var string
      */
-    private $filename;
+    private string $filename;
 
     /**
      * @var array
      */
-    private $foundUnexpectedArtifacts = [];
+    private array $foundUnexpectedArtifacts = [];
 
     /**
      * Whether the archive should have a license file or not.
      *
      * @var boolean
      */
-    private $shouldHaveLicenseFile = false;
+    private bool $shouldHaveLicenseFile = false;
 
     /**
      * Initialize.
@@ -58,9 +58,9 @@ class Archive
     /**
      * Set if license file presence should be validated.
      *
-     * @return \Stolt\LeanPackage\Archive
+     * @return Archive
      */
-    public function shouldHaveLicenseFile()
+    public function shouldHaveLicenseFile(): Archive
     {
         $this->shouldHaveLicenseFile = true;
 
@@ -72,7 +72,7 @@ class Archive
      *
      * @return boolean
      */
-    public function validateLicenseFilePresence()
+    public function validateLicenseFilePresence(): bool
     {
         return $this->shouldHaveLicenseFile === true;
     }
@@ -82,7 +82,7 @@ class Archive
      *
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->filename;
     }
@@ -92,7 +92,7 @@ class Archive
      *
      * @return array
      */
-    public function getFoundUnexpectedArtifacts()
+    public function getFoundUnexpectedArtifacts(): array
     {
         return $this->foundUnexpectedArtifacts;
     }
@@ -104,7 +104,7 @@ class Archive
      *
      * @return boolean
      */
-    public function hasHead()
+    public function hasHead(): bool
     {
         if ($this->isGitCommandAvailable()) {
             \exec('git show-ref --head 2>&1', $output, $returnValue);
@@ -121,7 +121,7 @@ class Archive
      *
      * @return boolean
      */
-    public function isGitCommandAvailable($command = 'git')
+    public function isGitCommandAvailable($command = 'git'): bool
     {
         \exec('where ' . $command . ' 2>&1', $output, $returnValue);
         if ((new OsHelper())->isWindows() === false) {
@@ -138,7 +138,7 @@ class Archive
      *
      * @return boolean
      */
-    public function createArchive()
+    public function createArchive(): bool
     {
         if ($this->hasHead()) {
             $command = 'git archive -o ' . $this->getFilename() . ' HEAD 2>&1';
@@ -157,7 +157,7 @@ class Archive
      * @throws \Stolt\LeanPackage\Exceptions\NoLicenseFilePresent
      * @return array
      */
-    public function compareArchive(array $unexpectedArtifacts)
+    public function compareArchive(array $unexpectedArtifacts): array
     {
         $foundUnexpectedArtifacts = [];
         $archive = new PharData($this->getFilename());
@@ -200,7 +200,7 @@ class Archive
      *
      * @return boolean
      */
-    public function removeArchive()
+    public function removeArchive(): bool
     {
         if (\file_exists($this->getFilename())) {
             return \unlink($this->getFilename());
@@ -220,7 +220,7 @@ class Archive
      *
      * @return array
      */
-    public function getUnexpectedArchiveArtifacts(array $unexpectedArtifacts)
+    public function getUnexpectedArchiveArtifacts(array $unexpectedArtifacts): array
     {
         $this->createArchive();
         $this->foundUnexpectedArtifacts = $this->compareArchive($unexpectedArtifacts);

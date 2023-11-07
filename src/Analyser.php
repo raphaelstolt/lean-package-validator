@@ -15,42 +15,42 @@ class Analyser
      *
      * @var string
      */
-    private $directory;
+    private string $directory;
 
     /**
      * The .gitattributes file to analyse
      *
      * @var string
      */
-    private $gitattributesFile;
+    private string $gitattributesFile;
 
     /**
      * Files to ignore in glob matches.
      *
      * @var array
      */
-    private $ignoredGlobMatches = ['.', '..', '.git', '.DS_Store'];
+    private array $ignoredGlobMatches = ['.', '..', '.git', '.DS_Store'];
 
     /**
      * The default glob patterns.
      *
      * @var array
      */
-    private $defaultGlobPatterns = [];
+    private array $defaultGlobPatterns = [];
 
     /**
      * The .gitattributes glob pattern
      *
      * @var string
      */
-    private $globPattern;
+    private string $globPattern;
 
     /**
      * The preferred end of line sequence
      *
      * @var string
      */
-    private $preferredEol = "\n";
+    private string $preferredEol = "\n";
 
     /**
      * Whether to do a strict comparsion of the export-ignores
@@ -59,7 +59,7 @@ class Analyser
      *
      * @var boolean
      */
-    private $strictOrderComparison = false;
+    private bool $strictOrderComparison = false;
 
     /**
      * Whether to do a strict comparsion for stale export-ignores
@@ -68,7 +68,7 @@ class Analyser
      *
      * @var boolean
      */
-    private $staleExportIgnoresCamparison = false;
+    private bool $staleExportIgnoresCamparison = false;
 
     /**
      * Whether to do a strict alignment comparsion of the export-ignores
@@ -77,7 +77,7 @@ class Analyser
      *
      * @var boolean
      */
-    private $strictAlignmentComparison = false;
+    private bool $strictAlignmentComparison = false;
 
     /**
      * Whether at least one export-ignore pattern has
@@ -85,14 +85,14 @@ class Analyser
      *
      * @var boolean
      */
-    private $hasPrecedingSlashesInExportIgnorePattern = false;
+    private bool $hasPrecedingSlashesInExportIgnorePattern = false;
 
     /**
      * Whether a text auto configuration is present or not.
      *
      * @var boolean
      */
-    private $hasTextAutoConfiguration = false;
+    private bool $hasTextAutoConfiguration = false;
 
     /**
      * Whether to exclude a license file from the export-ignores
@@ -100,7 +100,7 @@ class Analyser
      *
      * @var boolean
      */
-    private $keepLicense = false;
+    private bool $keepLicense = false;
 
     /**
      * Whether to align the export-ignores on create or overwrite
@@ -108,7 +108,7 @@ class Analyser
      *
      * @var boolean
      */
-    private $alignExportIgnores = false;
+    private bool $alignExportIgnores = false;
 
     /**
      * Initialize.
@@ -147,7 +147,7 @@ class Analyser
      *
      * @return array
      */
-    public function getDefaultGlobPatterns()
+    public function getDefaultGlobPatterns(): array
     {
         return $this->defaultGlobPatterns;
     }
@@ -157,7 +157,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function hasPrecedingSlashesInExportIgnorePattern()
+    public function hasPrecedingSlashesInExportIgnorePattern(): bool
     {
         return $this->hasPrecedingSlashesInExportIgnorePattern;
     }
@@ -167,7 +167,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function hasTextAutoConfiguration()
+    public function hasTextAutoConfiguration(): bool
     {
         return $this->hasTextAutoConfiguration;
     }
@@ -176,11 +176,11 @@ class Analyser
      * Set the glob pattern file.
      *
      * @param  string $file
-     * @throws \Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile
      * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile
-     * @return \Stolt\LeanPackage\Analyser
+     * @throws \Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile
+     * @return Analyser
      */
-    public function setGlobPatternFromFile($file)
+    public function setGlobPatternFromFile($file): Analyser
     {
         if (!\is_file($file)) {
             $message = "Glob pattern file {$file} doesn't exist.";
@@ -219,7 +219,7 @@ class Analyser
      * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPattern
      * @return void
      */
-    private function guardGlobPattern()
+    private function guardGlobPattern(): void
     {
         $invalidGlobPattern = false;
 
@@ -252,10 +252,10 @@ class Analyser
      *                        export-ignores files.
      *
      * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPattern
+     * @return Analyser
      *
-     * @return \Stolt\LeanPackage\Analyser
      */
-    public function setGlobPattern($pattern)
+    public function setGlobPattern($pattern): Analyser
     {
         $this->globPattern = \trim($pattern);
         $this->guardGlobPattern();
@@ -268,10 +268,10 @@ class Analyser
      *
      * @param  string $directory The directory to analyse.
      * @throws \RuntimeException
+     * @return Analyser
      *
-     * @return \Stolt\LeanPackage\Analyser
      */
-    public function setDirectory($directory = __DIR__)
+    public function setDirectory($directory = __DIR__): Analyser
     {
         if (!\is_dir($directory)) {
             $message = "Directory {$directory} doesn't exist.";
@@ -290,7 +290,7 @@ class Analyser
      *
      * @return string
      */
-    public function getDirectory()
+    public function getDirectory(): string
     {
         return $this->directory;
     }
@@ -298,9 +298,9 @@ class Analyser
     /**
      * Enable strict order camparison.
      *
-     * @return \Stolt\LeanPackage\Analyser
+     * @return Analyser
      */
-    public function enableStrictOrderCamparison()
+    public function enableStrictOrderCamparison(): Analyser
     {
         $this->strictOrderComparison = true;
 
@@ -312,7 +312,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function isStrictOrderCamparisonEnabled()
+    public function isStrictOrderCamparisonEnabled(): bool
     {
         return $this->strictOrderComparison === true;
     }
@@ -320,9 +320,9 @@ class Analyser
     /**
      * Enable stale export ignores camparison.
      *
-     * @return \Stolt\LeanPackage\Analyser
+     * @return Analyser
      */
-    public function enableStaleExportIgnoresCamparison()
+    public function enableStaleExportIgnoresCamparison(): Analyser
     {
         $this->staleExportIgnoresCamparison = true;
 
@@ -334,7 +334,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function isStaleExportIgnoresCamparisonEnabled()
+    public function isStaleExportIgnoresCamparisonEnabled(): bool
     {
         return $this->staleExportIgnoresCamparison === true;
     }
@@ -342,9 +342,9 @@ class Analyser
     /**
      * Enable strict alignment camparison.
      *
-     * @return \Stolt\LeanPackage\Analyser
+     * @return Analyser
      */
-    public function enableStrictAlignmentCamparison()
+    public function enableStrictAlignmentCamparison(): Analyser
     {
         $this->strictAlignmentComparison = true;
 
@@ -356,7 +356,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function isStrictAlignmentCamparisonEnabled()
+    public function isStrictAlignmentCamparisonEnabled(): bool
     {
         return $this->strictAlignmentComparison === true;
     }
@@ -364,9 +364,9 @@ class Analyser
     /**
      * Keep license file in releases.
      *
-     * @return \Stolt\LeanPackage\Analyser
+     * @return Analyser
      */
-    public function keepLicense()
+    public function keepLicense(): Analyser
     {
         $this->keepLicense = true;
 
@@ -378,7 +378,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function isKeepLicenseEnabled()
+    public function isKeepLicenseEnabled(): bool
     {
         return $this->keepLicense === true;
     }
@@ -386,9 +386,9 @@ class Analyser
     /**
      * Align export-ignores.
      *
-     * @return \Stolt\LeanPackage\Analyser
+     * @return Analyser
      */
-    public function alignExportIgnores()
+    public function alignExportIgnores(): Analyser
     {
         $this->alignExportIgnores = true;
 
@@ -400,7 +400,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function isAlignExportIgnoresEnabled()
+    public function isAlignExportIgnoresEnabled(): bool
     {
         return $this->alignExportIgnores === true;
     }
@@ -410,7 +410,7 @@ class Analyser
      *
      * @return string
      */
-    public function getGitattributesFilePath()
+    public function getGitattributesFilePath(): string
     {
         return $this->gitattributesFile;
     }
@@ -420,7 +420,7 @@ class Analyser
      *
      * @return boolean
      */
-    public function hasGitattributesFile()
+    public function hasGitattributesFile(): bool
     {
         return \file_exists($this->gitattributesFile) &&
             \is_readable($this->gitattributesFile);
@@ -555,7 +555,7 @@ class Analyser
      *
      * @return array
      */
-    public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores)
+    public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores): array
     {
         $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
 
@@ -608,7 +608,7 @@ class Analyser
      *
      * @return array
      */
-    public function collectExpectedExportIgnores()
+    public function collectExpectedExportIgnores(): array
     {
         $expectedExportIgnores = [];
 
@@ -672,7 +672,7 @@ class Analyser
      *
      * @return string
      */
-    private function detectEol($content)
+    private function detectEol($content): string
     {
         $maxCount = 0;
         $preferredEol = $this->preferredEol;
@@ -697,7 +697,7 @@ class Analyser
      * @param  string  $globPattern
      * @return boolean
      */
-    private function patternHasMatch($globPattern)
+    private function patternHasMatch($globPattern): bool
     {
         if (\substr(\trim($globPattern), 0, 1) === '/') {
             $globPattern = \trim(\substr($globPattern, 1));
@@ -828,7 +828,7 @@ class Analyser
      * @param  array  $artifacts The export-ignore artifacts to align.
      * @return array
      */
-    private function getAlignedExportIgnoreArtifacts(array $artifacts)
+    private function getAlignedExportIgnoreArtifacts(array $artifacts): array
     {
         $longestArtifact = \max(\array_map('strlen', $artifacts));
 
