@@ -29,10 +29,13 @@ use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
+use Stolt\LeanPackage\Presets\Finder;
+use Stolt\LeanPackage\Presets\PhpPreset;
 use Symfony\Component\Console\Application;
 
+$finder = new Finder(new PhpPreset());
 $archive = new Archive(WORKING_DIRECTORY);
-$analyser = new Analyser;
+$analyser = new Analyser($finder);
 
 $initCommand = new InitCommand(
     $analyser

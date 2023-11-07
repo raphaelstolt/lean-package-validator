@@ -9,6 +9,8 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Presets\Finder;
+use Stolt\LeanPackage\Presets\PhpPreset;
 
 class AnalyserTest extends TestCase
 {
@@ -37,7 +39,7 @@ class AnalyserTest extends TestCase
      */
     public function hasCompleteExportIgnoresFailsOnEmptyExportIgnores(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertFalse(
             $analyser->hasCompleteExportIgnores()
         );
@@ -45,12 +47,14 @@ class AnalyserTest extends TestCase
 
     /**
      * @test
+     * @throws InvalidGlobPattern
      */
     public function hasCompleteExportIgnoresFailsOnNonExistingGitattributesFile(): void
     {
-        $mock = Mockery::mock(
-            'Stolt\LeanPackage\Analyser[hasGitattributesFile]'
-        );
+        $mock = Mockery::mock(Analyser::class)->makePartial();
+
+        $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
+        $mock->setGlobPattern($globPattern);
 
         $mock->shouldReceive('hasGitattributesFile')
             ->once()
@@ -93,7 +97,7 @@ CONTENT;
             ['specs']
         );
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $this->assertTrue(
             $analyser->hasCompleteExportIgnores()
@@ -110,7 +114,7 @@ CONTENT;
         $this->expectExceptionMessage(
             "Directory {$nonExistingDirectory} doesn't exist."
         );
-        $analyser = (new Analyser())->setDirectory($nonExistingDirectory);
+        (new Analyser(new Finder(new PhpPreset())))->setDirectory($nonExistingDirectory);
     }
 
     /**
@@ -118,7 +122,7 @@ CONTENT;
      */
     public function gitattributesFileHasAnAccessor(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $expectedGitattributesFilePath = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
@@ -134,7 +138,7 @@ CONTENT;
      */
     public function directoryHasAnAccessor(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
@@ -163,7 +167,7 @@ README.md export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent(
             $artifactsWithoutExportIgnore
@@ -200,7 +204,7 @@ Vagrantfile export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
@@ -215,7 +219,7 @@ CONTENT;
      */
     public function nonExportIgnoresContentIsEmptyForNonexistentGitattributesFile(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $this->assertEquals('', $analyser->getPresentNonExportIgnoresContent());
     }
@@ -242,7 +246,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualGitattributesContent = $analyser->getPresentNonExportIgnoresContent();
 
@@ -313,7 +317,7 @@ README.md export-ignore
 specs/ export-ignore
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent(
             $artifactsWithoutExportIgnore
@@ -334,7 +338,7 @@ CONTENT;
             'README.md',
             '.travis.yml'
         ];
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent(
             $artifactFilenames
         );
@@ -368,7 +372,7 @@ CONTENT;
             $artifactFilenames
         );
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
@@ -398,7 +402,7 @@ CONTENT;
             $artifactFilenames
         );
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $this->assertFalse(
             $analyser->hasCompleteExportIgnores()
@@ -416,7 +420,7 @@ CONTENT;
 
         \touch($temporaryGitattributesFile);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $this->assertTrue(
             $analyser->hasGitattributesFile()
@@ -434,7 +438,7 @@ CONTENT;
 
         \touch($temporaryGitattributesFile);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $this->assertFalse(
             $analyser->hasGitattributesFile()
@@ -470,7 +474,7 @@ CONTENT;
             'README.md',
         ];
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualExportIgnores = $analyser->collectExpectedExportIgnores();
 
@@ -485,7 +489,7 @@ CONTENT;
      */
     public function returnsAnEmptyArrayOnNonExistingGitattributesFile(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualExportIgnores = $analyser->getPresentExportIgnores();
 
@@ -532,7 +536,7 @@ CONTENT;
             'specs/'
         ];
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualExportIgnores = $analyser->getPresentExportIgnores();
 
@@ -577,7 +581,7 @@ CONTENT;
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualNonExportIgnoresContentContent = $analyser->getPresentNonExportIgnoresContent();
 
@@ -640,7 +644,7 @@ tests/ export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
@@ -682,7 +686,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
@@ -720,7 +724,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $analyser->enableStrictOrderCamparison();
 
         $this->assertFalse($analyser->hasCompleteExportIgnores());
@@ -771,7 +775,7 @@ specs/ export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
@@ -820,7 +824,7 @@ CONTENT;
             '.gitattributes',
         ];
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualExportIgnoresToPreserve = $analyser->getPresentExportIgnoresToPreserve(
             $globPatternMatchingExportIgnores
@@ -862,7 +866,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
@@ -891,7 +895,7 @@ README.md export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
@@ -912,7 +916,7 @@ CONTENT;
 
         $this->expectException(NonExistentGlobPatternFile::class);
 
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPatternFromFile($globPatternFile);
     }
@@ -932,7 +936,7 @@ CONTENT;
         $this->createTemporaryGlobPatternFile($lpvContent);
         $this->expectException(InvalidGlobPatternFile::class);
 
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPatternFromFile($temporaryLpvFile);
     }
@@ -966,7 +970,7 @@ CONTENT;
             $artifactFilenamesMatchingGlob
         );
 
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPatternFromFile($temporaryLpvFile);
 
@@ -986,7 +990,7 @@ CONTENT;
      */
     public function defaultExportIgnoresGlobPatternIsOverwritable(): void
     {
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{*.txt,*.yml}*');
 
@@ -1017,7 +1021,7 @@ CONTENT;
     public function emptyGlobPatternThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
-        (new Analyser())
+        (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('');
     }
@@ -1029,7 +1033,7 @@ CONTENT;
     public function invalidGlobPatternBracesThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('[fdofodsppfosdp]');
         // TODO: Fix smelly test
@@ -1042,7 +1046,7 @@ CONTENT;
      */
     public function wildcardAfterBracesIsNotRaisingAnException(): void
     {
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{*.ymk, test.php}*');
         // TODO: Fix smelly test
@@ -1056,7 +1060,7 @@ CONTENT;
     public function emptyGlobPatternBracesContentThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{ }');
     }
@@ -1068,7 +1072,7 @@ CONTENT;
     public function singleGlobPatternThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{*.go}');
     }
@@ -1079,7 +1083,7 @@ CONTENT;
      */
     public function globPatternWithEnclosedBracesAreConsideredValid(): void
     {
-        $analyser = (new Analyser())
+        $analyser = (new Analyser(new Finder(new PhpPreset())))
             ->setDirectory($this->temporaryDirectory)
             ->setGlobPattern('{{{M,m}ake,{B,b}ox,{V,v}agrant}file,RMT}');
         // TODO: Fix smelly test
@@ -1111,7 +1115,7 @@ SUPPORT.md export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
@@ -1147,7 +1151,7 @@ specs/ export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory)->keepLicense();
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory)->keepLicense();
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertTrue($analyser->isKeepLicenseEnabled());
@@ -1197,7 +1201,7 @@ specs/ export-ignore
 tests/ export-ignore
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertEquals(
@@ -1233,7 +1237,7 @@ specs/           export-ignore
 
 CONTENT;
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory)->alignExportIgnores();
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory)->alignExportIgnores();
         $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
 
         $this->assertTrue($analyser->isAlignExportIgnoresEnabled());
@@ -1272,7 +1276,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertFalse($analyser->hasPrecedingSlashesInExportIgnorePattern());
         $this->assertTrue($analyser->hasCompleteExportIgnores());
         $this->assertTrue($analyser->hasPrecedingSlashesInExportIgnorePattern());
@@ -1303,7 +1307,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
         $this->assertFalse($analyser->hasTextAutoConfiguration());
     }
@@ -1336,7 +1340,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
         $this->assertTrue($analyser->hasTextAutoConfiguration());
     }
@@ -1346,7 +1350,7 @@ CONTENT;
      */
     public function returnsEmptyPatternsWhenNoGitignoreFilePresent(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertEquals([], $analyser->getGitignoredPatterns());
     }
 
@@ -1370,7 +1374,7 @@ CONTENT;
 
         $this->createTemporaryGitignoreFile($gitignoreContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $expectedGitignorePatterns = [
             'vendor/*',
@@ -1424,7 +1428,7 @@ CONTENT;
 
         $this->createTemporaryGitignoreFile($gitignoreContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
@@ -1468,7 +1472,7 @@ CONTENT;
 
         $this->createTemporaryGitignoreFile($gitignoreContent);
 
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
@@ -1478,7 +1482,7 @@ CONTENT;
      */
     public function returnsExpectedDefaultGlobPatterns(): void
     {
-        $analyser = (new Analyser())->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $expectedDefaultGlobPatterns = [
             '.*',
@@ -1506,7 +1510,7 @@ CONTENT;
 
         $this->assertEquals(
             $expectedDefaultGlobPatterns,
-            $analyser->getDefaultGlobPatterns()
+            $analyser->getDefaultGlobPattern()
         );
     }
 }

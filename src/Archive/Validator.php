@@ -56,6 +56,8 @@ class Validator
      *
      * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
      * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
+     * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
+     * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
      * @return boolean
      */
     public function validate(array $unexpectedArtifacts): bool

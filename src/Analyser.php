@@ -6,6 +6,7 @@ use Laminas\Stdlib\Glob;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Presets\Finder;
 
 class Analyser
 {
@@ -32,11 +33,11 @@ class Analyser
     private array $ignoredGlobMatches = ['.', '..', '.git', '.DS_Store'];
 
     /**
-     * The default glob patterns.
+     * The default glob pattern.
      *
      * @var array
      */
-    private array $defaultGlobPatterns = [];
+    private array $defaultGlobPattern = [];
 
     /**
      * The .gitattributes glob pattern
@@ -88,7 +89,7 @@ class Analyser
     private bool $hasPrecedingSlashesInExportIgnorePattern = false;
 
     /**
-     * Whether a text auto configuration is present or not.
+     * Whether a text autoconfiguration is present or not.
      *
      * @var boolean
      */
@@ -110,36 +111,27 @@ class Analyser
      */
     private bool $alignExportIgnores = false;
 
+    private Finder $finder;
+
     /**
      * Initialize.
      */
-    public function __construct()
+    public function __construct(Finder $finder)
     {
-        $this->defaultGlobPatterns = [
-            '.*',
-            '*.lock',
-            '*.txt',
-            '*.rst',
-            '*.{md,MD}',
-            '*.xml',
-            '*.yml',
-            'appveyor.yml',
-            'box.json',
-            'captainhook.json',
-            '*.dist.*',
-            '*.dist',
-            '{B,b}uild*',
-            '{D,d}oc*',
-            '{T,t}ool*',
-            '{T,t}est*',
-            '{S,s}pec*',
-            '{E,e}xample*',
-            'LICENSE',
-            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
-            'RMT'
-        ];
+        $this->finder = $finder;
+        $this->defaultGlobPattern = $finder->getDefaultPreset();
 
-        $this->globPattern = '{' . \implode(',', $this->defaultGlobPatterns) . '}*';
+        $this->globPattern = '{' . \implode(',', $this->defaultGlobPattern) . '}*';
+    }
+
+    /**
+     * Accessor for the injected finder.
+     *
+     * @return Finder
+     */
+    public function getFinder(): Finder
+    {
+        return $this->finder;
     }
 
     /**
@@ -147,9 +139,9 @@ class Analyser
      *
      * @return array
      */
-    public function getDefaultGlobPatterns(): array
+    public function getDefaultGlobPattern(): array
     {
-        return $this->defaultGlobPatterns;
+        return $this->defaultGlobPattern;
     }
 
     /**
@@ -253,6 +245,7 @@ class Analyser
      *
      * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPattern
      * @return Analyser
+     * @return Analyser
      *
      */
     public function setGlobPattern($pattern): Analyser
@@ -268,6 +261,7 @@ class Analyser
      *
      * @param  string $directory The directory to analyse.
      * @throws \RuntimeException
+     * @return Analyser
      * @return Analyser
      *
      */

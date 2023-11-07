@@ -8,6 +8,8 @@ use phpmock\functions\FixedValueFunction;
 use phpmock\MockBuilder;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Commands\InitCommand;
+use Stolt\LeanPackage\Presets\Finder;
+use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
@@ -155,6 +157,28 @@ CONTENT;
     /**
      * @test
      */
+    public function usingANonAvailablePresetShowsWarning(): void
+    {
+        $expectedDisplay = <<<CONTENT
+Warning: Chosen preset rust is not available. Maybe contribute it?.
+
+CONTENT;
+
+        $command = $this->application->find('init');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            ['command' => $command->getName(),
+             'directory' => WORKING_DIRECTORY,
+             '--preset' => 'rust'],
+        );
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() !== 0);
+    }
+
+    /**
+     * @test
+     */
     public function verboseOutputIsAvailableWhenDesired(): void
     {
         $defaultLpvFile = $this->temporaryDirectory
@@ -215,7 +239,7 @@ CONTENT;
     protected function getApplication(): Application
     {
         $application = new Application();
-        $application->add(new InitCommand(new Analyser));
+        $application->add(new InitCommand(new Analyser(new Finder(new PhpPreset()))));
 
         return $application;
     }

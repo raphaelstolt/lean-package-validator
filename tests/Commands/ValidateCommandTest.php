@@ -13,6 +13,8 @@ use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
+use Stolt\LeanPackage\Presets\Finder;
+use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
@@ -189,9 +191,11 @@ CONTENT;
      */
     public function gitattributesFileWithNoExportIgnoresContentShowsExpectedContent(): void
     {
-        $analyserMock = Mockery::mock(
-            'Stolt\LeanPackage\Analyser[getGlobalGitignorePatterns]'
-        );
+        $analyserMock = Mockery::mock(Analyser::class)->makePartial();
+
+        $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
+        $analyserMock->setGlobPattern($globPattern);
+
         $analyserMock->shouldReceive('getGlobalGitignorePatterns')
             ->once()
             ->withAnyArgs()
@@ -1142,9 +1146,11 @@ CONTENT;
      */
     public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed(): void
     {
-        $mock = Mockery::mock(
-            'Stolt\LeanPackage\Analyser[getExpectedGitattributesContent]'
-        );
+        $mock = Mockery::mock(Analyser::class)->makePartial();
+
+        $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
+        $mock->setGlobPattern($globPattern);
+
         $mock->shouldReceive('getExpectedGitattributesContent')
             ->once()
             ->withAnyArgs()
@@ -2102,7 +2108,7 @@ CONTENT;
         $application = new Application();
 
         $analyserCommand = new ValidateCommand(
-            new Analyser,
+            new Analyser(new Finder(new PhpPreset())),
             $mockedArchiveValidator
         );
 
@@ -2122,7 +2128,7 @@ CONTENT;
         );
 
         $analyserCommand = new ValidateCommand(
-            new Analyser,
+            new Analyser(new Finder(new PhpPreset())),
             new Validator($archive)
         );
 

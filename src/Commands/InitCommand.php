@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Presets\Finder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InitCommand extends Command
 {
+    private const DEFAULT_PRESET = 'PHP';
+
     /**
      * Package analyser.
      *
@@ -21,11 +24,17 @@ class InitCommand extends Command
     protected $analyser;
 
     /**
+     * @var \Stolt\LeanPackage\Presets\Finder
+     */
+    private Finder $finder;
+
+    /**
      * @param Analyser  $analyser
      */
     public function __construct(Analyser $analyser)
     {
         $this->analyser = $analyser;
+        $this->finder = $analyser->getFinder();
 
         parent::__construct();
     }
@@ -43,8 +52,13 @@ class InitCommand extends Command
             . 'project/micro-package repository';
         $this->setDescription($description);
 
+        $availablePresets = $this->formatAvailablePresetDefinitionsForDescription(
+            $this->finder->getAvailablePresets()
+        );
+
         $directoryDescription = 'The directory of a project/micro-package repository';
         $overwriteDescription = 'Overwrite existing default .lpv file file';
+        $presetDescription = 'The preset to use for the .lpv file. Available ones are ' . $availablePresets . '.';
 
         $this->addArgument(
             'directory',
@@ -53,6 +67,31 @@ class InitCommand extends Command
             $this->analyser->getDirectory()
         );
         $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, $overwriteDescription);
+        $this->addOption(
+            'preset',
+            null,
+            InputOption::VALUE_REQUIRED,
+            $presetDescription,
+            self::DEFAULT_PRESET
+        );
+    }
+
+    /**
+     * @param array $presets
+     * @return string
+     */
+    private function formatAvailablePresetDefinitionsForDescription(array $presets): string
+    {
+        $presets = \array_map(function ($preset) {
+            return '<comment>' . $preset . '</comment>';
+        }, $presets);
+
+        if (\count($presets)  > 2) {
+            $lastPreset = \array_pop($presets);
+            return \implode(', ', $presets) . ', and ' . $lastPreset;
+        }
+
+        return $presets[0] . ' and ' . $presets[1];
     }
 
     /**
@@ -67,6 +106,7 @@ class InitCommand extends Command
     {
         $directory = (string) $input->getArgument('directory');
         $overwriteDefaultLpvFile = $input->getOption('overwrite');
+        $chosenPreset = (string) $input->getOption('preset');
 
         if ($directory !== WORKING_DIRECTORY) {
             try {
@@ -96,8 +136,23 @@ class InitCommand extends Command
             return 1;
         }
 
-        $defaultGlobPatterns = $this->analyser->getDefaultGlobPatterns();
-        $lpvFileContent = \implode("\n", $defaultGlobPatterns);
+        $defaultGlobPattern = $this->analyser->getDefaultGlobPattern();
+        $globPatternFromPreset = false;
+
+        if ($chosenPreset && \in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()))) {
+            $verboseOutput = '+ Loadind preset ' . $chosenPreset . '.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+            $globPatternFromPreset = true;
+            $defaultGlobPattern = $this->finder->getPresetGlobByLanguageName($chosenPreset);
+        } else {
+            $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
+            $outputContent = '<error>' . $warning . '</error>';
+            $output->writeln($outputContent);
+
+            return 1;
+        }
+
+        $lpvFileContent = \implode("\n", $defaultGlobPattern);
 
         $bytesWritten = file_put_contents(
             $defaultLpvFile,
@@ -105,6 +160,9 @@ class InitCommand extends Command
         );
 
         $verboseOutput = '+ Writing default glob pattern to .lpv file in ' . WORKING_DIRECTORY . '.';
+        if ($globPatternFromPreset) {
+            $verboseOutput = '+ Writing glob pattern for preset ' . $chosenPreset . ' to .lpv file in ' . WORKING_DIRECTORY . '.';
+        }
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if ($bytesWritten === false) {
