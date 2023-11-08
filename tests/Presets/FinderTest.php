@@ -17,7 +17,14 @@ class FinderTest extends TestCase
     public function findsExpectedPresets(): void
     {
         $finder = new Finder(new PhpPreset());
-        $this->assertSame(['Go', 'Php', 'Python'], $finder->getAvailablePresets());
+        
+        $actualPresets = $finder->getAvailablePresets();
+        $expectedPrests = ['Php', 'Go', 'Python'];
+        
+        \sort($actualPresets);
+        \sort($expectedPrests);
+
+        $this->assertSame($expectedPrests, $actualPresets);
     }
 
     /**
