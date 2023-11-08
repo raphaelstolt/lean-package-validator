@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v3.2.0] - 2023-11-08
+
 ### Added
 
 - New `--preset` option. Closes [#43](https://github.com/raphaelstolt/lean-package-validator/issues/43).
@@ -225,7 +227,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.2.0...HEAD
+[v3.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.1...v3.1.0
 [v3.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.0.0...v3.0.1
