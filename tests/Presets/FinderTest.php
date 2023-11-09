@@ -19,12 +19,12 @@ class FinderTest extends TestCase
         $finder = new Finder(new PhpPreset());
         
         $actualPresets = $finder->getAvailablePresets();
-        $expectedPrests = ['Php', 'Go', 'Python'];
+        $expectedPresets = ['Php', 'Go', 'Python'];
         
         \sort($actualPresets);
-        \sort($expectedPrests);
+        \sort($expectedPresets);
 
-        $this->assertSame($expectedPrests, $actualPresets);
+        $this->assertSame($expectedPresets, $actualPresets);
     }
 
     /**
