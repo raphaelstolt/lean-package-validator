@@ -13,8 +13,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - New `--preset` option. Closes [#43](https://github.com/raphaelstolt/lean-package-validator/issues/43).
 
-### Added
-
 - New `--report-stale-export-ignores` option. Closes [#41](https://github.com/raphaelstolt/lean-package-validator/issues/41).
 
 ## [v3.1.1] - 2023-10-13
