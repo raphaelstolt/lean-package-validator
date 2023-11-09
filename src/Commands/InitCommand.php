@@ -160,7 +160,7 @@ class InitCommand extends Command
         );
 
         $verboseOutput = '+ Writing default glob pattern to .lpv file in ' . WORKING_DIRECTORY . '.';
-        if ($globPatternFromPreset) {
+        if ($globPatternFromPreset === true) {
             $verboseOutput = '+ Writing glob pattern for preset ' . $chosenPreset . ' to .lpv file in ' . WORKING_DIRECTORY . '.';
         }
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);

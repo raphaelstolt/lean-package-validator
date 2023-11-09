@@ -42,7 +42,7 @@ class Finder
      * @throws PresetNotAvailable|\ReflectionException
      * @return array
      */
-    public function getPresetGlobByLanguageName($name): array
+    public function getPresetGlobByLanguageName(string $name): array
     {
         $name = \ucfirst(\strtolower($name));
 
@@ -52,8 +52,8 @@ class Finder
 
         $presetClassName = \sprintf('Stolt\LeanPackage\Presets\%sPreset', $name);
 
-        $reflectionClass = new \ReflectionClass($presetClassName);
-        $preset = $reflectionClass->newInstance();
+        /** @var Preset **/
+        $preset = new $presetClassName();
 
         return $preset->getPresetGlob();
     }

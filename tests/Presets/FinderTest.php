@@ -31,7 +31,7 @@ class FinderTest extends TestCase
      * @test
      * @dataProvider languageProvider
      */
-    public function findsExpectedPresetGlobByLanguageNames($languageName): void
+    public function findsExpectedPresetGlobByLanguageNames(string $languageName): void
     {
         $finder = new Finder(new PhpPreset());
         $presetGlob = $finder->getPresetGlobByLanguageName($languageName);
