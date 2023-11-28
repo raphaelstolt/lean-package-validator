@@ -6,7 +6,7 @@
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
 
-The LeanPackageValidator is an utility tool that validates a project/micro-package
+The LeanPackageValidator is a utility tool that validates a project/micro-package
 for its `leanness`. A project/micro-package is considered `lean` when its common
 repository artifacts won't be included in release assets.
 
