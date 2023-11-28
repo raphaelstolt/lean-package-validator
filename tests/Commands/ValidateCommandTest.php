@@ -726,6 +726,10 @@ CONTENT;
      */
     public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithAlignment(): void
     {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+        
         $artifactFilenames = ['CONDUCT.md'];
 
         $this->createTemporaryFiles(
