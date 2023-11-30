@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- The header is written on existent .gitattributes file. Closes [#44](https://github.com/raphaelstolt/lean-package-validator/issues/44).
+
 ## [v3.3.0] - 2023-11-28
 
 ### Removed
