@@ -18,6 +18,7 @@ final class PhpPreset implements Preset
             '*.{md,MD}',
             '*.xml',
             '*.yml',
+            'phpunit*',
             'appveyor.yml',
             'box.json',
             'captainhook.json',
