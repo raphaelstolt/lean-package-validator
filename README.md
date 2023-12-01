@@ -27,7 +27,7 @@ Since the default name of the CLI is quite a mouthful, an alias which can be pla
 in `~/.aliases`, `~/.zshrc` or the like might come in handy. The alias shown next
 assumes that `$COMPOSER_HOME` is `~/.config/composer` and not `~/.composer`.
 
-```bash
+``` bash
 alias lpv='~/.config/composer/vendor/bin/lean-package-validator $@'
 ```
 
@@ -38,12 +38,14 @@ further utilisation via [Composer scripts](https://getcomposer.org/doc/articles/
 composer require --dev stolt/lean-package-validator
 ```
 
-As of release `v1.9.0` it's also possible to install and use the LeanPackageValidator
-via a PHAR [file](https://github.com/raphaelstolt/lean-package-validator/releases/tag/v1.9.0). Therefor download a released version e.g. v3.1.1 and move it
-to `/usr/local/bin` as shown next.
+> [!TIP] 
+> As of release `v1.9.0` it's also possible to install and use the LeanPackageValidator
+> via a PHAR [file](https://github.com/raphaelstolt/lean-package-validator/releases/tag/v1.9.0).
+
+Therefor download a released version e.g. v3.3.1 and move it to `/usr/local/bin` as shown next.
 
 ``` bash
-wget --quiet https://github.com/raphaelstolt/lean-package-validator/releases/download/v3.1.1/lean-package-validator.phar
+wget --quiet https://github.com/raphaelstolt/lean-package-validator/releases/download/v3.3.1/lean-package-validator.phar
 mv lean-package-validator.phar /usr/local/bin/lean-package-validator
 ```
 
@@ -61,7 +63,7 @@ lean-package-validator validate [<directory>]
 ### Available options
 
 The `--enforce-strict-order` option will enforce a strict order comparison
-of export-ignores in the .gitattributes file and fail validation if the order
+of export-ignores in the `.gitattributes` file and fail validation if the order
 differs. Per __default__ the order comparison is done in a non-strict fashion.
 
 ``` bash
@@ -117,7 +119,7 @@ lean-package-validator validate [<directory>] --align-export-ignores --create
 ```
 
 The `--enforce-alignment` option will enforce a strict alignment of export-ignores
-in the .gitattributes file and fail validation if they aren't aligned. Per __default__
+in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__
 no alignment is enforced.
 
 The `--validate-git-archive` option will validate that no common repository artifacts slip
@@ -129,7 +131,7 @@ file becomes mandatory and will fail the archive validation if not present.
 lean-package-validator validate [<directory>] --validate-git-archive
 ```
 
-The `--diff` option will show a visual diff between the actual and expected .gitattributes content.
+The `--diff` option will show a visual diff between the actual and expected `.gitattributes` content.
 
 ``` bash
 lean-package-validator validate --diff
