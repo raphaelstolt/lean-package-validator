@@ -30,10 +30,3 @@ jobs:
 
             -   name: Check leanness of package
                 run: composer run-script lpv:validate-gitattributes
-
-            -   name: Check Markdown files
-                uses: DavidAnson/markdownlint-cli2-action@v11
-                with:
-                  globs: |
-                    README.md
-                    CHANGELOG.md

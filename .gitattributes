@@ -5,7 +5,6 @@
 .github/ export-ignore
 .gitignore export-ignore
 .gitmessage export-ignore
-.markdownlint.json export-ignore
 .php-cs-fixer.php export-ignore
 .phpunit.result.cache export-ignore
 bin/application-version export-ignore
