@@ -78,6 +78,9 @@ phpunit*
 appveyor.yml
 box.json
 captainhook.json
+infection*
+phpstan*
+sonar*
 *.dist.*
 *.dist
 {B,b}uild*
