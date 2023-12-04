@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v3.3.2] - 2023-12-04
+
+### Fixed
+
+- Expands the PHP preset. 
+
 ## [v3.3.1] - 2023-12-01
 
 ### Fixed
@@ -237,7 +243,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.2...HEAD
+[v3.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.1...v3.3.2
 [v3.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.0...v3.3.1
 [v3.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.2.0...v3.3.0
 [v3.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.1.1...v3.2.0
