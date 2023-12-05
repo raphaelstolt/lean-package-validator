@@ -1499,6 +1499,7 @@ CONTENT;
             'infection*',
             'phpstan*',
             'sonar*',
+            'rector*',
             '*.dist.*',
             '*.dist',
             '{B,b}uild*',

@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- Further PHP preset expansion.
+
 ## [v3.3.2] - 2023-12-04
 
 ### Fixed
