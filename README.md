@@ -93,7 +93,7 @@ be used for projects (i.e. Python) outside the PHP ecosystem.
 lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod],dist/}'
 ```
 
-The default pattern is `{.*,*.lock,*.txt,*.rst,*.{md,MD},*.xml,*.yml,appveyor.yml,box.json,captainhook.json,*.dist.*,*.dist,{B,b}uild*,{D,d}oc*,{T,t}ool*,{T,t}est*,{S,s}pec*,{E,e}xample*,LICENSE,{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file,RMT}*`.
+The default pattern is defined in the PHP preset [file](./src/Presets/PhpPreset.php).
 
 The `--glob-pattern-file` option allows you to load patterns, which should
 be used to match the common repository artifacts, from a given file. You
