@@ -1,4 +1,4 @@
-# LeanPackageValidator
+# lean package validator
 
 ![Test Status](https://github.com/raphaelstolt/lean-package-validator/workflows/test/badge.svg)
 [![Version](http://img.shields.io/packagist/v/stolt/lean-package-validator.svg?style=flat)](https://packagist.org/packages/stolt/lean-package-validator)
@@ -6,13 +6,13 @@
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
 
-The LeanPackageValidator is a utility tool that validates a project/micro-package
+The lean package validator is a utility tool that validates a project/micro-package
 for its `leanness`. A project/micro-package is considered `lean` when its common
 repository artifacts won't be included in release assets.
 
 ## Installation
 
-The LeanPackageValidator CLI should be installed globally through Composer.
+The lean package validator CLI should be installed globally through Composer.
 
 ``` bash
 composer global require stolt/lean-package-validator
@@ -31,7 +31,7 @@ assumes that `$COMPOSER_HOME` is `~/.config/composer` and not `~/.composer`.
 alias lpv='~/.config/composer/vendor/bin/lean-package-validator $@'
 ```
 
-The LeanPackageValidator also can be installed locally to a project which allows
+The lean package validator also can be installed locally to a project which allows
 further utilisation via [Composer scripts](https://getcomposer.org/doc/articles/scripts.md).
 
 ``` bash
@@ -39,7 +39,7 @@ composer require --dev stolt/lean-package-validator
 ```
 
 > [!TIP] 
-> As of release `v1.9.0` it's also possible to install and use the LeanPackageValidator
+> As of release `v1.9.0` it's also possible to install and use the lean package validator
 > via a PHAR [file](https://github.com/raphaelstolt/lean-package-validator/releases/tag/v1.9.0).
 
 Therefor download a released version e.g. v3.3.1 and move it to `/usr/local/bin` as shown next.
@@ -51,7 +51,7 @@ mv lean-package-validator.phar /usr/local/bin/lean-package-validator
 
 ## Usage
 
-Run the LeanPackageValidator CLI within or against a project/micro-package
+Run the lean package validator CLI within or against a project/micro-package
 directory, and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in
 a `.gitattributes` file against a set of common repository artifacts. If no
 `.gitattributes` file is present it will suggest to create one.
