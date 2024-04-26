@@ -190,7 +190,7 @@ class ValidateCommand extends Command
 
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                return 1;
+                return Command::FAILURE;
             }
         }
 
@@ -263,7 +263,7 @@ class ValidateCommand extends Command
 
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                return 1;
+                return Command::FAILURE;
             }
         } elseif($this->isGlobPatternFileSetable($globPatternFile)) {
             try {
@@ -285,7 +285,7 @@ class ValidateCommand extends Command
 
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                return 1;
+                return Command::FAILURE;
             } catch (InvalidGlobPatternFile $e) {
                 $warning = "Warning: The provided glob pattern file "
                     . "'$globPatternFile' is considered invalid.";
@@ -294,7 +294,7 @@ class ValidateCommand extends Command
 
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                return 1;
+                return Command::FAILURE;
             }
         }
 
@@ -327,14 +327,14 @@ class ValidateCommand extends Command
 
                         $output->writeln($outputContent);
 
-                        return 0;
+                        return Command::SUCCESS;
                     } catch (GitattributesCreationFailed $e) {
                         $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
                         $output->writeln($outputContent);
 
                         $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                        return 1;
+                        return Command::FAILURE;
                     }
                 } else {
                     $verboseOutput = '+ Suggesting .gitattribute file content.';
@@ -346,7 +346,7 @@ class ValidateCommand extends Command
 
                     $output->writeln($outputContent);
 
-                    return 1;
+                    return Command::FAILURE;
                 }
             }
 
@@ -364,7 +364,7 @@ class ValidateCommand extends Command
                     $info = '<info>The archive file of the current HEAD is considered lean.</info>';
                     $output->writeln($info);
 
-                    return 0;
+                    return Command::SUCCESS;
                 }
                 $foundUnexpectedArchiveArtifacts = $this->archiveValidator
                     ->getFoundUnexpectedArchiveArtifacts();
@@ -390,7 +390,7 @@ class ValidateCommand extends Command
 
             $output->writeln($info);
 
-            return 1;
+            return Command::FAILURE;
         } else {
             $verboseOutput = '+ Analysing the .gitattribute content.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
@@ -424,14 +424,14 @@ class ValidateCommand extends Command
 
                         $output->writeln($outputContent);
 
-                        return 0;
+                        return Command::SUCCESS;
                     } catch (GitattributesCreationFailed $e) {
                         $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
                         $output->writeln($outputContent);
 
                         $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                        return 1;
+                        return Command::FAILURE;
                     }
                 }
 
@@ -451,7 +451,7 @@ class ValidateCommand extends Command
 
                 $output->writeln($outputContent);
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $info = '<info>The present .gitattributes file is considered valid.</info>';
@@ -476,7 +476,7 @@ class ValidateCommand extends Command
                 $output->writeln($outputContent);
             }
 
-            return 0;
+            return Command::SUCCESS;
         }
     }
 

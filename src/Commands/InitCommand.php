@@ -119,7 +119,7 @@ class InitCommand extends Command
 
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
-                return 1;
+                return Command::FAILURE;
             }
         }
 
@@ -133,7 +133,7 @@ class InitCommand extends Command
             $outputContent = '<error>' . $warning . '</error>';
             $output->writeln($outputContent);
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $defaultGlobPattern = $this->analyser->getDefaultGlobPattern();
@@ -149,7 +149,7 @@ class InitCommand extends Command
             $outputContent = '<error>' . $warning . '</error>';
             $output->writeln($outputContent);
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $lpvFileContent = \implode("\n", $defaultGlobPattern);
@@ -170,12 +170,12 @@ class InitCommand extends Command
             $outputContent = '<error>' . $warning . '</error>';
             $output->writeln($outputContent);
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $info = "<info>Created default '$defaultLpvFile' file.</info>";
         $output->writeln($info);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
