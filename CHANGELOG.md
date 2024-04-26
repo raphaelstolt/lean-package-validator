@@ -7,8 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.0.0] - 2024-04-26
+
 ### Fixed
 
+- Updated the symfony/console dependency.
 - Further PHP preset expansion.
 
 ## [v3.3.2] - 2023-12-04
@@ -247,7 +250,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.2...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.0...HEAD
+[v4.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.2...v4.0.0
 [v3.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.1...v3.3.2
 [v3.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.0...v3.3.1
 [v3.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.2.0...v3.3.0
