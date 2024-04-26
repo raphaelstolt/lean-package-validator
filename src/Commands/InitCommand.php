@@ -102,7 +102,7 @@ class InitCommand extends Command
      *
      * @return integer
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory');
         $overwriteDefaultLpvFile = $input->getOption('overwrite');

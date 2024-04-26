@@ -13,7 +13,7 @@
         "php": ">=8.1",
         "laminas/laminas-stdlib": "^3.7",
         "sebastian/diff": "^5.0||^4.0.3",
-        "symfony/console": "^v6.3||^v5.4.8"
+        "symfony/console": "^7.0.6||^v5.4.8"
     },
     "autoload": {
         "psr-4": {

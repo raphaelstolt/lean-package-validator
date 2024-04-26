@@ -175,7 +175,7 @@ class ValidateCommand extends Command
      *
      * @return integer
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory');
 
