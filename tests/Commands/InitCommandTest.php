@@ -83,6 +83,7 @@ phpstan*
 sonar*
 rector*
 pint.json
+ecs*
 *.dist.*
 *.dist
 {B,b}uild*
