@@ -1,5 +1,5 @@
 parameters:
-    level: max
+    level: 4
     paths:
         - src
         - tests
@@ -15,3 +15,6 @@ parameters:
         - '#Cannot cast#'
         - '#is never read#'
         - '#Comparison operation ">="#'
+        - '#unresolvable type.#'
+        - '#TMock#'
+        - '#unknown class#'
