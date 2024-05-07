@@ -1,6 +1,6 @@
 # How to contribute
 
-Thanks for considering to contribute to the `LeanPackageValidator`. Please follow these guidelines:
+Thanks for considering to contribute to the `lean package validator`. Please follow these guidelines:
 
 - All code __MUST__ follow the PSR-2 coding standard. Please see [PSR-2](http://www.php-fig.org/psr/psr-2/) for more details.
 

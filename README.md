@@ -1,4 +1,4 @@
-# lean package validator
+# Lean package validator
 
 ![Test Status](https://github.com/raphaelstolt/lean-package-validator/workflows/test/badge.svg)
 [![Version](http://img.shields.io/packagist/v/stolt/lean-package-validator.svg?style=flat)](https://packagist.org/packages/stolt/lean-package-validator)
