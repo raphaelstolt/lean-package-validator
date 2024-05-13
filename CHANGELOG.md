@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Further PHP preset expansion.
 
+### Fixed
+
+- Ignore global gitignore patterns.
+
 ## [v4.0.1] - 2024-05-07
 
 ### Added

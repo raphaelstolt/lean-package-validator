@@ -421,25 +421,6 @@ class Analyser
     }
 
     /**
-     * @return array
-     */
-    public function getGlobalGitignorePatterns(): array
-    {
-        $gitConfigGetCommand = 'git config --get core.excludesfile';
-
-        \exec($gitConfigGetCommand, $output, $statusCode);
-
-        if ($statusCode !== 0) {
-            return [];
-        }
-
-        $homeDirectory = \getenv('HOME') ? \getenv('HOME') : __DIR__;
-        $excludesFile = \str_replace('~', $homeDirectory, \trim($output[0]));
-
-        return $this->getGitignorePatterns($excludesFile);
-    }
-
-    /**
      * @param string $gitignoreFile
      * @return array
      */
@@ -612,8 +593,7 @@ class Analyser
 
         $ignoredGlobMatches = \array_merge(
             $this->ignoredGlobMatches,
-            $this->getGitignoredPatterns(),
-            $this->getGlobalGitignorePatterns()
+            $this->getGitignoredPatterns()
         );
 
         $globMatches = Glob::glob($this->globPattern, Glob::GLOB_BRACE);

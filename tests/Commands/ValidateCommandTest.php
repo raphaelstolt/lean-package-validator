@@ -184,6 +184,76 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
+    /**
+     * @test
+     */
+    public function filesInGlobalGitignoreAreExportIgnored(): void
+    {
+        $analyserMock = Mockery::mock(Analyser::class)->makePartial();
+
+        $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
+        $analyserMock->setGlobPattern($globPattern);
+
+        $application = $this->getApplicationWithMockedAnalyser($analyserMock);
+
+        $artifactFilenames = [
+            '.gitattributes',
+            '.gitignore',
+            'captainhook.json',
+            'CODE_OF_CONDUCT.md',
+            'CONTRIBUTING.md',
+            'infection.json5',
+            'LICENSE.txt',
+            'phpstan.neon',
+            'phpunit.xml',
+            'README.md',
+            'sonar-project.properties',
+            'package.json',
+            'package-lock.json'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests', '.github', 'docs']
+        );
+
+        $command = $application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--enforce-strict-order' => true,
+            '--enforce-alignment' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered invalid.
+
+Would expect the following .gitattributes file content:
+
+
+.gitattributes           export-ignore
+.github/                 export-ignore
+.gitignore               export-ignore
+captainhook.json         export-ignore
+CODE_OF_CONDUCT.md       export-ignore
+CONTRIBUTING.md          export-ignore
+docs/                    export-ignore
+infection.json5          export-ignore
+LICENSE.txt              export-ignore
+package-lock.json        export-ignore
+package.json             export-ignore
+phpstan.neon             export-ignore
+phpunit.xml              export-ignore
+README.md                export-ignore
+sonar-project.properties export-ignore
+tests/                   export-ignore
+
+CONTENT;
+
+        $this->assertStringEqualsStringIgnoringLineEndings($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > 0);
+    }
 
     /**
      * @test
@@ -195,11 +265,6 @@ CONTENT;
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
         $analyserMock->setGlobPattern($globPattern);
-
-        $analyserMock->shouldReceive('getGlobalGitignorePatterns')
-            ->once()
-            ->withAnyArgs()
-            ->andReturn([]);
 
         $application = $this->getApplicationWithMockedAnalyser($analyserMock);
 
