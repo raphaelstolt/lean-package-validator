@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.0.2] - 2024-05-13
+
+### Added
+
+- Further PHP preset expansion.
+
 ## [v4.0.1] - 2024-05-07
 
 ### Added

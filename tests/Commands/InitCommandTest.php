@@ -82,6 +82,7 @@ infection*
 phpstan*
 sonar*
 rector*
+package*
 pint.json
 ecs*
 *.dist.*

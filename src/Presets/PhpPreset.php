@@ -26,6 +26,7 @@ final class PhpPreset implements Preset
             'phpstan*',
             'sonar*',
             'rector*',
+            'package*',
             'pint.json',
             'ecs*',
             '*.dist.*',
