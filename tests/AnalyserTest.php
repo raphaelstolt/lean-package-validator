@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Tests;
 
 use Mockery;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Ticket;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
@@ -34,9 +37,7 @@ class AnalyserTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasCompleteExportIgnoresFailsOnEmptyExportIgnores(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
@@ -45,10 +46,7 @@ class AnalyserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @throws InvalidGlobPattern
-     */
+    #[Test]
     public function hasCompleteExportIgnoresFailsOnNonExistingGitattributesFile(): void
     {
         $mock = Mockery::mock(Analyser::class)->makePartial();
@@ -68,9 +66,7 @@ class AnalyserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsTrueWhenDirectoryHasCompleteExportIgnores(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -104,9 +100,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function analyseOnNonExistingDirectoryThrowsExpectedException(): void
     {
         $nonExistingDirectory = '/tmp/non-existing_directory';
@@ -117,9 +111,7 @@ CONTENT;
         (new Analyser(new Finder(new PhpPreset())))->setDirectory($nonExistingDirectory);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function gitattributesFileHasAnAccessor(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
@@ -133,18 +125,14 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function directoryHasAnAccessor(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsExpectedGitattributesContent(): void
     {
         $artifactsWithoutExportIgnore = [
@@ -179,9 +167,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expectedFileMatchesAreInExpectedGitattributesContent(): void
     {
         $artifactFilenames = [
@@ -214,9 +200,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonExportIgnoresContentIsEmptyForNonexistentGitattributesFile(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
@@ -224,9 +208,7 @@ CONTENT;
         $this->assertEquals('', $analyser->getPresentNonExportIgnoresContent());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonExportIgnoresContentOfGitattributesFileIsReturned(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -268,9 +250,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getExpectedGitattributesContentKeepsNonExportIgnoreEntries(): void
     {
         $artifactsWithoutExportIgnore = [
@@ -329,9 +309,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addsAutoEolToGitattributesContentWhenNoGitattributesFilePresent(): void
     {
         $artifactFilenames = [
@@ -358,9 +336,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsEmptyExpectedGitattributesContent(): void
     {
         $artifactFilenames = [
@@ -381,9 +357,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsFalseWhenGitattributesFileHasGaps(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -409,9 +383,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasGitattributesFileOnExistingGitattributesFile(): void
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
@@ -427,9 +399,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasGitattributesFileFailsOnNonExistingGitattributesFile(): void
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
@@ -445,9 +415,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function collectExpectedExportIgnoresReturnsExpectedEntries(): void
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
@@ -484,9 +452,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsAnEmptyArrayOnNonExistingGitattributesFile(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
@@ -499,9 +465,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsExpectedPresentExportIgnores(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -546,9 +510,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonExportIgnoresContentHasPlaceholderForExportIgnoresPlacement(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -591,9 +553,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsExpectedGitattributesContentWithPreservedLocation(): void
     {
         $artifactFilenames = [
@@ -653,10 +613,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 5 (https://github.com/raphaelstolt/lean-package-validator/issues/5)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/5')]
     public function varyingOrderDoesNotFailCompletenessCheck(): void
     {
         $artifactFilenames = [
@@ -691,10 +649,8 @@ CONTENT;
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
-    /**
-     * @test
-     * @ticket 6 (https://github.com/raphaelstolt/lean-package-validator/issues/6)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/6')]
     public function varyingOrderDoesFailCompletenessCheckWhenEnforced(): void
     {
         $artifactFilenames = [
@@ -730,9 +686,7 @@ CONTENT;
         $this->assertFalse($analyser->hasCompleteExportIgnores());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function notPatternMatchingExportIgnoresArePreservedAssumedFileExists(): void
     {
         $artifactFilenames = [
@@ -784,9 +738,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonPatternsMatchingButMatchingExistingFilesArePreservedExportIgnores(): void
     {
         $artifactFilenames = [
@@ -836,9 +788,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function notPatternMatchingExportIgnoresDoNotFailCompletenessCheck(): void
     {
         $artifactFilenames = [
@@ -870,11 +820,9 @@ CONTENT;
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 14 (https://github.com/raphaelstolt/lean-package-validator/issues/14)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/5')]
     public function captainHookConfigurationFileIsInDefaultPattern(): void
     {
         $artifactFilenames = [
@@ -904,11 +852,9 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function nonExistingGlobPatternFileThrowsExpectedException(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
@@ -921,11 +867,9 @@ CONTENT;
             ->setGlobPatternFromFile($globPatternFile);
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function emptyGlobPatternFileThrowsExpectedException(): void
     {
         $temporaryLpvFile = $this->temporaryDirectory
@@ -941,11 +885,9 @@ CONTENT;
             ->setGlobPatternFromFile($temporaryLpvFile);
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function defaultExportIgnoresGlobPatternIsOverwritableFromFile(): void
     {
         $temporaryLpvFile = $this->temporaryDirectory
@@ -984,10 +926,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function defaultExportIgnoresGlobPatternIsOverwritable(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))
@@ -1014,10 +954,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function emptyGlobPatternThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
@@ -1026,10 +964,8 @@ CONTENT;
             ->setGlobPattern('');
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function invalidGlobPatternBracesThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
@@ -1040,10 +976,8 @@ CONTENT;
         $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function wildcardAfterBracesIsNotRaisingAnException(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))
@@ -1053,10 +987,8 @@ CONTENT;
         $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function emptyGlobPatternBracesContentThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
@@ -1065,10 +997,8 @@ CONTENT;
             ->setGlobPattern('{ }');
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function singleGlobPatternThrowsExpectedException(): void
     {
         $this->expectException(InvalidGlobPattern::class);
@@ -1077,10 +1007,8 @@ CONTENT;
             ->setGlobPattern('{*.go}');
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function globPatternWithEnclosedBracesAreConsideredValid(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))
@@ -1090,9 +1018,7 @@ CONTENT;
         $this->assertEquals($this->temporaryDirectory, $analyser->getDirectory());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withDistEndingFilesAreNotExportIgnored(): void
     {
         $artifactFilenames = [
@@ -1124,10 +1050,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function licenseFileIsNotExportIgnored(): void
     {
         $artifactFilenames = [
@@ -1161,10 +1085,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 24 (https://github.com/raphaelstolt/lean-package-validator/issues/24)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/24')]
     public function directoriesOnlyExportIgnoredOnce(): void
     {
         $artifactFilenames = [
@@ -1210,9 +1132,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportIgnoresAreAligned(): void
     {
         $artifactFilenames = [
@@ -1247,10 +1167,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 4 (https://github.com/raphaelstolt/lean-package-validator/issues/4)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/4')]
     public function precedingSlashesAreDetected(): void
     {
         $artifactFilenames = [
@@ -1282,10 +1200,8 @@ CONTENT;
         $this->assertTrue($analyser->hasPrecedingSlashesInExportIgnorePattern());
     }
 
-    /**
-     * @test
-     * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/12')]
     public function missingTextAutoConfigurationIsDetected(): void
     {
         $artifactFilenames = [
@@ -1312,10 +1228,8 @@ CONTENT;
         $this->assertFalse($analyser->hasTextAutoConfiguration());
     }
 
-    /**
-     * @test
-     * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/12')]
     public function presentTextAutoConfigurationIsDetected(): void
     {
         $artifactFilenames = [
@@ -1345,18 +1259,14 @@ CONTENT;
         $this->assertTrue($analyser->hasTextAutoConfiguration());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsEmptyPatternsWhenNoGitignoreFilePresent(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $this->assertEquals([], $analyser->getGitignoredPatterns());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsExpectedGitignoredPatterns(): void
     {
         $gitignoreContent = <<<CONTENT
@@ -1390,10 +1300,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 17 (https://github.com/raphaelstolt/lean-package-validator/issues/17)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/17')]
     public function presentGitignoredFileIsExcludedFromValidation(): void
     {
         $artifactFilenames = [
@@ -1432,10 +1340,8 @@ CONTENT;
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
-    /**
-     * @test
-     * @ticket 21 (https://github.com/raphaelstolt/lean-package-validator/issues/21)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/21')]
     public function presentGitignoredSpecsCoverageDirectoryIsExcludedFromValidation(): void
     {
         $artifactFilenames = [
@@ -1476,10 +1382,8 @@ CONTENT;
         $this->assertTrue($analyser->hasCompleteExportIgnores());
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function returnsExpectedDefaultGlobPatterns(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);

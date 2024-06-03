@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Tests\Presets;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
@@ -11,26 +13,22 @@ use Stolt\LeanPackage\Tests\TestCase;
 
 class FinderTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function findsExpectedPresets(): void
     {
         $finder = new Finder(new PhpPreset());
-        
+
         $actualPresets = $finder->getAvailablePresets();
         $expectedPresets = ['Php', 'Go', 'Python'];
-        
+
         \sort($actualPresets);
         \sort($expectedPresets);
 
         $this->assertSame($expectedPresets, $actualPresets);
     }
 
-    /**
-     * @test
-     * @dataProvider languageProvider
-     */
+    #[Test]
+    #[DataProvider('languageProvider')]
     public function findsExpectedPresetGlobByLanguageNames(string $languageName): void
     {
         $finder = new Finder(new PhpPreset());
@@ -38,9 +36,7 @@ class FinderTest extends TestCase
         $this->assertTrue(\is_array($presetGlob));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function forNonAvailableLanguagePresetItThrowsExpectedException(): void
     {
         $this->expectException(PresetNotAvailable::class);
@@ -62,5 +58,4 @@ class FinderTest extends TestCase
             ['Go']
         ];
     }
-
 }

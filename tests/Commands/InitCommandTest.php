@@ -6,6 +6,8 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use phpmock\functions\FixedValueFunction;
 use phpmock\MockBuilder;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Presets\Finder;
@@ -18,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class InitCommandTest extends TestCase
 {
     /**
-     * @var \Symfony\Component\Console\Application
+     * @var Application
      */
     private $application;
 
@@ -46,9 +48,7 @@ class InitCommandTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createsExpectedDefaultLpvFile(): void
     {
         $command = $this->application->find('init');
@@ -104,10 +104,8 @@ CONTENT;
         $this->assertEquals($expectedDefaultLpvFileContent, \file_get_contents($expectedDefaultLpvFile));
     }
 
-    /**
-     * @test
-     * @runInSeparateProcess
-     */
+    #[Test]
+    #[RunInSeparateProcess]
     public function failingInitReturnsExpectedStatusCode(): void
     {
         $builder = new MockBuilder();
@@ -136,9 +134,7 @@ CONTENT;
         $mock->disable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function existingDefaultLpvFileIsNotOverwritten(): void
     {
         $defaultLpvFile = $this->temporaryDirectory
@@ -162,9 +158,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() !== 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usingANonAvailablePresetShowsWarning(): void
     {
         $expectedDisplay = <<<CONTENT
@@ -184,9 +178,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() !== 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function verboseOutputIsAvailableWhenDesired(): void
     {
         $defaultLpvFile = $this->temporaryDirectory
@@ -213,9 +205,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() !== 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function existingDefaultLpvFileIsOverwrittenWhenDesired(): void
     {
         $expectedDefaultLpvFile = $this->temporaryDirectory
@@ -242,7 +232,7 @@ CONTENT;
     }
 
     /**
-     * @return \Symfony\Component\Console\Application
+     * @return Application
      */
     protected function getApplication(): Application
     {

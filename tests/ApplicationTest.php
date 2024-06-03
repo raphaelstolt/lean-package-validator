@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Tests;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as PHPUnit;
 
 final class ApplicationTest extends PHPUnit
 {
-    /**
-     * @test
-     * @group integration
-     */
+    #[Test]
+    #[Group('integration')]
     public function executableIsAvailable(): void
     {
         $binaryCommand = 'php bin/lean-package-validator';
@@ -26,10 +26,8 @@ final class ApplicationTest extends PHPUnit
         $this->assertEquals(0, $returnValue);
     }
 
-    /**
-     * @test
-     * @group integration
-     */
+    #[Test]
+    #[Group('integration')]
     public function expectedCommandsAreListed(): void
     {
         $binaryCommand = 'php bin/lean-package-validator list';

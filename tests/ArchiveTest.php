@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Tests;
 
 use Mockery;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Ticket;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
@@ -29,9 +32,7 @@ class ArchiveTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function filenameHasAnAccessor(): void
     {
         $analyser = new Archive(__DIR__, 'foo');
@@ -42,26 +43,22 @@ class ArchiveTest extends TestCase
 
         $this->assertEquals($expectedFilename, $analyser->getFilename());
     }
-    /**
-     * @test
-     */
+
+    #[Test]
     public function isGitCommandAvailableReturnsFalseOnNonExistingCommand(): void
     {
         $this->assertFalse((new Archive(__DIR__, 'foo'))->isGitCommandAvailable('no-way-i-exists'));
     }
 
-    /**
-     * @test
-     * @group travis-ci-exclude
-     */
+    #[Test]
+    #[Group('travis-ci-exclude')]
     public function isGitCommandAvailableReturnsTrueOnExistingCommand(): void
     {
         $this->assertTrue((new Archive(__DIR__, 'foo'))->isGitCommandAvailable('ping'));
     }
 
-    /**
-     * @test
-     */
+
+    #[Test]
     public function hasHeadThrowsExpectedExceptionWhenGitCommandNotAvailable(): void
     {
         $mock = Mockery::mock(
@@ -80,9 +77,7 @@ class ArchiveTest extends TestCase
         $mock->hasHead();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createArchiveThrowsExpectedExceptionWhenNoGitHeadPresent(): void
     {
         $mock = Mockery::mock(
@@ -101,9 +96,7 @@ class ArchiveTest extends TestCase
         $mock->createArchive();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeArchiveRemovesArchive(): void
     {
         $this->createTemporaryFiles(
@@ -116,9 +109,7 @@ class ArchiveTest extends TestCase
         $this->assertTrue($removed);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeArchiveRemovesArchiveReturnsFalseOnNonExtistentFile(): void
     {
         $removed = (new Archive($this->temporaryDirectory, 'archive-nonexistent'))
@@ -127,9 +118,7 @@ class ArchiveTest extends TestCase
         $this->assertFalse($removed);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function compareArchiveReturnsExpectedFoundUnexpectedArtifacts(): void
     {
         $unexpectedArtifacts = [
@@ -147,9 +136,7 @@ class ArchiveTest extends TestCase
         $this->assertEquals($unexpectedArtifacts, $foundUnexpectedArtifacts);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function compareArchiveReturnsNoFoundUnexpectedArtifactsOnLeanArchive(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
@@ -167,10 +154,8 @@ class ArchiveTest extends TestCase
         $this->assertEquals([], $foundUnexpectedArtifacts);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function compareArchiveThrowsExpectedExceptionWhenLicenseFileIsMissing(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
@@ -186,10 +171,8 @@ class ArchiveTest extends TestCase
         $archive->compareArchive([]);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function compareArchiveDoesNotThrowsExceptionOnPresentLicenseFile(): void
     {
         $fixturesDirectory = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
@@ -202,9 +185,7 @@ class ArchiveTest extends TestCase
         $archive->compareArchive([]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnexpectedArchiveArtifactsDelegatesWork(): void
     {
         $mock = Mockery::mock(

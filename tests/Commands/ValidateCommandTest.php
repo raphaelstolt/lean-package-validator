@@ -7,6 +7,10 @@ namespace Stolt\LeanPackage\Tests\Commands;
 use Mockery;
 use Mockery\MockInterface;
 use phpmock\MockBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Ticket;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
@@ -22,9 +26,9 @@ use Symfony\Component\Console\Application;
 class ValidateCommandTest extends TestCase
 {
     /**
-     * @var \Symfony\Component\Console\Application
+     * @var Application
      */
-    private $application;
+    private Application $application;
 
     /**
      * Set up test environment.
@@ -50,9 +54,7 @@ class ValidateCommandTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateOnNonExistentGitattributesFilesSuggestsCreation(): void
     {
         $artifactFilenames = [
@@ -95,9 +97,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateOnNonExistentGitattributesFilesSuggestsCreationWithAlignment(): void
     {
         $artifactFilenames = [
@@ -141,10 +141,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 39 (https://github.com/raphaelstolt/lean-package-validator/issues/39)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/39')]
     public function showsDifferenceBetweenActualAndExpectedGitattributesContent(): void
     {
         if ((new OsHelper())->isWindows()) {
@@ -184,9 +182,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function filesInGlobalGitignoreAreExportIgnored(): void
     {
         $analyserMock = Mockery::mock(Analyser::class)->makePartial();
@@ -255,10 +251,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 16 (https://github.com/raphaelstolt/lean-package-validator/issues/16)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/16')]
     public function gitattributesFileWithNoExportIgnoresContentShowsExpectedContent(): void
     {
         $analyserMock = Mockery::mock(Analyser::class)->makePartial();
@@ -334,10 +328,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 13 (https://github.com/raphaelstolt/lean-package-validator/issues/13)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/13')]
     public function gitattributesIsInSuggestedFileContent(): void
     {
         $artifactFilenames = [
@@ -376,10 +368,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function licenseIsInSuggestedFileContentPerDefault(): void
     {
         $artifactFilenames = [
@@ -420,10 +410,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function licenseIsNotInSuggestedFileContent(): void
     {
         $artifactFilenames = [
@@ -464,11 +452,9 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/13')]
     public function licenseIsNotInSuggestedFileContentWithCustomGlobPattern(): void
     {
         $artifactFilenames = [
@@ -510,10 +496,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function presentExportIgnoredLicenseWithKeepLicenseOptionInvalidatesResult(): void
     {
         $artifactFilenames = [
@@ -563,10 +547,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function archiveWithoutLicenseFileIsConsideredInvalid(): void
     {
         $mock = Mockery::mock(
@@ -611,10 +593,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 15 (https://github.com/raphaelstolt/lean-package-validator/issues/15)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function archiveWithLicenseFileIsConsideredValid(): void
     {
         $mock = Mockery::mock(
@@ -658,9 +638,7 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function failingGitattributesFilesCreationReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
@@ -703,9 +681,7 @@ CONTENT;
         $mock->disable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithoutHeader(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
@@ -744,9 +720,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOne(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
@@ -786,9 +760,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithAlignment(): void
     {
         if ((new OsHelper())->isWindows()) {
@@ -845,9 +817,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validGitattributesReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = [
@@ -889,9 +859,7 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidGitattributesReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = [
@@ -934,10 +902,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function optionalGlobPatternIsApplied(): void
     {
         $artifactFilenames = [
@@ -983,10 +949,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @group glob
-     */
+    #[Test]
+    #[Group('glob')]
     public function usageOfInvalidGlobFailsValidation(): void
     {
         $failingGlobPattern = '{single-pattern*}';
@@ -1007,11 +971,9 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 38 (https://github.com/raphaelstolt/lean-package-validator/issues/38)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/38')]
     public function missingGlobPatternProducesUserFriendlyErrorMessage(): void
     {
         $missingGlobPattern = '';
@@ -1032,9 +994,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function overwriteOptionOnNonExistentGitattributesFileImplicatesCreate(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
@@ -1074,9 +1034,7 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function leanArchiveIsConsideredLean(): void
     {
         $mock = Mockery::mock(
@@ -1113,9 +1071,7 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonLeanArchiveIsNotConsideredLeanPlural(): void
     {
         $mock = Mockery::mock(
@@ -1162,9 +1118,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonLeanArchiveIsNotConsideredLeanSingular(): void
     {
         $mock = Mockery::mock(
@@ -1210,9 +1164,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed(): void
     {
         $mock = Mockery::mock(Analyser::class)->makePartial();
@@ -1245,9 +1197,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidDirectoryAgumentReturnsExpectedStatusCode(): void
     {
         $nonExistentDirectoryOrFile = WORKING_DIRECTORY
@@ -1270,10 +1220,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 44 (https://github.com/raphaelstolt/lean-package-validator/issues/44)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/44')]
     public function incompleteGitattributesFileIsOverwrittenWithAlignment(): void
     {
         if ((new OsHelper())->isWindows()) {
@@ -1378,10 +1326,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 41 (https://github.com/raphaelstolt/lean-package-validator/issues/41)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/41')]
     public function staleExportIgnoresAreConsideredAsInvalid(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -1434,12 +1380,9 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
-     * @dataProvider optionProvider
-     * @param string $option
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/8')]
+    #[DataProvider('optionProvider')]
     public function incompleteGitattributesFileIsOverwritten(string $option): void
     {
         $gitattributesContent = <<<CONTENT
@@ -1488,10 +1431,8 @@ CONTENT;
         );
     }
 
-    /**
-     * @test
-     * @ticket 8 (https://github.com/raphaelstolt/lean-package-validator/issues/8)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/8')]
     public function failingGitattributesFilesOverwriteReturnsExpectedStatusCode(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -1543,10 +1484,8 @@ CONTENT;
         $mock->disable();
     }
 
-    /**
-     * @test
-     * @ticket 22 (https://github.com/raphaelstolt/lean-package-validator/issues/22)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/22')]
     public function nonExistentArtifactsWhichAreExportIgnoredAreIgnoredOnComparison(): void
     {
         $artifactFilenames = [
@@ -1589,9 +1528,7 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function strictAlignmentOfExportIgnoresCanBeEnforced(): void
     {
         $artifactFilenames = [
@@ -1641,9 +1578,7 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function strictAlignmentAndOrderOfExportIgnoresCanBeEnforced(): void
     {
         $artifactFilenames = [
@@ -1694,10 +1629,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 6 (https://github.com/raphaelstolt/lean-package-validator/issues/6)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/6')]
     public function strictOrderOfExportIgnoresCanBeEnforced(): void
     {
         $artifactFilenames = [
@@ -1748,11 +1681,9 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function givenGlobPatternTakesPrecedenceOverDefaultGlobPatternFile(): void
     {
         $artifactFilenames = [
@@ -1806,11 +1737,9 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function presentGlobPatternFileTakesPrecedenceOverDefaultGlobPattern(): void
     {
         $artifactFilenames = [
@@ -1866,11 +1795,9 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 35 (https://github.com/raphaelstolt/lean-package-validator/issues/35)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/35')]
     public function presentLpvPatternFileIsUsed(): void
     {
         $artifactFilenames = [
@@ -1921,11 +1848,9 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function providedNonExistentGlobPatternFileFailsValidation(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -1956,11 +1881,9 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @group glob
-     * @ticket 9 (https://github.com/raphaelstolt/lean-package-validator/issues/9)
-     */
+    #[Test]
+    #[Group('glob')]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/9')]
     public function providedInvalidGlobPatternFileFailsValidation(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -1998,10 +1921,8 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > 0);
     }
 
-    /**
-     * @test
-     * @ticket 4 (https://github.com/raphaelstolt/lean-package-validator/issues/4)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/4')]
     public function precedingSlashesInExportIgnorePatternsRaiseAWarning(): void
     {
         $artifactFilenames = [
@@ -2046,10 +1967,8 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     * @ticket 12 (https://github.com/raphaelstolt/lean-package-validator/issues/12)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/12')]
     public function missingTextAutoConfigurationRaisesAWarning(): void
     {
         $artifactFilenames = [
@@ -2091,10 +2010,8 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @test
-     * @ticket 17 (https://github.com/raphaelstolt/lean-package-validator/issues/17)
-     */
+    #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/17')]
     public function gitignoredFilesAreExcludedFromValidation(): void
     {
         $artifactFilenames = [
@@ -2200,7 +2117,7 @@ CONTENT;
     }
 
     /**
-     * @return \Symfony\Component\Console\Application
+     * @return Application
      */
     protected function getApplication(): Application
     {
