@@ -1,20 +1,16 @@
 parameters:
-    level: 4
+    level: 7
     paths:
         - src
         - tests
     reportUnmatchedIgnoredErrors: false
-    checkMissingIterableValueType: false
     ignoreErrors:
+        - identifier: missingType.iterableValue
         - '#Constant WORKING_DIRECTORY not found.#'
         - '#Mockery\\MockInterface#'
         - '#Mockery\\LegacyMockInterface#'
         - '#Mockery\\ExpectationInterface#'
         - '#array_filter#'
-        - '#cannot be cast to string#'
-        - '#Cannot cast#'
         - '#is never read#'
-        - '#Comparison operation ">="#'
-        - '#unresolvable type.#'
         - '#TMock#'
         - '#unknown class#'
