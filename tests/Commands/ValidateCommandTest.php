@@ -6,6 +6,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use Mockery;
 use Mockery\MockInterface;
+use phpmock\functions\FixedValueFunction;
 use phpmock\MockBuilder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -651,11 +652,7 @@ CONTENT;
         $builder = new MockBuilder();
         $builder->setNamespace('Stolt\LeanPackage\Commands')
             ->setName('file_put_contents')
-            ->setFunction(
-                function () {
-                    return false;
-                }
-            );
+            ->setFunctionProvider(new FixedValueFunction(false));
 
         $mock = $builder->build();
         $mock->enable();
@@ -1454,11 +1451,7 @@ CONTENT;
         $builder = new MockBuilder();
         $builder->setNamespace('Stolt\LeanPackage\Commands')
             ->setName('file_put_contents')
-            ->setFunction(
-                function () {
-                    return false;
-                }
-            );
+            ->setFunctionProvider(new FixedValueFunction(false));
 
         $mock = $builder->build();
         $mock->enable();
