@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- Attested dist builds.
+
 ## [v4.0.2] - 2024-05-13
 
 ### Added

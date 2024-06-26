@@ -6,9 +6,14 @@ on:
       - 'v*'
 
 jobs:
-    tests:
+    build:
         name: distribute
         runs-on: ubuntu-latest
+
+        permissions:
+          id-token: write
+          contents: write
+          attestations: write
 
         strategy:
             fail-fast: true
@@ -38,8 +43,13 @@ jobs:
             -   name: Check generated PHAR
                 run: bin/lean-package-validator.phar --version
 
-            -   name: Create Release
-                uses: softprops/action-gh-release@v1
+            -   name: Create release
+                uses: softprops/action-gh-release@v2
                 if: startsWith(github.ref, 'refs/tags/')
                 with:
                     files: bin/lean-package-validator.phar
+
+            -   name: Create attestation
+                uses: actions/attest-build-provenance@v1
+                with:
+                    subject-path: bin/lean-package-validator.phar
