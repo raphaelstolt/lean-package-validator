@@ -34,7 +34,7 @@ jobs:
                 run: composer install --no-progress --prefer-dist --optimize-autoloader
 
             -   name: Install Box Phar bundler
-                run: wget --quiet https://github.com/box-project/box/releases/download/4.3.8/box.phar && sudo mv box.phar /usr/bin/box && sudo chmod u+x /usr/bin/box
+                run: wget --quiet https://github.com/box-project/box/releases/download/4.6.1/box.phar && sudo mv box.phar /usr/bin/box && sudo chmod u+x /usr/bin/box
                 shell: bash
 
             -   name: Build PHAR
