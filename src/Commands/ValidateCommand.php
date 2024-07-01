@@ -9,12 +9,14 @@ use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 use SplFileInfo;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive\Validator;
+use Stolt\LeanPackage\Exceptions\GitArchiveNotValidatedYet;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
+use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
+use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
-use Stolt\LeanPackage\Generator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,21 +30,21 @@ class ValidateCommand extends Command
      *
      * @var string
      */
-    protected $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
+    protected string $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
 
     /**
      * Package analyser.
      *
-     * @var \Stolt\LeanPackage\Analyser
+     * @var Analyser
      */
-    protected $analyser;
+    protected Analyser $analyser;
 
     /**
      * Archive validator.
      *
-     * @var \Stolt\LeanPackage\Archive\Validator
+     * @var Validator
      */
-    protected $archiveValidator;
+    protected Validator $archiveValidator;
 
     /**
      * @param Analyser  $analyser
@@ -61,7 +63,7 @@ class ValidateCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->analyser->setDirectory(WORKING_DIRECTORY);
         $this->setName('validate');
@@ -81,7 +83,7 @@ class ValidateCommand extends Command
         $createDescription = 'Create a .gitattributes file if not present';
         $enforceStrictOrderDescription = 'Enforce a strict order comparison of '
             . 'export-ignores in the .gitattributes file';
-        $enforceExportIgnoreAligmentDescription = 'Enforce a strict alignment of '
+        $enforceExportIgnoreAlignmentDescription = 'Enforce a strict alignment of '
             . 'export-ignores in the .gitattributes file';
         $overwriteDescription = 'Overwrite existing .gitattributes file '
             . 'with missing export-ignores';
@@ -112,7 +114,7 @@ class ValidateCommand extends Command
             'enforce-alignment',
             null,
             InputOption::VALUE_NONE,
-            $enforceExportIgnoreAligmentDescription
+            $enforceExportIgnoreAlignmentDescription
         );
 
         $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, $overwriteDescription);
@@ -170,9 +172,12 @@ class ValidateCommand extends Command
     /**
      * Execute command.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      *
+     * @throws GitArchiveNotValidatedYet
+     * @throws GitHeadNotAvailable
+     * @throws GitNotAvailable
      * @return integer
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -265,7 +270,7 @@ class ValidateCommand extends Command
 
                 return Command::FAILURE;
             }
-        } elseif($this->isGlobPatternFileSetable($globPatternFile)) {
+        } elseif($this->isGlobPatternFileSettable($globPatternFile)) {
             try {
                 if ($this->isDefaultGlobPatternFilePresent()) {
                     $this->analyser->setGlobPatternFromFile($globPatternFile);
@@ -320,7 +325,6 @@ class ValidateCommand extends Command
                             $expectedGitattributesFileContent = $headerContent . PHP_EOL . $expectedGitattributesFileContent;
                         }
 
-                        $expectedGitattributesFileContent = $expectedGitattributesFileContent;
                         $outputContent .= $this->createGitattributesFile(
                             $expectedGitattributesFileContent
                         );
@@ -481,12 +485,12 @@ class ValidateCommand extends Command
     }
 
     /**
-     * Check if a glob pattern file is setable.
+     * Check if a glob pattern file is settable.
      *
      * @param string $file The glob pattern file to check.
      * @return boolean
      */
-    protected function isGlobPatternFileSetable($file)
+    protected function isGlobPatternFileSettable(string $file): bool
     {
         if ($this->isGlobPatternFileProvided($file)) {
             return true;
@@ -501,7 +505,7 @@ class ValidateCommand extends Command
      * @param string $file The glob pattern file provided.
      * @return boolean
      */
-    protected function isGlobPatternFileProvided($file)
+    protected function isGlobPatternFileProvided(string $file): bool
     {
         return $file !== $this->defaultLpvFile;
     }
@@ -511,7 +515,7 @@ class ValidateCommand extends Command
      *
      * @return boolean
      */
-    protected function isDefaultGlobPatternFilePresent()
+    protected function isDefaultGlobPatternFilePresent(): bool
     {
         return \file_exists($this->defaultLpvFile);
     }
@@ -519,11 +523,12 @@ class ValidateCommand extends Command
     /**
      * Validate archive of current Git HEAD.
      *
-     * @param  boolean $validateLicenseFilePresence Whether the archive should have a license file or not.
-     * @throws \Stolt\LeanPackage\Exceptions\NoLicenseFilePresent
+     * @param boolean $validateLicenseFilePresence Whether the archive should have a license file or not.
+     * @throws GitHeadNotAvailable
+     * @throws GitNotAvailable
      * @return boolean
      */
-    protected function isValidArchive($validateLicenseFilePresence = false)
+    protected function isValidArchive(bool $validateLicenseFilePresence = false): bool
     {
         if ($validateLicenseFilePresence) {
             return $this->archiveValidator->shouldHaveLicenseFile()->validate(
@@ -539,13 +544,13 @@ class ValidateCommand extends Command
     /**
      * Get expected gitattributes file content output content.
      *
-     * @param  string $expectedGitattributesFileContent
+     * @param string $expectedGitattributesFileContent
      *
      * @return string
      */
     protected function getExpectedGitattributesFileContentOutput(
-        $expectedGitattributesFileContent
-    ) {
+        string $expectedGitattributesFileContent
+    ): string {
         $content = 'Would expect the following .gitattributes file content:' . PHP_EOL
             . '<info>' . $expectedGitattributesFileContent . '</info>';
 
@@ -555,13 +560,13 @@ class ValidateCommand extends Command
     /**
      * Get suggest gitattributes file creation output content.
      *
-     * @param  string $expectedGitattributesFileContent
+     * @param string $expectedGitattributesFileContent
      *
      * @return string
      */
     protected function getSuggestGitattributesFileCreationOptionOutput(
-        $expectedGitattributesFileContent
-    ) {
+        string $expectedGitattributesFileContent
+    ): string {
         $content = 'Would expect the following .gitattributes file content:' . PHP_EOL
             . '<info>' . $expectedGitattributesFileContent . '</info>' . PHP_EOL
             . 'Use the <info>--create|-c</info> option to create a '
@@ -574,11 +579,11 @@ class ValidateCommand extends Command
      * Create the gitattributes file.
      *
      * @param  string  $content The content of the gitattributes file
-     * @throws \Stolt\LeanPackage\Exceptions\GitattributesCreationFailed
+     * @throws GitattributesCreationFailed
      *
      * @return string
      */
-    protected function createGitattributesFile($content)
+    protected function createGitattributesFile(string $content): string
     {
         $bytesWritten = file_put_contents(
             $this->analyser->getGitattributesFilePath(),
@@ -600,11 +605,11 @@ class ValidateCommand extends Command
      * Overwrite an existing gitattributes file.
      *
      * @param  string  $content The content of the gitattributes file
-     * @throws \Stolt\LeanPackage\Exceptions\GitattributesCreationFailed
+     * @throws GitattributesCreationFailed
      *
      * @return string
      */
-    protected function overwriteGitattributesFile($content)
+    protected function overwriteGitattributesFile(string $content): string
     {
         $bytesWritten = file_put_contents(
             $this->analyser->getGitattributesFilePath(),

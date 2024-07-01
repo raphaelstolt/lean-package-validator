@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,12 +20,12 @@ class InitCommand extends Command
     /**
      * Package analyser.
      *
-     * @var \Stolt\LeanPackage\Analyser
+     * @var Analyser
      */
-    protected $analyser;
+    protected Analyser $analyser;
 
     /**
-     * @var \Stolt\LeanPackage\Presets\Finder
+     * @var Finder
      */
     private Finder $finder;
 
@@ -44,7 +45,7 @@ class InitCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->analyser->setDirectory(WORKING_DIRECTORY);
         $this->setName('init');
@@ -97,9 +98,10 @@ class InitCommand extends Command
     /**
      * Execute command.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      *
+     * @throws PresetNotAvailable
      * @return integer
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -136,11 +138,8 @@ class InitCommand extends Command
             return Command::FAILURE;
         }
 
-        $defaultGlobPattern = $this->analyser->getDefaultGlobPattern();
-        $globPatternFromPreset = false;
-
         if ($chosenPreset && \in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()))) {
-            $verboseOutput = '+ Loadind preset ' . $chosenPreset . '.';
+            $verboseOutput = '+ Loading preset ' . $chosenPreset . '.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
             $globPatternFromPreset = true;
             $defaultGlobPattern = $this->finder->getPresetGlobByLanguageName($chosenPreset);
