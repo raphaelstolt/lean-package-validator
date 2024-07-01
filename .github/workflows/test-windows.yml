@@ -3,7 +3,7 @@ name: test-windows
 on: push
 
 jobs:
-  test:
+  build:
     name: "PHPUnit (PHP ${{ matrix.php }})"
     runs-on: "windows-latest"
 

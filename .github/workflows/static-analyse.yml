@@ -3,7 +3,7 @@ name: static-analyse
 on: push
 
 jobs:
-    tests:
+    build:
         name: static-analyse
         runs-on: ubuntu-latest
 
