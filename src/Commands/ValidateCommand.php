@@ -400,7 +400,7 @@ class ValidateCommand extends Command
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
             if ($this->analyser->hasCompleteExportIgnores() === false) {
-                $outputContent = '<error>The present .gitattributes file is considered invalid.</error>';
+                $outputContent = 'The present .gitattributes file is considered <error>invalid</error>.';
 
                 $verboseOutput = "+ Gathering expected .gitattribute content.";
                 $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
@@ -458,7 +458,7 @@ class ValidateCommand extends Command
                 return Command::FAILURE;
             }
 
-            $info = '<info>The present .gitattributes file is considered valid.</info>';
+            $info = 'The present .gitattributes file is considered <info>valid</info>.';
             $output->writeln($info);
 
             if ($this->analyser->hasPrecedingSlashesInExportIgnorePattern()) {
