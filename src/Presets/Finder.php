@@ -47,7 +47,8 @@ class Finder
         $name = \ucfirst(\strtolower($name));
 
         if (!\in_array($name, $this->getAvailablePresets())) {
-            throw new PresetNotAvailable('Preset for Kotlin not available. Maybe contribute it?.');
+            $message = \sprintf('Preset for %s not available. Maybe contribute it?.', $name);
+            throw new PresetNotAvailable($message);
         }
 
         $presetClassName = \sprintf('Stolt\LeanPackage\Presets\%sPreset', $name);
