@@ -466,13 +466,14 @@ class ValidateCommand extends Command
                 $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
                 $warning = "Warning: At least one export-ignore pattern has a leading '/', "
-                    . $warning = 'which is considered as a smell.';
+                    . 'which is considered as a smell.';
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
             }
 
             if ($this->analyser->hasTextAutoConfiguration() === false) {
                 $verboseOutput = '+ Checking for text auto configuration.';
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
                 $warning = 'Warning: Missing a text auto configuration. '
                     . 'Consider adding one.';
