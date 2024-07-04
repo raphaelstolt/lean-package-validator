@@ -167,12 +167,12 @@ class Analyser
     /**
      * Set the glob pattern file.
      *
-     * @param  string $file
-     * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile
+     * @param string $file
      * @throws \Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile
+     * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile
      * @return Analyser
      */
-    public function setGlobPatternFromFile($file): Analyser
+    public function setGlobPatternFromFile(string $file): Analyser
     {
         if (!\is_file($file)) {
             $message = "Glob pattern file {$file} doesn't exist.";
