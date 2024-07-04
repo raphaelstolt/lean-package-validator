@@ -4,11 +4,14 @@ namespace Stolt\LeanPackage\Archive;
 
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Exceptions\GitArchiveNotValidatedYet;
+use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
+use Stolt\LeanPackage\Exceptions\GitNotAvailable;
+use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 
 class Validator
 {
     /**
-     * @var \Stolt\LeanPackage\Archive
+     * @var Archive
      */
     private Archive $archive;
 
@@ -20,7 +23,7 @@ class Validator
     /**
      * Initialise.
      *
-     * @param \Stolt\LeanPackage\Archive $archive The archive to validate.
+     * @param Archive $archive The archive to validate.
      */
     public function __construct(Archive $archive)
     {
@@ -30,7 +33,7 @@ class Validator
     /**
      * Set if license file presence should be validated.
      *
-     * @return \Stolt\LeanPackage\Archive\Validator
+     * @return Validator
      */
     public function shouldHaveLicenseFile(): Validator
     {
@@ -42,7 +45,7 @@ class Validator
     /**
      * Accessor for injected archive instance.
      *
-     * @return \Stolt\LeanPackage\Archive
+     * @return Archive
      */
     public function getArchive(): Archive
     {
@@ -54,10 +57,10 @@ class Validator
      *
      * @param array $unexpectedArtifacts Artifacts not expected in archive.
      *
-     * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
-     * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
-     * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
-     * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
+     * @throws GitNotAvailable
+     * @throws GitHeadNotAvailable
+     * @throws GitNotAvailable|NoLicenseFilePresent
+     * @throws GitHeadNotAvailable
      * @return boolean
      */
     public function validate(array $unexpectedArtifacts): bool
@@ -77,7 +80,7 @@ class Validator
     /**
      * Accessor for found unexpected archive artifacts.
      *
-     * @throws \Stolt\LeanPackage\Exceptions\GitArchiveNotValidatedYet
+     * @throws GitArchiveNotValidatedYet
      *
      * @return array
      */

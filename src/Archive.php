@@ -100,7 +100,7 @@ class Archive
     /**
      * Has repository a HEAD.
      *
-     * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
+     * @throws GitNotAvailable
      *
      * @return boolean
      */
@@ -112,6 +112,24 @@ class Archive
         }
 
         throw new GitNotAvailable('The Git command is not available.');
+    }
+
+    /**
+     * Create a Git archive from the current HEAD.
+     *
+     * @throws GitHeadNotAvailable|GitNotAvailable
+     * @return boolean
+     */
+    public function createArchive(): bool
+    {
+        if ($this->hasHead()) {
+            $command = 'git archive -o ' . $this->getFilename() . ' HEAD 2>&1';
+            \exec($command, $output, $returnValue);
+
+            return $returnValue === 0;
+        }
+
+        throw new GitHeadNotAvailable('No Git HEAD present to create an archive from.');
     }
 
     /**
@@ -132,29 +150,10 @@ class Archive
     }
 
     /**
-     * Create a Git archive from the current HEAD.
-     *
-     * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
-     *
-     * @return boolean
-     */
-    public function createArchive(): bool
-    {
-        if ($this->hasHead()) {
-            $command = 'git archive -o ' . $this->getFilename() . ' HEAD 2>&1';
-            \exec($command, $output, $returnValue);
-
-            return $returnValue === 0;
-        }
-
-        throw new GitHeadNotAvailable('No Git HEAD present to create an archive from.');
-    }
-
-    /**
      * Compare archive against unexpected artifacts.
      *
      * @param  array $unexpectedArtifacts The unexpected artifacts.
-     * @throws \Stolt\LeanPackage\Exceptions\NoLicenseFilePresent
+     * @throws NoLicenseFilePresent
      * @return array
      */
     public function compareArchive(array $unexpectedArtifacts): array
@@ -196,6 +195,23 @@ class Archive
     }
 
     /**
+     * Delegator for temporary archive creation and comparison against
+     * a set of unexpected artifacts.
+     *
+     * @param array $unexpectedArtifacts The unexpected artifacts of the archive.
+     * @throws GitHeadNotAvailable|NoLicenseFilePresent|GitNotAvailable
+     * @return array
+     */
+    public function getUnexpectedArchiveArtifacts(array $unexpectedArtifacts): array
+    {
+        $this->createArchive();
+        $this->foundUnexpectedArtifacts = $this->compareArchive($unexpectedArtifacts);
+        $this->removeArchive();
+
+        return $this->foundUnexpectedArtifacts;
+    }
+
+    /**
      * Remove temporary Git archive.
      *
      * @return boolean
@@ -207,25 +223,5 @@ class Archive
         }
 
         return false;
-    }
-
-    /**
-     * Delegator for temporary archive creation and comparison against
-     * a set of unexpected artifacts.
-     *
-     * @param array $unexpectedArtifacts The unexpected artifacts of the archive.
-     *
-     * @throws \Stolt\LeanPackage\Exceptions\GitNotAvailable
-     * @throws \Stolt\LeanPackage\Exceptions\GitHeadNotAvailable
-     *
-     * @return array
-     */
-    public function getUnexpectedArchiveArtifacts(array $unexpectedArtifacts): array
-    {
-        $this->createArchive();
-        $this->foundUnexpectedArtifacts = $this->compareArchive($unexpectedArtifacts);
-        $this->removeArchive();
-
-        return $this->foundUnexpectedArtifacts;
     }
 }
