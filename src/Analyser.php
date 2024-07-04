@@ -69,7 +69,7 @@ class Analyser
      *
      * @var boolean
      */
-    private bool $staleExportIgnoresCamparison = false;
+    private bool $staleExportIgnoresComparison = false;
 
     /**
      * Whether to do a strict alignment comparsion of the export-ignores
@@ -290,11 +290,11 @@ class Analyser
     }
 
     /**
-     * Enable strict order camparison.
+     * Enable strict order comparison.
      *
      * @return Analyser
      */
-    public function enableStrictOrderCamparison(): Analyser
+    public function enableStrictOrderComparison(): Analyser
     {
         $this->strictOrderComparison = true;
 
@@ -302,43 +302,43 @@ class Analyser
     }
 
     /**
-     * Guard for strict order camparison.
+     * Guard for strict order comparison.
      *
      * @return boolean
      */
-    public function isStrictOrderCamparisonEnabled(): bool
+    public function isStrictOrderComparisonEnabled(): bool
     {
         return $this->strictOrderComparison === true;
     }
 
     /**
-     * Enable stale export ignores camparison.
+     * Enable stale export ignores comparison.
      *
      * @return Analyser
      */
-    public function enableStaleExportIgnoresCamparison(): Analyser
+    public function enableStaleExportIgnoresComparison(): Analyser
     {
-        $this->staleExportIgnoresCamparison = true;
+        $this->staleExportIgnoresComparison = true;
 
         return $this;
     }
 
     /**
-     * Guard for stale export ignores camparison.
+     * Guard for stale export ignores comparison.
      *
      * @return boolean
      */
-    public function isStaleExportIgnoresCamparisonEnabled(): bool
+    public function isStaleExportIgnoresComparisonEnabled(): bool
     {
-        return $this->staleExportIgnoresCamparison === true;
+        return $this->staleExportIgnoresComparison === true;
     }
 
     /**
-     * Enable strict alignment camparison.
+     * Enable strict alignment comparison.
      *
      * @return Analyser
      */
-    public function enableStrictAlignmentCamparison(): Analyser
+    public function enableStrictAlignmentComparison(): Analyser
     {
         $this->strictAlignmentComparison = true;
 
@@ -346,11 +346,11 @@ class Analyser
     }
 
     /**
-     * Guard for strict alignment camparison.
+     * Guard for strict alignment comparison.
      *
      * @return boolean
      */
-    public function isStrictAlignmentCamparisonEnabled(): bool
+    public function isStrictAlignmentComparisonEnabled(): bool
     {
         return $this->strictAlignmentComparison === true;
     }
@@ -487,7 +487,7 @@ class Analyser
         \sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if (\count($postfixlessExportIgnores) > 0) {
-            if ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentCamparisonEnabled()) {
+            if ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentComparisonEnabled()) {
                 $postfixlessExportIgnores = $this->getAlignedExportIgnoreArtifacts(
                     $postfixlessExportIgnores
                 );
@@ -791,7 +791,7 @@ class Analyser
             }
         });
 
-        if ($this->isStrictOrderCamparisonEnabled() === false) {
+        if ($this->isStrictOrderComparisonEnabled() === false) {
             \sort($exportIgnores, SORT_STRING | SORT_FLAG_CASE);
         }
 
@@ -831,7 +831,7 @@ class Analyser
 
         $actualExportIgnores = $this->getPresentExportIgnores();
 
-        if ($this->isStaleExportIgnoresCamparisonEnabled()) {
+        if ($this->isStaleExportIgnoresComparisonEnabled()) {
             $staleExportIgnores = [];
             $unfilteredExportIgnores = $this->getPresentExportIgnores(false);
             foreach ($unfilteredExportIgnores as $unfilteredExportIgnore) {
@@ -841,13 +841,13 @@ class Analyser
             }
         }
 
-        if ($this->isStrictAlignmentCamparisonEnabled()) {
+        if ($this->isStrictAlignmentComparisonEnabled()) {
             $expectedExportIgnores = $this->getAlignedExportIgnoreArtifacts(
                 $expectedExportIgnores
             );
         }
 
-        if ($this->isStaleExportIgnoresCamparisonEnabled()) {
+        if ($this->isStaleExportIgnoresComparisonEnabled()) {
             $actualExportIgnores = \array_merge($actualExportIgnores, $staleExportIgnores);
         }
 

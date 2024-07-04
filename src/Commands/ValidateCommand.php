@@ -217,14 +217,14 @@ class ValidateCommand extends Command
             $verboseOutput = '+ Enforcing strict order comparison.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-            $this->analyser->enableStrictOrderCamparison();
+            $this->analyser->enableStrictOrderComparison();
         }
 
         if ($reportStaleExportIgnores) {
             $verboseOutput = '+ Enforcing stale export ignores comparison.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-            $this->analyser->enableStaleExportIgnoresCamparison();
+            $this->analyser->enableStaleExportIgnoresComparison();
         }
 
         $enforceExportIgnoresAlignment = $input->getOption('enforce-alignment');
@@ -233,7 +233,7 @@ class ValidateCommand extends Command
             $verboseOutput = '+ Enforcing alignment comparison.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-            $this->analyser->enableStrictAlignmentCamparison();
+            $this->analyser->enableStrictAlignmentComparison();
         }
 
         $keepLicense = (boolean) $input->getOption('keep-license');

@@ -681,7 +681,7 @@ CONTENT;
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $analyser->enableStrictOrderCamparison();
+        $analyser->enableStrictOrderComparison();
 
         $this->assertFalse($analyser->hasCompleteExportIgnores());
     }
