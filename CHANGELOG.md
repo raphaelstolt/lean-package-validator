@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.0.3] - 2024-07-10
+
 ### Added
 
 - Attested dist builds.
@@ -270,7 +272,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.2...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.3...HEAD
+[v4.0.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.2...v4.0.3
 [v4.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.1...v4.0.2
 [v4.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.0...v4.0.1
 [v4.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v3.3.2...v4.0.0
