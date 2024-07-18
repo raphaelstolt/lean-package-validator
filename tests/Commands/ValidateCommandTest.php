@@ -23,9 +23,13 @@ use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
+use Zenstruck\Console\Test\InteractsWithConsole;
+use Zenstruck\Console\Test\TestCommand;
 
 class ValidateCommandTest extends TestCase
 {
+    use InteractsWithConsole;
+
     /**
      * @var Application
      */
@@ -344,11 +348,6 @@ CONTENT;
         );
 
         $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
-        ]);
 
         $expectedDisplay = <<<CONTENT
 Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
@@ -365,8 +364,10 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 
 CONTENT;
 
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        TestCommand::for($command)
+            ->execute(WORKING_DIRECTORY)
+            ->assertOutputContains($expectedDisplay)
+            ->assertStatusCode(1);
     }
 
     #[Test]

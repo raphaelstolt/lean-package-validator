@@ -61,6 +61,7 @@
         "phlak/semver": "^4.1",
         "php-mock/php-mock-phpunit": "^2.7||^1.1",
         "phpstan/phpstan": "^1.11",
-        "phpunit/phpunit": "^11.2.6||^10.5.25"
+        "phpunit/phpunit": "^11.2.6||^10.5.25",
+        "zenstruck/console-test": "^1.5"
     }
 }
