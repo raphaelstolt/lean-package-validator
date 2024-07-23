@@ -23,6 +23,7 @@ use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Zenstruck\Console\Test\InteractsWithConsole;
 use Zenstruck\Console\Test\TestCommand;
 
@@ -99,7 +100,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -143,7 +144,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -184,7 +185,7 @@ CONTENT;
             $this->assertContains($expectedDiffRow, $actualDisplayRows);
         }
 
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -253,7 +254,7 @@ tests/                   export-ignore
 CONTENT;
 
         $this->assertStringEqualsStringIgnoringLineEndings($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -330,7 +331,7 @@ tests/           export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -409,7 +410,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -451,7 +452,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -495,7 +496,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -546,7 +547,7 @@ specs/ export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -592,7 +593,7 @@ The archive file of the current HEAD is considered invalid due to a missing lice
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -674,7 +675,7 @@ Creation of .gitattributes file failed.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
 
         $mock->disable();
     }
@@ -897,7 +898,7 @@ specs/ export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -944,7 +945,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -966,7 +967,7 @@ Warning: The provided glob pattern '{$failingGlobPattern}' is considered invalid
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -989,7 +990,7 @@ Warning: The provided glob pattern '{$missingGlobPattern}' is considered invalid
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1113,7 +1114,7 @@ Seems like the following artifacts slipped in:
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1159,7 +1160,7 @@ Seems like the following artifact slipped in:
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1192,7 +1193,7 @@ Unable to resolve expected .gitattributes content.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1215,7 +1216,7 @@ Warning: The provided directory '{$nonExistentDirectoryOrFile}' does not exist o
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1375,7 +1376,7 @@ Would expect the following .gitattributes file content:
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1473,7 +1474,7 @@ Overwrite of .gitattributes file failed.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
 
         $mock->disable();
     }
@@ -1569,7 +1570,7 @@ specs/           export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1620,7 +1621,7 @@ specs/           export-ignore
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1672,7 +1673,7 @@ phpspec.yml.dist
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1872,7 +1873,7 @@ Warning: The provided glob pattern file '{$temporaryLpvFile}' doesn't exist.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]
@@ -1912,7 +1913,7 @@ Warning: The provided glob pattern file '{$temporaryLpvFile}' is considered inva
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > 0);
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
     #[Test]

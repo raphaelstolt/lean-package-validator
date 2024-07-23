@@ -15,6 +15,7 @@ use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InitCommandTest extends TestCase
@@ -129,7 +130,7 @@ Warning: The creation of the default .lpv file failed.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() !== 0);
+        $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
 
         $mock->disable();
     }
@@ -155,7 +156,7 @@ Warning: A default .lpv file already exists.
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() !== 0);
+        $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
     }
 
     #[Test]
@@ -175,7 +176,7 @@ CONTENT;
         );
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() !== 0);
+        $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
     }
 
     #[Test]
@@ -202,7 +203,7 @@ CONTENT;
         );
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() !== 0);
+        $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
     }
 
     #[Test]
@@ -218,7 +219,7 @@ CONTENT;
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
-            '-o' => true,
+            '--overwrite' => true,
         ]);
 
         $expectedDisplay = <<<CONTENT

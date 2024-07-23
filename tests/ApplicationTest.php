@@ -7,6 +7,7 @@ namespace Stolt\LeanPackage\Tests;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as PHPUnit;
+use Symfony\Component\Console\Command\Command;
 
 final class ApplicationTest extends PHPUnit
 {
@@ -23,7 +24,7 @@ final class ApplicationTest extends PHPUnit
             $output[1],
             'Expected application name not present.'
         );
-        $this->assertEquals(0, $returnValue);
+        $this->assertEquals(Command::SUCCESS, $returnValue);
     }
 
     #[Test]
@@ -44,6 +45,6 @@ final class ApplicationTest extends PHPUnit
             $output[19],
             'Expected validate command not listed.'
         );
-        $this->assertEquals(0, $returnValue);
+        $this->assertEquals(Command::SUCCESS, $returnValue);
     }
 }
