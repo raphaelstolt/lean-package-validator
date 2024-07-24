@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\Ticket;
+use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
@@ -366,7 +367,8 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         TestCommand::for($command)
-            ->execute(WORKING_DIRECTORY)
+            ->addArgument(WORKING_DIRECTORY)
+            ->execute()
             ->assertOutputContains($expectedDisplay)
             ->assertFaulty();
     }
