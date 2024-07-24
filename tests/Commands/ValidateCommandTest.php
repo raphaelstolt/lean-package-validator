@@ -368,7 +368,7 @@ CONTENT;
         TestCommand::for($command)
             ->execute(WORKING_DIRECTORY)
             ->assertOutputContains($expectedDisplay)
-            ->assertStatusCode(1);
+            ->assertFaulty();
     }
 
     #[Test]
