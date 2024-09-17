@@ -14,3 +14,4 @@ parameters:
         - '#is never read#'
         - '#TMock#'
         - '#unknown class#'
+        - '#set_error_handler expects#'

@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+
+- Removed laminas/laminas-stdlib dependency.  
+
 ## [v4.0.3] - 2024-07-10
 
 ### Added

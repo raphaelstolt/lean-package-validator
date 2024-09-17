@@ -339,6 +339,10 @@ CONTENT;
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/13')]
     public function gitattributesIsInSuggestedFileContent(): void
     {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
         $artifactFilenames = [
             'CONDUCT.md',
             'phpspec.yml.dist',

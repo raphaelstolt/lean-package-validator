@@ -270,7 +270,7 @@ class ValidateCommand extends Command
 
                 return Command::FAILURE;
             }
-        } elseif($this->isGlobPatternFileSettable($globPatternFile)) {
+        } elseif ($this->isGlobPatternFileSettable($globPatternFile)) {
             try {
                 if ($this->isDefaultGlobPatternFilePresent()) {
                     $this->analyser->setGlobPatternFromFile($globPatternFile);
