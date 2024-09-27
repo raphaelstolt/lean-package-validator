@@ -1399,6 +1399,8 @@ CONTENT;
             'phpunit*',
             'appveyor.yml',
             'box.json',
+            'composer-dependency-analyser*',
+            'collision-detector*',
             'captainhook.json',
             'infection*',
             'phpstan*',

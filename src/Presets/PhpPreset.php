@@ -21,6 +21,8 @@ final class PhpPreset implements Preset
             'phpunit*',
             'appveyor.yml',
             'box.json',
+            'composer-dependency-analyser*',
+            'collision-detector*',
             'captainhook.json',
             'infection*',
             'phpstan*',
