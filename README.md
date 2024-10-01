@@ -12,7 +12,7 @@ repository artifacts won't be included in release assets.
 
 ## Installation
 
-The lean package validator CLI should be installed globally through Composer.
+The lean package validator CLI can be installed globally through Composer.
 
 ``` bash
 composer global require stolt/lean-package-validator
@@ -36,6 +36,12 @@ further utilisation via [Composer scripts](https://getcomposer.org/doc/articles/
 
 ``` bash
 composer require --dev stolt/lean-package-validator
+```
+
+A third option to use the lean package validator is via [cpx](https://cpx.dev/).
+
+``` bash
+cpx stolt/lean-package-validator validate
 ```
 
 > [!TIP] 
