@@ -1383,6 +1383,37 @@ CONTENT;
     }
 
     #[Test]
+    public function exportIgnoresExpectedImages(): void
+    {
+        $artifactFilenames = [
+            'test.png',
+            'test.gif',
+            'test.jpg',
+            'test.jpeg',
+            'test.webp',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames
+        );
+
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+test.gif export-ignore
+test.jpeg export-ignore
+test.jpg export-ignore
+test.png export-ignore
+test.webp export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $this->assertTrue($analyser->hasCompleteExportIgnores());
+    }
+
+    #[Test]
     #[Group('glob')]
     public function returnsExpectedDefaultGlobPatterns(): void
     {
@@ -1394,6 +1425,7 @@ CONTENT;
             '*.txt',
             '*.rst',
             '*.{md,MD}',
+            '*.{png,gif,jpeg,jpg,webp}',
             '*.xml',
             '*.yml',
             'phpunit*',

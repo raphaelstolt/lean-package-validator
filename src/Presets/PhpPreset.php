@@ -16,6 +16,7 @@ final class PhpPreset implements Preset
             '*.txt',
             '*.rst',
             '*.{md,MD}',
+            '*.{png,gif,jpeg,jpg,webp}',
             '*.xml',
             '*.yml',
             'phpunit*',
