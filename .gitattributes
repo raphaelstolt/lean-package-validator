@@ -15,6 +15,7 @@ box.json.dist export-ignore
 CHANGELOG.md export-ignore
 example/ export-ignore
 LICENSE.md export-ignore
+lpv-logo.png export-ignore
 phpstan.neon.dist export-ignore
 phpunit.xml.dist export-ignore
 README.md export-ignore
