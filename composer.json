@@ -36,7 +36,8 @@
         "lpv:application-version-guard": "Checks that the application version matches the given Git tag.",
         "lpv:application-phar-version-guard": "Checks that the PHAR version matches the given Git tag.",
         "lpv:static-analyse": "Runs a static code analysis via PHPStan.",
-        "lpv:validate-gitattributes": "Checks the leanness of this package."
+        "lpv:validate-gitattributes": "Checks the leanness of this package.",
+        "lpv:pre-commit-check": "Does a final (aggregated) check before committing."
     },
     "scripts": {
         "lpv:test": "phpunit",
@@ -47,7 +48,12 @@
         "lpv:application-version-guard": "php bin/application-version --verify-tag-match=bin",
         "lpv:application-phar-version-guard": "php bin/application-version --verify-tag-match=phar",
         "lpv:static-analyse": "phpstan analyse --configuration phpstan.neon.dist",
-        "lpv:validate-gitattributes": "bin/lean-package-validator validate"
+        "lpv:validate-gitattributes": "bin/lean-package-validator validate",
+        "lpv:pre-commit-check": [
+            "@lpv:test",
+            "@lpv:cs-lint",
+            "@lpv:static-analyse"
+        ]
     },
     "config": {
         "preferred-install": "dist",
