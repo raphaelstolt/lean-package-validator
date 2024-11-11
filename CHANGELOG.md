@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.1.0] - 2024-11-11
+
+### Added
+
+- New `--keep-readme` and `--keep-glob-pattern` options. Closes [#47](https://github.com/raphaelstolt/lean-package-validator/issues/47).
+
 ## [v4.0.5] - 2024-11-06
 
 ### Added
@@ -288,7 +294,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.5...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.0...HEAD
+[v4.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.5...v4.1.0
 [v4.0.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.4...v4.0.5
 [v4.0.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.3...v4.0.4
 [v4.0.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.2...v4.0.3
