@@ -57,6 +57,34 @@ abstract class Glob
     }
 
     /**
+     * Find array elements matching a pattern.
+     *
+     * @param string $pattern
+     * @param array $array
+     * @param int $flags
+     * @return array
+     */
+    public static function globArray(string $pattern, array $array, int $flags = FNM_CASEFOLD)
+    {
+        $pattern = \str_replace(['{', '}'], '', $pattern);
+
+        $patternParts = \explode(',', $pattern);
+
+        foreach ($patternParts as $index => $patternPart) {
+            $matches[] = \array_filter($array, function ($val) use ($patternPart, $flags) {
+                return \fnmatch($patternPart, $val, $flags);
+            });
+        }
+
+        $excludes = [];
+        foreach ($matches as $index => $value) {
+            $excludes[] = \array_values($value)[0];
+        }
+
+        return $excludes;
+    }
+
+    /**
      * Use the glob function provided by the system.
      *
      * @param  string  $pattern

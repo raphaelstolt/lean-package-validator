@@ -99,7 +99,9 @@ class ValidateCommand extends Command
         $globPatternFileDescription = 'Use this file with glob patterns '
             . 'to match artifacts which should be export-ignored';
 
-        $keepLicenseDescription = 'Do not export-ignore license file';
+        $keepLicenseDescription = 'Do not export-ignore the license file';
+        $keepReadmeDescription = 'Do not export-ignore the README file';
+        $keepGlobPatternDescription = 'Do not export-ignore matching glob pattern e.g. <comment>{LICENSE.*,README.*,docs*}</comment>';
 
         $alignExportIgnoresDescription = 'Align export-ignores on create or overwrite';
 
@@ -142,6 +144,18 @@ class ValidateCommand extends Command
             null,
             InputOption::VALUE_NONE,
             $keepLicenseDescription
+        );
+        $this->addOption(
+            'keep-readme',
+            null,
+            InputOption::VALUE_NONE,
+            $keepReadmeDescription
+        );
+        $this->addOption(
+            'keep-glob-pattern',
+            null,
+            InputOption::VALUE_NONE,
+            $keepGlobPatternDescription
         );
         $this->addOption(
             'align-export-ignores',
@@ -244,6 +258,35 @@ class ValidateCommand extends Command
 
             $this->analyser->keepLicense();
         }
+
+        $keepReadme = (boolean) $input->getOption('keep-readme');
+
+        if ($keepReadme) {
+            $verboseOutput = '+ Keeping the README file.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+            $this->analyser->keepReadme();
+        }
+
+        $keepGlobPattern = (string) $input->getOption('keep-glob-pattern');
+
+        if ($keepGlobPattern !== '') {
+            $verboseOutput = \sprintf('+ Keeping files matching the glob pattern <info>%s</info>.', $keepGlobPattern);
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+            try {
+                $this->analyser->setKeepGlobPattern($keepGlobPattern);
+            } catch (InvalidGlobPattern $e) {
+                $warning = "Warning: The provided glob pattern "
+                    . "'$keepGlobPattern' is considered invalid.";
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+
+                $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
+                return Command::FAILURE;
+            }
+        }
+
 
         $alignExportIgnores = $input->getOption('align-export-ignores');
 

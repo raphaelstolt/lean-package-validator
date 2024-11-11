@@ -123,6 +123,18 @@ The `--keep-license` option will allow a license file in the release/dist archiv
 lean-package-validator validate [<directory>] --keep-license
 ```
 
+The `--keep-readme` option will allow a README file in the release/dist archive file which is per default ommitted.
+
+``` bash
+lean-package-validator validate [<directory>] --keep-readme
+```
+
+The `--keep-glob-pattern` option allows to keep matching files in the release/dist archive file which are per default ommitted.
+
+``` bash
+lean-package-validator validate [<directory>] --keep-glob-pattern '{LICENSE.*,README.*,docs*}'
+```
+
 The `--align-export-ignores|-a` option will align the created or overwritten export-ignores for a better readability.
 
 ``` bash

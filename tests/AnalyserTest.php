@@ -1086,6 +1086,77 @@ CONTENT;
     }
 
     #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/47')]
+    public function readmeFileIsNotExportIgnored(): void
+    {
+        $artifactFilenames = [
+            'LICENSE.txt',
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+LICENSE.txt export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory)->keepReadme();
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertTrue($analyser->isKeepReadmeEnabled());
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    /**
+     * @throws InvalidGlobPattern
+     */
+    #[Test]
+    public function filesMatchingKeepGlobPatternAreNotExportIgnored(): void
+    {
+        $artifactFilenames = [
+            'LICENSE.txt',
+            'README.rst',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs', 'docs']
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory)->setKeepGlobPattern('{LICENSE.*,README.*,docs*}');
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertTrue($analyser->isKeepGlobPatternSet());
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/24')]
     public function directoriesOnlyExportIgnoredOnce(): void
     {

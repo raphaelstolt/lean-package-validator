@@ -103,6 +103,22 @@ class Analyser
     private bool $keepLicense = false;
 
     /**
+     * Whether to exclude a README file from the export-ignores
+     * or not.
+     *
+     * @var boolean
+     */
+    private bool $keepReadme = false;
+
+
+    /**
+     * Pattern to exclude from the export-ignores.
+     *
+     * @var string
+     */
+    private string $keepGlobPattern = '';
+
+    /**
      * Whether to align the export-ignores on create or overwrite
      * or not.
      *
@@ -205,21 +221,22 @@ class Analyser
     }
 
     /**
-     * Guard the set glob pattern.
+     * Guard the given glob pattern.
      *
-     * @throws \Stolt\LeanPackage\Exceptions\InvalidGlobPattern
+     * @param string $pattern
+     * @throws InvalidGlobPattern
      * @return void
      */
-    private function guardGlobPattern(): void
+    private function guardGlobPattern(string $pattern): void
     {
         $invalidGlobPattern = false;
 
-        if (\substr($this->globPattern, 0) !== '{'
-            && (\substr($this->globPattern, -1) !== '}' && \substr($this->globPattern, -2) !== '}*')) {
+        if (\substr($pattern, 0) !== '{'
+            && (\substr($pattern, -1) !== '}' && \substr($pattern, -2) !== '}*')) {
             $invalidGlobPattern = true;
         }
 
-        $bracesContent = \trim(\substr($this->globPattern, 1, -1));
+        $bracesContent = \trim(\substr($pattern, 1, -1));
 
         if (empty($bracesContent)) {
             $invalidGlobPattern = true;
@@ -250,7 +267,7 @@ class Analyser
     public function setGlobPattern($pattern): Analyser
     {
         $this->globPattern = \trim($pattern);
-        $this->guardGlobPattern();
+        $this->guardGlobPattern($this->globPattern);
 
         return $this;
     }
@@ -374,6 +391,53 @@ class Analyser
     public function isKeepLicenseEnabled(): bool
     {
         return $this->keepLicense === true;
+    }
+
+    /**
+     * Keep README file in releases.
+     *
+     * @return Analyser
+     */
+    public function keepReadme(): Analyser
+    {
+        $this->keepReadme = true;
+
+        return $this;
+    }
+
+    /**
+     * Guard for not export-ignoring README file.
+     *
+     * @return boolean
+     */
+    public function isKeepReadmeEnabled(): bool
+    {
+        return $this->keepReadme === true;
+    }
+
+    /**
+     * Sets the glob pattern for not export-ignoring license files.
+     *
+     * @param string $globPattern
+     * @throws InvalidGlobPattern
+     * @return Analyser
+     */
+    public function setKeepGlobPattern(string $globPattern): Analyser
+    {
+        $this->guardGlobPattern($globPattern);
+        $this->keepGlobPattern = $globPattern;
+
+        return $this;
+    }
+
+    /**
+     * Guard for not export-ignoring glob pattern.
+     *
+     * @return boolean
+     */
+    public function isKeepGlobPatternSet(): bool
+    {
+        return $this->keepGlobPattern !== '';
     }
 
     /**
@@ -633,6 +697,24 @@ class Analyser
             });
 
             $expectedExportIgnores = $licenseLessExpectedExportIgnores;
+        }
+
+        if ($this->isKeepReadmeEnabled()) {
+            $readmeLessExpectedExportIgnores = [];
+            \array_filter($expectedExportIgnores, function ($exportIgnore) use (
+                &$readmeLessExpectedExportIgnores
+            ) {
+                if (!\preg_match('/(Readme.*)/i', $exportIgnore)) {
+                    $readmeLessExpectedExportIgnores[] = $exportIgnore;
+                }
+            });
+
+            $expectedExportIgnores = $readmeLessExpectedExportIgnores;
+        }
+
+        if ($this->isKeepGlobPatternSet()) {
+            $excludes = Glob::globArray($this->keepGlobPattern, $expectedExportIgnores);
+            $expectedExportIgnores = \array_diff($expectedExportIgnores, $excludes);
         }
 
         return \array_unique($expectedExportIgnores);

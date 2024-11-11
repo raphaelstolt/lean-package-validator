@@ -462,6 +462,92 @@ CONTENT;
     }
 
     #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/47')]
+    public function readmeIsNotInSuggestedFileContent(): void
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.md',
+            'README.md'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--keep-readme' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+License.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
+    }
+
+    #[Test]
+    public function keepGlobPatternMatchesAreNotInSuggestedFileContent(): void
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.md',
+            'README.md'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs', 'docs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--keep-glob-pattern' => '{README.*,License.*,docs*}',
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
+    }
+
+    #[Test]
     #[Group('glob')]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/13')]
     public function licenseIsNotInSuggestedFileContentWithCustomGlobPattern(): void
