@@ -33,7 +33,8 @@ class FinderTest extends TestCase
     {
         $finder = new Finder(new PhpPreset());
         $presetGlob = $finder->getPresetGlobByLanguageName($languageName);
-        $this->assertTrue(\is_array($presetGlob));
+
+        $this->assertIsArray($presetGlob);
     }
 
     #[Test]

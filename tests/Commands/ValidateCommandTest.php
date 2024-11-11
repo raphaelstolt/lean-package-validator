@@ -179,7 +179,7 @@ CONTENT;
             '--diff' => true,
         ]);
 
-        $actualDisplayRows = \array_values(\explode(PHP_EOL, $commandTester->getDisplay()));
+        $actualDisplayRows = \explode(PHP_EOL, $commandTester->getDisplay());
         $expectedDiffRows = ['--- Original', '+++ Expected', '@@ -1 +1,2 @@'];
 
         foreach ($expectedDiffRows as $expectedDiffRow) {

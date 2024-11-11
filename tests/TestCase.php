@@ -74,7 +74,7 @@ class TestCase extends PHPUnit
             \touch($artifactFile);
         }
 
-        if (\is_array($directories) && \count($directories) > 0) {
+        if (\count($directories) > 0) {
             foreach ($directories as $directory) {
                 $artifactDirectory = $this->temporaryDirectory
                     . DIRECTORY_SEPARATOR

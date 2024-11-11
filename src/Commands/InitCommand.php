@@ -109,6 +109,7 @@ class InitCommand extends Command
         $directory = (string) $input->getArgument('directory');
         $overwriteDefaultLpvFile = $input->getOption('overwrite');
         $chosenPreset = (string) $input->getOption('preset');
+        $globPatternFromPreset = false;
 
         if ($directory !== WORKING_DIRECTORY) {
             try {
@@ -159,9 +160,11 @@ class InitCommand extends Command
         );
 
         $verboseOutput = '+ Writing default glob pattern to .lpv file in ' . WORKING_DIRECTORY . '.';
+
         if ($globPatternFromPreset === true) {
             $verboseOutput = '+ Writing glob pattern for preset ' . $chosenPreset . ' to .lpv file in ' . WORKING_DIRECTORY . '.';
         }
+
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if ($bytesWritten === false) {

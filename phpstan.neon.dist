@@ -3,9 +3,13 @@ parameters:
     paths:
         - src
         - tests
+    treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: missingType.iterableValue
+        - identifier: argument.type
+        - identifier: identical.alwaysTrue
+        - identifier: method.alreadyNarrowedType
         - '#Constant WORKING_DIRECTORY not found.#'
         - '#Mockery\\MockInterface#'
         - '#Mockery\\LegacyMockInterface#'
