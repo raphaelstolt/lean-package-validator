@@ -57,28 +57,31 @@ abstract class Glob
     }
 
     /**
-     * Find array elements matching a pattern.
+     * Find array elements matching a glob pattern.
      *
      * @param string $pattern
      * @param array $array
      * @param int $flags
      * @return array
      */
-    public static function globArray(string $pattern, array $array, int $flags = FNM_CASEFOLD)
+    public static function globArray(string $pattern, array $array, int $flags = FNM_CASEFOLD): array
     {
         $pattern = \str_replace(['{', '}'], '', $pattern);
 
         $patternParts = \explode(',', $pattern);
 
-        foreach ($patternParts as $index => $patternPart) {
-            $matches[] = \array_filter($array, function ($val) use ($patternPart, $flags) {
-                return \fnmatch($patternPart, $val, $flags);
+        $matches = [];
+        foreach ($patternParts as $patternPart) {
+            $matches[] = \array_filter($array, function ($value) use ($patternPart, $flags) {
+                return \fnmatch($patternPart, $value, $flags);
             });
         }
 
         $excludes = [];
-        foreach ($matches as $index => $value) {
-            $excludes[] = \array_values($value)[0];
+        foreach ($matches as $match) {
+            if (\count(\array_values($match)) > 0) {
+                $excludes[] = \array_values($match)[0];
+            }
         }
 
         return $excludes;
