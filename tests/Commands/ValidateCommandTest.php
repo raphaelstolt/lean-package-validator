@@ -506,6 +506,50 @@ CONTENT;
     }
 
     #[Test]
+    public function licenseAndReadmeAreNotInSuggestedFileContent(): void
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.md',
+            'README.md'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs', 'docs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--keep-readme' => true,
+            '--keep-license' => true,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+docs/ export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the --create|-c option to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
+    }
+
+    #[Test]
     public function keepGlobPatternMatchesAreNotInSuggestedFileContent(): void
     {
         $artifactFilenames = [
