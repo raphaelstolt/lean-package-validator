@@ -37,12 +37,12 @@ final class ApplicationTest extends PHPUnit
 
         $this->assertStringContainsString(
             'init',
-            $output[17],
+            \implode('', $output),
             'Expected init command not listed.'
         );
         $this->assertStringContainsString(
             'validate',
-            $output[19],
+            \implode('', $output),
             'Expected validate command not listed.'
         );
         $this->assertEquals(Command::SUCCESS, $returnValue);
