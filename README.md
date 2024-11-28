@@ -43,12 +43,6 @@ further utilisation via [Composer scripts](https://getcomposer.org/doc/articles/
 composer require --dev stolt/lean-package-validator
 ```
 
-A third option to use the lean package validator is via [cpx](https://cpx.dev/).
-
-``` bash
-cpx stolt/lean-package-validator validate
-```
-
 > [!TIP] 
 > As of release `v1.9.0` it's also possible to install and use the lean package validator
 > via a PHAR [file](https://github.com/raphaelstolt/lean-package-validator/releases/tag/v1.9.0).
@@ -192,11 +186,10 @@ The `--overwrite|-o` option overwrites an existing `.lpv` file.
 The `--preset` option allows to choose from a predefined set of glob pattern.
 Available presets are `PHP`, `Python`, and `Go`. With `PHP` being the default.
 
-## Utilisation via Composer scripts or it's dedicated GitHub Action
+## Utilisation via Composer scripts, cpx, or it's dedicated GitHub Action
 
 To avoid that changes coming from contributions or own modifications slip into release/dist archives it
-might be helpful to use a guarding [Composer script](https://getcomposer.org/doc/articles/scripts.md),
-which will be available at everyone's fingertips.
+might be helpful to use a guarding [Composer script](https://getcomposer.org/doc/articles/scripts.md), which will be available at everyone's fingertips.
 
 By adding the following to the project/micro-package its `composer.json` the `.gitattributes` file can
 now be easily validated via `composer validate-gitattributes`.
@@ -207,6 +200,11 @@ now be easily validated via `composer validate-gitattributes`.
         "validate-gitattributes": "lean-package-validator validate"
     },
 }
+```
+Another option to utilise the lean package validator is via [cpx](https://cpx.dev/).
+
+``` bash
+cpx stolt/lean-package-validator validate
 ```
 
 For utilising a dedicated GitHub Action have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
