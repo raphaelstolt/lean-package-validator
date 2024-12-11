@@ -31,6 +31,7 @@ final class PhpPreset implements Preset
             'rector*',
             'package*',
             'pint.json',
+            '*debugbar.json',
             'ecs*',
             '*.dist.*',
             '*.dist',

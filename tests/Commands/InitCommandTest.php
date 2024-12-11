@@ -88,6 +88,7 @@ sonar*
 rector*
 package*
 pint.json
+*debugbar.json
 ecs*
 *.dist.*
 *.dist
