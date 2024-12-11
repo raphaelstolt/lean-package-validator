@@ -82,12 +82,14 @@ box.json
 composer-dependency-analyser*
 collision-detector*
 captainhook.json
+peck.json
 infection*
 phpstan*
 sonar*
 rector*
 package*
 pint.json
+*debugbar.json
 ecs*
 *.dist.*
 *.dist
