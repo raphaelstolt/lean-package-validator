@@ -52,7 +52,8 @@
         "lpv:pre-commit-check": [
             "@lpv:test",
             "@lpv:cs-lint",
-            "@lpv:static-analyse"
+            "@lpv:static-analyse",
+            "@lpv:application-version-guard"
         ]
     },
     "config": {
