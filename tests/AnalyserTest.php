@@ -1512,6 +1512,7 @@ CONTENT;
             'rector*',
             'package*',
             'pint.json',
+            'renovate.json',
             '*debugbar.json',
             'ecs*',
             '*.dist.*',
