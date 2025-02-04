@@ -13,7 +13,6 @@ bin/release-version export-ignore
 bin/start-watchman export-ignore
 box.json.dist export-ignore
 CHANGELOG.md export-ignore
-composer.json export-ignore
 example/ export-ignore
 LICENSE.md export-ignore
 lpv-logo.png export-ignore
