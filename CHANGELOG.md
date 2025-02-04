@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.2.0] - 2025-02-06
+
 ### Added
 
 - Option to sort ignored artifacts from directories to files. Closes [#30](https://github.com/raphaelstolt/lean-package-validator/issues/30).
@@ -305,7 +307,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.2.0...HEAD
+[v4.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.1...v4.2.0
 [v4.1.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.0...v4.1.1
 [v4.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.5...v4.1.0
 [v4.0.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.0.4...v4.0.5
