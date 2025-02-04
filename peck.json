@@ -1,0 +1,32 @@
+{
+    "preset": "base",
+    "ignore": {
+        "words": [
+            "php",
+            "gitattributes",
+            "analyser",
+            "analyse",
+            "windowsish",
+            "lpv",
+            "readme",
+            "pathnames",
+            "gitignore",
+            "eol",
+            "nosort",
+            "nocheck",
+            "onlydir",
+            "noescape",
+            "errline",
+            "errfile",
+            "errno",
+            "initialise",
+            "errstr",
+            "delegator",
+            "gitignored",
+            "str",
+            "postfix",
+            "autoconfiguration"
+        ],
+        "paths": []
+    }
+}

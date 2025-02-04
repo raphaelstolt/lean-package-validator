@@ -49,11 +49,13 @@
         "lpv:application-phar-version-guard": "php bin/application-version --verify-tag-match=phar",
         "lpv:static-analyse": "phpstan analyse --configuration phpstan.neon.dist",
         "lpv:validate-gitattributes": "bin/lean-package-validator validate",
+        "lpv:spell-check": "./vendor/bin/peck",
         "lpv:pre-commit-check": [
             "@lpv:test",
             "@lpv:cs-lint",
             "@lpv:static-analyse",
-            "@lpv:application-version-guard"
+            "@lpv:application-version-guard",
+            "@lpv:spell-check"
         ]
     },
     "config": {
@@ -64,6 +66,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
         "mockery/mockery": "^1.0",
+        "peckphp/peck": "^0.1.2",
         "phlak/semver": "^4.1 || ^6.0",
         "php-mock/php-mock-phpunit": "^2.7||^1.1",
         "phpstan/phpstan": "^2.0",
