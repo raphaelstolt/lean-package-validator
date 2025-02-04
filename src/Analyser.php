@@ -54,7 +54,7 @@ class Analyser
     private string $preferredEol = "\n";
 
     /**
-     * Whether to do a strict comparsion of the export-ignores
+     * Whether to do a strict comparison of the export-ignores
      * in the .gitattributes files against the expected ones
      * or not.
      *
@@ -63,7 +63,7 @@ class Analyser
     private bool $strictOrderComparison = false;
 
     /**
-     * Whether to do a strict comparsion for stale export-ignores
+     * Whether to do a strict comparison for stale export-ignores
      * in the .gitattributes files against the expected ones
      * or not.
      *
@@ -550,35 +550,35 @@ class Analyser
     /**
      * Return the expected .gitattributes content.
      *
-     * @param array $postfixlessExportIgnores Expected patterns without an export-ignore postfix.
+     * @param array $postfixLessExportIgnores Expected patterns without an export-ignore postfix.
      * @return string
      */
-    public function getExpectedGitattributesContent(array $postfixlessExportIgnores = []): string
+    public function getExpectedGitattributesContent(array $postfixLessExportIgnores = []): string
     {
-        if ($postfixlessExportIgnores === []) {
-            $postfixlessExportIgnores = $this->collectExpectedExportIgnores();
+        if ($postfixLessExportIgnores === []) {
+            $postfixLessExportIgnores = $this->collectExpectedExportIgnores();
         }
 
-        if (!$this->hasGitattributesFile() && \count($postfixlessExportIgnores) > 0) {
-            $postfixlessExportIgnores[] = '.gitattributes';
+        if (!$this->hasGitattributesFile() && \count($postfixLessExportIgnores) > 0) {
+            $postfixLessExportIgnores[] = '.gitattributes';
         }
 
-        \sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
+        \sort($postfixLessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
-        if (\count($postfixlessExportIgnores) > 0) {
+        if (\count($postfixLessExportIgnores) > 0) {
             if ($this->sortFromDirectoriesToFiles === false && ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentComparisonEnabled())) {
-                $postfixlessExportIgnores = $this->getAlignedExportIgnoreArtifacts(
-                    $postfixlessExportIgnores
+                $postfixLessExportIgnores = $this->getAlignedExportIgnoreArtifacts(
+                    $postfixLessExportIgnores
                 );
             }
 
             if ($this->sortFromDirectoriesToFiles) {
-                $postfixlessExportIgnores = $this->getByDirectoriesToFilesExportIgnoreArtifacts(
-                    $postfixlessExportIgnores
+                $postfixLessExportIgnores = $this->getByDirectoriesToFilesExportIgnoreArtifacts(
+                    $postfixLessExportIgnores
                 );
             }
 
-            $content = \implode(" export-ignore" . $this->preferredEol, $postfixlessExportIgnores)
+            $content = \implode(" export-ignore" . $this->preferredEol, $postfixLessExportIgnores)
                 . " export-ignore" . $this->preferredEol;
 
             if ($this->hasGitattributesFile()) {
