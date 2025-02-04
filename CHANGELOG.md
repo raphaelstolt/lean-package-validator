@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- Option to sort ignored artifacts from directories to files. Closes [#30](https://github.com/raphaelstolt/lean-package-validator/issues/30).
 - Further PHP preset expansion.
 
 ## [v4.1.1] - 2025-01-14

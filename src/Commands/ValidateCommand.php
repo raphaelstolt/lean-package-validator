@@ -102,6 +102,7 @@ class ValidateCommand extends Command
         $keepLicenseDescription = 'Do not export-ignore the license file';
         $keepReadmeDescription = 'Do not export-ignore the README file';
         $keepGlobPatternDescription = 'Do not export-ignore matching glob pattern e.g. <comment>{LICENSE.*,README.*,docs*}</comment>';
+        $sortDescription = 'Sort from directories to files';
 
         $alignExportIgnoresDescription = 'Align export-ignores on create or overwrite';
 
@@ -162,6 +163,12 @@ class ValidateCommand extends Command
             'a',
             InputOption::VALUE_NONE,
             $alignExportIgnoresDescription
+        );
+        $this->addOption(
+            'sort-from-directories-to-files',
+            's',
+            InputOption::VALUE_NONE,
+            $sortDescription
         );
         $this->addOption(
             'omit-header',
@@ -226,12 +233,20 @@ class ValidateCommand extends Command
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
 
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
+        $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');
 
-        if ($enforceStrictOrderComparison) {
+        if ($enforceStrictOrderComparison && $sortFromDirectoriesToFiles === false) {
             $verboseOutput = '+ Enforcing strict order comparison.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
             $this->analyser->enableStrictOrderComparison();
+        }
+
+        if ($sortFromDirectoriesToFiles) {
+            $verboseOutput = '+ Sorting from files to directories.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+            $this->analyser->sortFromDirectoriesToFiles();
         }
 
         if ($reportStaleExportIgnores) {

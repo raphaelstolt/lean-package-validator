@@ -135,6 +135,12 @@ The `--align-export-ignores|-a` option will align the created or overwritten exp
 lean-package-validator validate [<directory>] --align-export-ignores --create
 ```
 
+The `--sort-from-directories-to-files|-s` option will order the export-ignores from directories to files for a better readability.
+
+``` bash
+lean-package-validator validate [<directory>] --sort-from-directories-to-files --create
+```
+
 The `--enforce-alignment` option will enforce a strict alignment of export-ignores
 in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__
 no alignment is enforced.

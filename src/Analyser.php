@@ -2,6 +2,7 @@
 
 namespace Stolt\LeanPackage;
 
+use PHPStan\Type\Php\DateIntervalDynamicReturnTypeExtension;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
@@ -71,13 +72,21 @@ class Analyser
     private bool $staleExportIgnoresComparison = false;
 
     /**
-     * Whether to do a strict alignment comparsion of the export-ignores
+     * Whether to do a strict alignment comparison of the export-ignores
      * in the .gitattributes files against the expected ones
      * or not.
      *
      * @var boolean
      */
     private bool $strictAlignmentComparison = false;
+
+    /**
+     * Whether to sort the export-ignores
+     * in the .gitattributes from directories to files or not.
+     *
+     * @var boolean
+     */
+    private bool $sortFromDirectoriesToFiles = false;
 
     /**
      * Whether at least one export-ignore pattern has
@@ -317,6 +326,13 @@ class Analyser
         return $this;
     }
 
+    public function sortFromDirectoriesToFiles(): Analyser
+    {
+        $this->sortFromDirectoriesToFiles = true;
+
+        return $this;
+    }
+
     /**
      * Guard for strict order comparison.
      *
@@ -550,8 +566,14 @@ class Analyser
         \sort($postfixlessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if (\count($postfixlessExportIgnores) > 0) {
-            if ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentComparisonEnabled()) {
+            if ($this->sortFromDirectoriesToFiles === false && ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentComparisonEnabled())) {
                 $postfixlessExportIgnores = $this->getAlignedExportIgnoreArtifacts(
+                    $postfixlessExportIgnores
+                );
+            }
+
+            if ($this->sortFromDirectoriesToFiles) {
+                $postfixlessExportIgnores = $this->getByDirectoriesToFilesExportIgnoreArtifacts(
                     $postfixlessExportIgnores
                 );
             }
@@ -896,6 +918,22 @@ class Analyser
             }
             return $artifact;
         }, $artifacts);
+    }
+
+    private function getByDirectoriesToFilesExportIgnoreArtifacts(array $artifacts): array
+    {
+        $directories = \array_filter($artifacts, function ($artifact) {
+            if (\strpos($artifact, '/')) {
+                return $artifact;
+            }
+        });
+        $files = \array_filter($artifacts, function ($artifact) {
+            if (\strpos($artifact, '/') === false) {
+                return $artifact;
+            }
+        });
+
+        return \array_merge($directories, $files);
     }
 
     /**

@@ -1239,6 +1239,41 @@ CONTENT;
     }
 
     #[Test]
+    public function exportIgnoresAreSortedFromDirectoriesToFiles(): void
+    {
+        $artifactFilenames = [
+            'LICENSE.txt',
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs', 'docs']
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+docs/ export-ignore
+specs/ export-ignore
+.gitattributes export-ignore
+LICENSE.txt export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+
+CONTENT;
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory)->sortFromDirectoriesToFiles();
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent();
+
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/4')]
     public function precedingSlashesAreDetected(): void
     {
