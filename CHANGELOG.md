@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.3.1] - 2025-02-07
+
+### Added
+- The tree command defaults to the `--dist-package` option.
+
+### Fixed
+- A bug where the directory to operate on was incorrect.
+
 ## [v4.3.0] - 2025-02-07
 
 ### Added
@@ -312,7 +320,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.1...HEAD
+[v4.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.0...v4.3.1
 [v4.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.2.0...v4.3.0
 [v4.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.1...v4.2.0
 [v4.1.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.0...v4.1.1
