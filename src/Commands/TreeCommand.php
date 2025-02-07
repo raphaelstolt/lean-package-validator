@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands;
 
-use Stolt\LeanPackage\Exceptions\GitNotAvailable;
-use Stolt\LeanPackage\Exceptions\TreeNotAvailable;
-use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use Stolt\LeanPackage\Tree;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -57,21 +54,18 @@ final class TreeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = (string) $input->getArgument('directory');
+        $this->directoryToOperateOn = (string) $input->getArgument('directory');
 
-        if ($directory !== $this->directoryToOperateOn) {
-            if (!\file_get_contents($directory) || !\is_dir($directory)) {
-                $warning = "Warning: The provided directory "
-                    . "'$directory' does not exist or is not a directory.";
-                $outputContent = '<error>' . $warning . '</error>';
-                $output->writeln($outputContent);
+        if (!\is_dir($this->directoryToOperateOn)) {
+            $warning = "Warning: The provided directory "
+                . "'$this->directoryToOperateOn' does not exist or is not a directory.";
+            $outputContent = '<error>' . $warning . '</error>';
+            $output->writeln($outputContent);
 
-                return Command::FAILURE;
-            }
+            return Command::FAILURE;
         }
 
         $showSrcTree = $input->getOption('src');
-        $showDistPackageTree = $input->getOption('dist-package');
 
         if ($showSrcTree) {
             $verboseOutput = '+ Showing flat structure of package source.';
@@ -94,7 +88,10 @@ final class TreeCommand extends Command
 
     protected function getPackageName(): string
     {
-        $composerContentAsJson = \json_decode(\file_get_contents('composer.json'), true);
+        $composerContentAsJson = \json_decode(
+            \file_get_contents($this->directoryToOperateOn . DIRECTORY_SEPARATOR . 'composer.json'),
+            true
+        );
         return \trim($composerContentAsJson['name']);
     }
 }
