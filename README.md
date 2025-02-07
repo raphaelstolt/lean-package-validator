@@ -179,7 +179,9 @@ Would expect the following .gitattributes file content:
 The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing non-existent
 repository artifacts. In combination with the `--diff` option these will be shown in the output.
 
-#### Additional commands
+### Additional commands
+
+#### Init command
 
 The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artifacts.
 
@@ -192,7 +194,10 @@ The `--overwrite|-o` option overwrites an existing `.lpv` file.
 The `--preset` option allows to choose from a predefined set of glob pattern.
 Available presets are `PHP`, `Python`, and `Go`. With `PHP` being the default.
 
-The `tree` command allows you to inspect the __flat__ `source` and `dist package` structure of the given project.
+#### Tree command
+
+The `tree` command of the lean package validator allows you to inspect the __flat__ `source` and `dist package` structure
+of the given project/micro-package. It requires the [tree](https://en.wikipedia.org/wiki/Tree_(command)) command to be installed.
 
 ``` bash
 lean-package-validator tree [<directory>] --src
