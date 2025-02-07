@@ -83,17 +83,13 @@ final class TreeCommand extends Command
             return Command::SUCCESS;
         }
 
-        if ($showDistPackageTree) {
-            $verboseOutput = '+ Showing flat structure of dist package.';
-            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+        $verboseOutput = '+ Showing flat structure of dist package.';
+        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-            $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
-            $output->write($this->tree->getTreeForDistPackage($this->directoryToOperateOn));
+        $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
+        $output->write($this->tree->getTreeForDistPackage($this->directoryToOperateOn));
 
-            return Command::SUCCESS;
-        }
-
-        return Command::FAILURE;
+        return Command::SUCCESS;
     }
 
     protected function getPackageName(): string
