@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.3.0] - 2025-02-07
+
+### Added
+- New `tree` command, that displays the source and dist package structure. Closes [#48](https://github.com/raphaelstolt/lean-package-validator/issues/48).  
+
 ## [v4.2.0] - 2025-02-06
 
 ### Added

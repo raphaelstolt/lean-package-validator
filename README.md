@@ -192,6 +192,54 @@ The `--overwrite|-o` option overwrites an existing `.lpv` file.
 The `--preset` option allows to choose from a predefined set of glob pattern.
 Available presets are `PHP`, `Python`, and `Go`. With `PHP` being the default.
 
+The `tree` command allows you to inspect the __flat__ `source` and `dist package` structure of the given project.
+
+``` bash
+lean-package-validator tree [<directory>] --src
+
+Package: stolt/lean-package-validator
+.
+├── bin
+├── coverage-reports
+├── example
+├── .git
+├── .github
+├── .idea
+├── .phpunit.cache
+├── src
+├── tests
+├── vendor
+├── box.json.dist
+├── CHANGELOG.md
+├── composer.json
+├── composer.lock
+├── .editorconfig
+├── .gitattributes
+├── .gitignore
+├── .gitmessage
+├── LICENSE.md
+├── lpv-logo.png
+├── peck.json
+├── .php-cs-fixer.php
+├── phpstan.neon.dist
+├── phpunit.xml.dist
+└── README.md
+
+10 directories, 15 files
+```
+
+``` bash
+lean-package-validator tree [<directory>] --dist-package
+
+Package: stolt/lean-package-validator
+.
+├── bin
+├── composer.json
+└── src
+
+2 directories, 1 file
+```
+
 ## Utilisation via Composer scripts, cpx, or it's dedicated GitHub Action
 
 To avoid that changes coming from contributions or own modifications slip into release/dist archives it

@@ -25,12 +25,14 @@ if (false === $autoloaded) {
 \define('VERSION', '4.2.0');
 
 use Stolt\LeanPackage\Commands\InitCommand;
+use Stolt\LeanPackage\Commands\TreeCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
+use Stolt\LeanPackage\Tree;
 use Symfony\Component\Console\Application;
 
 $finder = new Finder(new PhpPreset());
@@ -44,9 +46,10 @@ $validateCommand = new ValidateCommand(
     $analyser,
     new Validator($archive)
 );
+$treeCommand = new TreeCommand(new Tree($archive));
 
 $application = new Application('Lean package validator', VERSION);
 $application->addCommands(
-    [$initCommand, $validateCommand]
+    [$initCommand, $validateCommand, $treeCommand]
 );
 $application->run();
