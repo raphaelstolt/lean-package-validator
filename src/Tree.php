@@ -30,7 +30,7 @@ final class Tree
     public function getTreeForSrc(string $directory): string
     {
         \exec(
-            'tree -aL 1 --dirsfirst ' . \escapeshellarg($directory) . '  2>&1',
+            'tree -aL 1 --dirsfirst ' . \escapeshellarg($directory) . ' --gitignore -I .git  2>&1',
             $output
         );
 

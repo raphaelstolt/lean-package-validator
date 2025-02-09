@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.3.2] - 2025-02-10
+
+### Added
+- The tree command with the `--src` option now exludes files from `.gitignore` and the `.git` directory.
+
 ## [v4.3.1] - 2025-02-07
 
 ### Added
