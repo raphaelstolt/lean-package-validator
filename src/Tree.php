@@ -29,10 +29,13 @@ final class Tree
 
     public function getTreeForSrc(string $directory): string
     {
-        \exec(
-            'tree -aL 1 --dirsfirst ' . \escapeshellarg($directory) . ' --gitignore -I .git  2>&1',
-            $output
-        );
+        $command = 'tree -aL 1 --dirsfirst ' . \escapeshellarg($directory) . ' -I .git  2>&1';
+
+        if ((new OsHelper())->isMacOs()) {
+            $command = 'tree -aL 1 --dirsfirst ' . \escapeshellarg($directory) . ' --gitignore -I .git  2>&1';
+        }
+
+        \exec($command, $output);
 
         $output[0] = '.';
 
@@ -43,10 +46,13 @@ final class Tree
     {
         $this->archive->createArchive();
 
-        \exec(
-            'tar --list --exclude="*/*" --file ' . \escapeshellarg($this->archive->getFilename()) . ' | tree -aL 1 --dirsfirst --fromfile . 2>&1',
-            $output
-        );
+        $command = 'tar --list --exclude="*/*" --file ' . \escapeshellarg($this->archive->getFilename()) . ' | tree -aL 1 --dirsfirst --fromfile . 2>&1';
+
+        if ((new OsHelper())->isMacOs()) {
+            $command = 'tar --list --file ' . \escapeshellarg($this->archive->getFilename()) . ' | tree -aL 1 --dirsfirst --fromfile . 2>&1';
+        }
+
+        \exec($command, $output);
 
         $this->archive->removeArchive();
 
