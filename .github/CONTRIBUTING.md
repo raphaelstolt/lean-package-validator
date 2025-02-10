@@ -9,3 +9,5 @@ Thanks for considering to contribute to the `lean package validator`. Please fol
 - Commits __MUST__ use the provided [commit message template](../.gitmessage), which follows the [rules](http://chris.beams.io/posts/git-commit/) described by Chris Beams. It can be configured via `composer lpv:configure-commit-template` prior to committing.
 
 - All upstreamed contributions __MUST__ use [feature / topic branches](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows) to ease merging.
+
+- Please run `composer lpv:pre-commit-check` before opening a pull request.
