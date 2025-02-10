@@ -81,7 +81,7 @@ final class TreeCommand extends Command
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
-        $output->write($this->tree->getTreeForDistPackage($this->directoryToOperateOn));
+        $output->write($this->tree->getTreeForDistPackage());
 
         return Command::SUCCESS;
     }

@@ -197,7 +197,8 @@ Available presets are `PHP`, `Python`, and `Go`. With `PHP` being the default.
 #### Tree command
 
 The `tree` command of the lean package validator allows you to inspect the __flat__ `source` and `dist package` structure
-of the given project/micro-package. It requires the [tree](https://en.wikipedia.org/wiki/Tree_(command)) command to be installed.
+of the given project/micro-package. It requires the [tree](https://en.wikipedia.org/wiki/Tree_(command)) Unix command to
+be installed in version `>=2.0`.
 
 ``` bash
 lean-package-validator tree [<directory>] --src
@@ -205,15 +206,10 @@ lean-package-validator tree [<directory>] --src
 Package: stolt/lean-package-validator
 .
 ├── bin
-├── coverage-reports
 ├── example
-├── .git
 ├── .github
-├── .idea
-├── .phpunit.cache
 ├── src
 ├── tests
-├── vendor
 ├── box.json.dist
 ├── CHANGELOG.md
 ├── composer.json
@@ -230,7 +226,7 @@ Package: stolt/lean-package-validator
 ├── phpunit.xml.dist
 └── README.md
 
-10 directories, 15 files
+5 directories, 15 files
 ```
 
 ``` bash
