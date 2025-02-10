@@ -197,7 +197,7 @@ Available presets are `PHP`, `Python`, and `Go`. With `PHP` being the default.
 #### Tree command
 
 The `tree` command of the lean package validator allows you to inspect the __flat__ `source` and `dist package` structure
-of the given project/micro-package.
+of the given project/micro-package. It is __not__ intended for validation use.
 
 ``` bash
 lean-package-validator tree [<directory>] --src
