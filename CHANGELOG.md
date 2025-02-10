@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.3.3] - 2025-02-10
+
+### Fixed
+- Replace the dependency on the Unix `tree` command. Closes [#49](https://github.com/raphaelstolt/lean-package-validator/issues/49). 
+
 ## [v4.3.2] - 2025-02-10
 
 ### Added
@@ -325,7 +330,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.3...HEAD
+[v4.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.2...v4.3.3
+[v4.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.1...v4.3.2
 [v4.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.0...v4.3.1
 [v4.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.2.0...v4.3.0
 [v4.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.1.1...v4.2.0
