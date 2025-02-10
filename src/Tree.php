@@ -2,10 +2,10 @@
 
 namespace Stolt\LeanPackage;
 
+use FilesystemIterator;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
-use Stolt\LeanPackage\Exceptions\TreeNotAvailable;
-use Stolt\LeanPackage\Helpers\Str as OsHelper;
+use Symfony\Component\Finder\Finder;
 
 final class Tree
 {
@@ -23,75 +23,97 @@ final class Tree
         }
     }
 
-    /**
-     * @throws TreeNotAvailable
-     */
     public function getTreeForSrc(string $directory): string
     {
-        if (!$this->detectTreeCommand()) {
-            throw new TreeNotAvailable('Unix tree command is not available.');
-        }
-
-        if (!$this->detectTreeCommandVersion()) {
-            throw new TreeNotAvailable('Required tree command version >=2.0 is not available.');
-        }
-
-        $command = 'tree -aL 1 --dirsfirst ' . \escapeshellarg($directory) . ' --gitignore -I .git  2>&1';
-
-        \exec($command, $output);
-
-        $output[0] = '.';
-
-        return \implode(PHP_EOL, $output) . PHP_EOL;
+        return $this->getTree($directory);
     }
 
     /**
-     * @throws TreeNotAvailable
      * @throws GitHeadNotAvailable
      * @throws GitNotAvailable
      */
     public function getTreeForDistPackage(): string
     {
-        if (!$this->detectTreeCommand()) {
-            throw new TreeNotAvailable('Unix tree command is not available.');
-        }
-
         $this->archive->createArchive();
+        $temporaryDirectory = \sys_get_temp_dir() . '/dist-release';
 
-        $command = 'tar --list --exclude="*/*" --file ' . \escapeshellarg($this->archive->getFilename()) . ' | tree -aL 1 --dirsfirst --fromfile . 2>&1';
-
-        if ((new OsHelper())->isMacOs()) {
-            $command = 'tar --list --file ' . \escapeshellarg($this->archive->getFilename()) . ' | tree -aL 1 --dirsfirst --fromfile . 2>&1';
+        if (!\file_exists($temporaryDirectory)) {
+            \mkdir($temporaryDirectory);
         }
 
-        \exec($command, $output);
+        $command = 'tar -xf ' . \escapeshellarg($this->archive->getFilename()) . ' --directory ' . $temporaryDirectory . ' 2>&1';
+
+        \exec($command);
+
+        $distReleaseTree = $this->getTree($temporaryDirectory);
+
 
         $this->archive->removeArchive();
+        $this->removeDirectory($temporaryDirectory);
 
-        return \implode(PHP_EOL, $output) . PHP_EOL;
+        return $distReleaseTree;
     }
 
-    protected function detectTreeCommand(): bool
+    private function getTree(string $directory): string
     {
-        $command = 'where tree 2>&1';
+        $finder = new Finder();
+        $finder->in($directory)->ignoreVCSIgnored(true)
+            ->ignoreDotFiles(false)->depth(0)->sortByName()->sortByType();
 
-        if ((new OsHelper())->isWindows() === false) {
-            $command = 'which tree 2>&1';
+        $tree[] = '.';
+
+        $index = 0;
+        $directoryCount = 0;
+        $fileCount = 0;
+
+        foreach ($finder as $file) {
+            $index++;
+            $filename = $file->getFilename();
+            if ($file->isDir()) {
+                $filename = $file->getFilename() . '/';
+                $directoryCount++;
+            }
+
+            if ($file->isFile()) {
+                $fileCount++;
+            }
+
+            if ($index < $finder->count()) {
+                $tree[] = '├── ' . $filename;
+            } else {
+                $tree[] = '└── ' . $filename;
+            }
         }
 
-        \exec($command, $output, $returnValue);
+        $tree[] = PHP_EOL;
+        $tree[] = \sprintf(
+            '%d %s, %d %s',
+            $directoryCount,
+            $directoryCount > 1 ? 'directories' : 'directory',
+            $fileCount,
+            $fileCount > 1 ? 'files': 'file'
+        );
+        $tree[] = PHP_EOL;
 
-        return $returnValue === 0;
+        return \implode(PHP_EOL, $tree);
     }
 
-    protected function detectTreeCommandVersion(): bool
+    protected function removeDirectory(string $directory): void
     {
-        \exec('tree --version 2>&1', $output);
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
 
-        if (\strpos($output[0], 'v2')) {
-            return true;
+        /** @var \SplFileInfo $fileinfo */
+        foreach ($files as $fileinfo) {
+            if ($fileinfo->isDir()) {
+                @\rmdir($fileinfo->getRealPath());
+                continue;
+            }
+            @\unlink($fileinfo->getRealPath());
         }
 
-        return false;
+        @\rmdir($directory);
     }
 }

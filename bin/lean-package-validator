@@ -46,7 +46,7 @@ $validateCommand = new ValidateCommand(
     $analyser,
     new Validator($archive)
 );
-$treeCommand = new TreeCommand(new Tree($archive));
+$treeCommand = new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY,'tree-temp')));
 
 $application = new Application('Lean package validator', VERSION);
 $application->addCommands(
