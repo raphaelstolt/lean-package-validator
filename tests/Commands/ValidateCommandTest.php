@@ -12,7 +12,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\Ticket;
-use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
@@ -33,11 +32,6 @@ class ValidateCommandTest extends TestCase
     use InteractsWithConsole;
 
     /**
-     * @var Application
-     */
-    private Application $application;
-
-    /**
      * Set up test environment.
      */
     protected function setUp(): void
@@ -46,7 +40,13 @@ class ValidateCommandTest extends TestCase
         if (!\defined('WORKING_DIRECTORY')) {
             \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
-        $this->application = $this->getApplication();
+
+        $analyserCommand = new ValidateCommand(
+            new Analyser(new Finder(new PhpPreset())),
+            new Validator(new Archive($this->temporaryDirectory))
+        );
+
+        $this->application = $this->getApplication($analyserCommand);
     }
 
     /**
@@ -2240,26 +2240,6 @@ CONTENT;
         $analyserCommand = new ValidateCommand(
             new Analyser(new Finder(new PhpPreset())),
             $mockedArchiveValidator
-        );
-
-        $application->add($analyserCommand);
-
-        return $application;
-    }
-
-    /**
-     * @return Application
-     */
-    protected function getApplication(): Application
-    {
-        $application = new Application();
-        $archive = new Archive(
-            $this->temporaryDirectory
-        );
-
-        $analyserCommand = new ValidateCommand(
-            new Analyser(new Finder(new PhpPreset())),
-            new Validator($archive)
         );
 
         $application->add($analyserCommand);

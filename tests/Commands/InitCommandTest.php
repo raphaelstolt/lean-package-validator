@@ -14,17 +14,11 @@ use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InitCommandTest extends TestCase
 {
-    /**
-     * @var Application
-     */
-    private $application;
-
     /**
      * Set up test environment.
      */
@@ -34,7 +28,7 @@ class InitCommandTest extends TestCase
         if (!\defined('WORKING_DIRECTORY')) {
             \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
-        $this->application = $this->getApplication();
+        $this->application = $this->getApplication(new InitCommand(new Analyser(new Finder(new PhpPreset()))));
     }
 
     /**
@@ -236,16 +230,5 @@ CONTENT;
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists($expectedDefaultLpvFile);
-    }
-
-    /**
-     * @return Application
-     */
-    protected function getApplication(): Application
-    {
-        $application = new Application();
-        $application->add(new InitCommand(new Analyser(new Finder(new PhpPreset()))));
-
-        return $application;
     }
 }

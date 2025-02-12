@@ -11,17 +11,12 @@ use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Tree;
-use Symfony\Component\Console\Application;
 
 class TreeCommandTest extends TestCase
 {
     /**
-     * @var Application
-     */
-    private Application $application;
-
-    /**
      * Set up test environment.
+     * @throws GitNotAvailable
      */
     protected function setUp(): void
     {
@@ -29,7 +24,7 @@ class TreeCommandTest extends TestCase
         if (!\defined('WORKING_DIRECTORY')) {
             \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
-        $this->application = $this->getApplication();
+        $this->application = $this->getApplication(new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY))));
     }
 
     /**
@@ -43,7 +38,6 @@ class TreeCommandTest extends TestCase
             $this->removeDirectory($this->temporaryDirectory);
         }
     }
-
     #[Test]
     public function displaysExpectedSrcTree(): void
     {
@@ -70,17 +64,5 @@ class TreeCommandTest extends TestCase
 
         $this->assertStringContainsString('5 directories, 2 files', $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
-    }
-
-    /**
-     * @throws GitNotAvailable
-     * @return Application
-     */
-    protected function getApplication(): Application
-    {
-        $application = new Application();
-        $application->add(new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY))));
-
-        return $application;
     }
 }

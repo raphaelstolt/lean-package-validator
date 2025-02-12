@@ -5,10 +5,20 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
+use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
+use Stolt\LeanPackage\Presets\Finder;
+use Stolt\LeanPackage\Presets\PhpPreset;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 
 class TestCase extends PHPUnit
 {
+    /**
+     * @var Application
+     */
+    protected Application $application;
     protected string $temporaryDirectory;
 
     /**
@@ -133,5 +143,17 @@ class TestCase extends PHPUnit
             . '.lpv';
 
         return file_put_contents($temporaryLpvFile, $content) > 0;
+    }
+
+    /**
+     * @param Command $command
+     * @return Application
+     */
+    protected function getApplication(Command $command): Application
+    {
+        $application = new Application();
+        $application->add($command);
+
+        return $application;
     }
 }
