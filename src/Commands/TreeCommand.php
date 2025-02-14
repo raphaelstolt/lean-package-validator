@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands;
 
+use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Tree;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -80,14 +81,25 @@ final class TreeCommand extends Command
         $verboseOutput = '+ Showing flat structure of dist package.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-        $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
-        $output->write($this->tree->getTreeForDistPackage());
+        try {
+            $treeToDisplay = $this->tree->getTreeForDistPackage($this->directoryToOperateOn);
+
+            $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
+            $output->write($treeToDisplay);
+        } catch (GitHeadNotAvailable $e) {
+            $output->writeln('Directory <info>' . $this->directoryToOperateOn . '</info> has no Git Head.');
+            return Command::FAILURE;
+        }
 
         return Command::SUCCESS;
     }
 
     protected function getPackageName(): string
     {
+        if (!\file_exists($this->directoryToOperateOn . DIRECTORY_SEPARATOR . 'composer.json')) {
+            return 'unknown/unknown';
+        }
+
         $composerContentAsJson = \json_decode(
             \file_get_contents($this->directoryToOperateOn . DIRECTORY_SEPARATOR . 'composer.json'),
             true

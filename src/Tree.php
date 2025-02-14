@@ -32,8 +32,10 @@ final class Tree
      * @throws GitHeadNotAvailable
      * @throws GitNotAvailable
      */
-    public function getTreeForDistPackage(): string
+    public function getTreeForDistPackage(string $directory): string
     {
+        \chdir($directory);
+
         $this->archive->createArchive();
         $temporaryDirectory = \sys_get_temp_dir() . '/dist-release';
 
