@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.3.4] - 2025-02-14
+
+### Fixed
+- Check if given directory of the `tree --dist-package` command is a Git repository.
+
 ## [v4.3.3] - 2025-02-10
 
 ### Fixed
@@ -330,7 +335,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.3...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.4...HEAD
+[v4.3.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.3...v4.3.4
 [v4.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.2...v4.3.3
 [v4.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.1...v4.3.2
 [v4.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.0...v4.3.1
