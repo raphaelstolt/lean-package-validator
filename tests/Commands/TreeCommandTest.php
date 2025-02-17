@@ -11,6 +11,7 @@ use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Tree;
+use Symfony\Component\Console\Command\Command;
 
 class TreeCommandTest extends TestCase
 {
@@ -63,6 +64,49 @@ class TreeCommandTest extends TestCase
         ]);
 
         $this->assertStringContainsString('5 directories, 2 files', $commandTester->getDisplay());
+        $this->assertStringContainsString('Package: test-src/package', $commandTester->getDisplay());
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    #[Test]
+    public function displaysExpectedDefaultPackageName(): void
+    {
+        $command = $this->application->find('tree');
+        $commandTester = new CommandTester($command);
+
+        $artifactFilenames = [
+            '.gitattributes',
+            'composer.json',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['src', 'tests', '.github', 'docs', 'bin']
+        );
+
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => $this->temporaryDirectory,
+            '--src' => true
+        ]);
+
+        $this->assertStringContainsString('unknown/unknown', $commandTester->getDisplay());
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    #[Test]
+    public function displaysExpectedDistPackageTree(): void
+    {
+        $command = $this->application->find('tree');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => '.'
+        ]);
+
+        $this->assertStringContainsString('2 directories, 1 file', $commandTester->getDisplay());
+        $this->assertStringContainsString('Package: stolt/lean-package-validator', $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
     }
 }

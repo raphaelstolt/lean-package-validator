@@ -19,20 +19,4 @@ class Str
 
         return true;
     }
-
-    /**
-     * Check if the operating system is macish.
-     *
-     * @param string $os
-     *
-     * @return boolean
-     */
-    public function isMacOs(string $os = PHP_OS): bool
-    {
-        if (\strtoupper(\substr($os, 0, 3)) !== 'DAR') {
-            return false;
-        }
-
-        return true;
-    }
 }

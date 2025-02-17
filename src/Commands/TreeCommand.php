@@ -16,6 +16,8 @@ final class TreeCommand extends Command
 {
     private Tree $tree;
 
+    private const UNKNOWN_PACKAGE_NAME = 'unknown/unknown';
+
     private string $directoryToOperateOn;
 
     public function __construct(Tree $tree)
@@ -97,13 +99,18 @@ final class TreeCommand extends Command
     protected function getPackageName(): string
     {
         if (!\file_exists($this->directoryToOperateOn . DIRECTORY_SEPARATOR . 'composer.json')) {
-            return 'unknown/unknown';
+            return self::UNKNOWN_PACKAGE_NAME;
         }
 
         $composerContentAsJson = \json_decode(
             \file_get_contents($this->directoryToOperateOn . DIRECTORY_SEPARATOR . 'composer.json'),
             true
         );
+
+        if (!isset($composerContentAsJson['name'])) {
+            return self::UNKNOWN_PACKAGE_NAME;
+        }
+
         return \trim($composerContentAsJson['name']);
     }
 }
