@@ -71,6 +71,6 @@
         "php-mock/php-mock-phpunit": "^2.7||^1.1",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.4.4||^10.5.25",
-        "zenstruck/console-test": "^1.6"
+        "zenstruck/console-test": "^1.7"
     }
 }
