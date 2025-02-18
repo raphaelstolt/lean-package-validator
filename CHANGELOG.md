@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.3.5] - 2025-02-18
+
+### Fixed
+- Fix issue where no package name is set.
+
 ## [v4.3.4] - 2025-02-14
 
 ### Fixed
@@ -335,7 +340,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.4...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.5...HEAD
+[v4.3.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.4...v4.3.5
 [v4.3.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.3...v4.3.4
 [v4.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.2...v4.3.3
 [v4.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.3.1...v4.3.2
