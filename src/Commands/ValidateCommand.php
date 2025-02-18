@@ -23,7 +23,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ValidateCommand extends Command
+final class ValidateCommand extends Command
 {
     /**
      * Default glob pattern file.
