@@ -72,13 +72,13 @@ of export-ignores in the `.gitattributes` file and fail validation if the order
 differs. Per __default__ the order comparison is done in a non-strict fashion.
 
 ``` bash
-lean-package-validator validate [<directory>] --enforce-strict-order
+lean-package-validator validate --enforce-strict-order [<directory>]
 ```
 
 The `--create|-c` option creates an `.gitattributes` file if nonexistent.
 
 ``` bash
-lean-package-validator validate [<directory>] --create
+lean-package-validator validate --create [<directory>]
 ```
 
 The `--overwrite|-o` option overwrites an existing `.gitattributes` file when
@@ -86,7 +86,7 @@ there are any `export-ignore` entries missing. Using this option on a directory
 with a nonexistent `.gitattributes` file implicates the `--create` option.
 
 ``` bash
-lean-package-validator validate [<directory>] --overwrite
+lean-package-validator validate --overwrite [<directory>]
 ```
 
 The `--glob-pattern` option allows you to overwrite the default pattern used
@@ -95,7 +95,7 @@ braces is expected to be `>1`. As shown next this utility could thereby also
 be used for projects (i.e. Python) outside the PHP ecosystem.
 
 ``` bash
-lean-package-validator validate [<directory>] --glob-pattern '{.*,*.rst,*.py[cod],dist/}'
+lean-package-validator validate --glob-pattern '{.*,*.rst,*.py[cod],dist/}' [<directory>]
 ```
 
 The default pattern is defined in the PHP preset [file](./src/Presets/PhpPreset.php).
@@ -108,37 +108,37 @@ can be taken from the [example](example/.lpv) directory or be created
 via `lean-package-validator init`.
 
 ``` bash
-lean-package-validator validate [<directory>] --glob-pattern-file /path/to/glob-pattern-file
+lean-package-validator validate --glob-pattern-file /path/to/glob-pattern-file [<directory>]
 ```
 
 The `--keep-license` option will allow a license file in the release/dist archive file which is per default ommitted.
 
 ``` bash
-lean-package-validator validate [<directory>] --keep-license
+lean-package-validator validate --keep-license [<directory>]
 ```
 
 The `--keep-readme` option will allow a README file in the release/dist archive file which is per default ommitted.
 
 ``` bash
-lean-package-validator validate [<directory>] --keep-readme
+lean-package-validator validate --keep-readme [<directory>]
 ```
 
 The `--keep-glob-pattern` option allows to keep matching files in the release/dist archive file which are per default ommitted.
 
 ``` bash
-lean-package-validator validate [<directory>] --keep-glob-pattern '{LICENSE.*,README.*,docs*}'
+lean-package-validator validate --keep-glob-pattern '{LICENSE.*,README.*,docs*}' [<directory>]
 ```
 
 The `--align-export-ignores|-a` option will align the created or overwritten export-ignores for a better readability.
 
 ``` bash
-lean-package-validator validate [<directory>] --align-export-ignores --create
+lean-package-validator validate --align-export-ignores --create [<directory>]
 ```
 
 The `--sort-from-directories-to-files|-s` option will order the export-ignores from directories to files for a better readability.
 
 ``` bash
-lean-package-validator validate [<directory>] --sort-from-directories-to-files --create
+lean-package-validator validate --sort-from-directories-to-files --create [<directory>]
 ```
 
 The `--enforce-alignment` option will enforce a strict alignment of export-ignores
@@ -151,13 +151,13 @@ current Git `HEAD` and inspecting its content. With a set `--keep-license` optio
 file becomes mandatory and will fail the archive validation if not present.
 
 ``` bash
-lean-package-validator validate [<directory>] --validate-git-archive
+lean-package-validator validate --validate-git-archive [<directory>]
 ```
 
 The `--diff` option will show a visual diff between the actual and expected `.gitattributes` content.
 
 ``` bash
-lean-package-validator validate --diff
+lean-package-validator validate --diff [<directory>]
 
 The present .gitattributes file is considered invalid.
 
@@ -200,7 +200,7 @@ The `tree` command of the lean package validator allows you to inspect the __fla
 of the given project/micro-package. It is __not__ intended for validation use.
 
 ``` bash
-lean-package-validator tree [<directory>] --src
+lean-package-validator tree --src [<directory>]
 
 Package: stolt/lean-package-validator
 .
@@ -229,7 +229,7 @@ Package: stolt/lean-package-validator
 ```
 
 ``` bash
-lean-package-validator tree [<directory>] --dist-package
+lean-package-validator tree --dist-package [<directory>]
 
 Package: stolt/lean-package-validator
 .
