@@ -42,6 +42,7 @@ final class PhpPreset implements Preset
             '{T,t}ool*',
             '{T,t}est*',
             '{S,s}pec*',
+            '{A,a}rt*',
             '{E,e}xample*',
             'LICENSE',
             '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
