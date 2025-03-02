@@ -179,6 +179,13 @@ Would expect the following .gitattributes file content:
 The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing non-existent
 repository artifacts. In combination with the `--diff` option these will be shown in the output.
 
+The `--stdin-input` option allows the validate command to read from `STDIN` so that the following can be used for validation.
+It currently only does a strict comparison.
+
+```bash
+cat .gitattributes | lean-package-validator validate --stdin-input
+```
+
 ### Additional commands
 
 #### Init command

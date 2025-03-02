@@ -30,6 +30,7 @@ use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
+use Stolt\LeanPackage\Helpers\PhpInputReader;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tree;
@@ -44,7 +45,8 @@ $initCommand = new InitCommand(
 );
 $validateCommand = new ValidateCommand(
     $analyser,
-    new Validator($archive)
+    new Validator($archive),
+    new PhpInputReader()
 );
 $treeCommand = new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY,'tree-temp')));
 

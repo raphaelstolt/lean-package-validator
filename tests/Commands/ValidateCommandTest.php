@@ -10,6 +10,7 @@ use phpmock\functions\FixedValueFunction;
 use phpmock\MockBuilder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\Ticket;
 use Stolt\LeanPackage\Analyser;
@@ -21,6 +22,7 @@ use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
+use Stolt\LeanPackage\Tests\Helpers\FakeInputReader;
 use Stolt\LeanPackage\Tests\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -43,7 +45,8 @@ class ValidateCommandTest extends TestCase
 
         $analyserCommand = new ValidateCommand(
             new Analyser(new Finder(new PhpPreset())),
-            new Validator(new Archive($this->temporaryDirectory))
+            new Validator(new Archive($this->temporaryDirectory)),
+            new FakeInputReader()
         );
 
         $this->application = $this->getApplication($analyserCommand);
@@ -2196,6 +2199,35 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
     }
 
+
+    #[Test]
+    #[RunInSeparateProcess]
+    public function detectsNonGitattributeContentInStdinInput(): void
+    {
+        $application = new Application();
+        $fakeInputReader = new FakeInputReader();
+        $fakeInputReader->set('Some non .gitattributes content.');
+
+        $analyserCommand = new ValidateCommand(
+            new Analyser(new Finder(new PhpPreset())),
+            new Validator(new Archive(\getcwd())),
+            $fakeInputReader
+        );
+
+        $application->add($analyserCommand);
+        $command = $application->find('validate');
+
+        $expectedDisplay = <<<CONTENT
+Warning: The provided input stream seems to be no .gitattributes content.
+CONTENT;
+
+        TestCommand::for($command)
+            ->addOption('stdin-input')
+            ->execute()
+            ->assertOutputContains($expectedDisplay)
+            ->assertFaulty();
+    }
+
     /**
      * @return array
      */
@@ -2221,7 +2253,8 @@ CONTENT;
 
         $analyserCommand = new ValidateCommand(
             $mockedAnalyser,
-            new Validator($archive)
+            new Validator($archive),
+            new FakeInputReader()
         );
 
         $application->add($analyserCommand);
@@ -2239,7 +2272,8 @@ CONTENT;
 
         $analyserCommand = new ValidateCommand(
             new Analyser(new Finder(new PhpPreset())),
-            $mockedArchiveValidator
+            $mockedArchiveValidator,
+            new FakeInputReader()
         );
 
         $application->add($analyserCommand);

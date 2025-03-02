@@ -853,15 +853,18 @@ class Analyser
      * the .gitattributes file.
      *
      * @param bool $applyGlob
+     * @param string $gitattributesContent
      * @return array
      */
-    public function getPresentExportIgnores(bool $applyGlob = true): array
+    public function getPresentExportIgnores(bool $applyGlob = true, string $gitattributesContent = ''): array
     {
-        if ($this->hasGitattributesFile() === false) {
+        if ($this->hasGitattributesFile() === false && $gitattributesContent === '') {
             return [];
         }
 
-        $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+        if ($gitattributesContent === '') {
+            $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+        }
 
         $gitattributesLines = \preg_split(
             '/\\r\\n|\\r|\\n/',
@@ -934,6 +937,14 @@ class Analyser
         });
 
         return \array_merge($directories, $files);
+    }
+
+    public function hasCompleteExportIgnoresFromString(string $gitattributesContent): bool
+    {
+        $expectedExportIgnores = $this->collectExpectedExportIgnores();
+        $presentExportIgnores = $this->getPresentExportIgnores(true, $gitattributesContent);
+
+        return \array_values($expectedExportIgnores) === \array_values($presentExportIgnores);
     }
 
     /**

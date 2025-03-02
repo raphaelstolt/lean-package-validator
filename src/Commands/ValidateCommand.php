@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands;
 
+use function PHPUnit\Framework\stringContains;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 use SplFileInfo;
@@ -17,6 +18,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Helpers\InputReader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,13 +49,22 @@ final class ValidateCommand extends Command
     protected Validator $archiveValidator;
 
     /**
-     * @param Analyser  $analyser
-     * @param Validator $archiveValidator
+     * Input reader.
+     *
+     * @var InputReader
      */
-    public function __construct(Analyser $analyser, Validator $archiveValidator)
+    protected InputReader $inputReader;
+
+    /**
+     * @param Analyser $analyser
+     * @param Validator $archiveValidator
+     * @param InputReader $inputReader
+     */
+    public function __construct(Analyser $analyser, Validator $archiveValidator, InputReader $inputReader)
     {
         $this->analyser = $analyser;
         $this->archiveValidator = $archiveValidator;
+        $this->inputReader = $inputReader;
 
         parent::__construct();
     }
@@ -105,7 +116,9 @@ final class ValidateCommand extends Command
         $sortDescription = 'Sort from directories to files';
 
         $alignExportIgnoresDescription = 'Align export-ignores on create or overwrite';
+        $stdinInputDescription = "Read .gitattributes content from standard input";
 
+        $this->addOption('stdin-input', null, InputOption::VALUE_NONE, $stdinInputDescription);
         $this->addOption('create', 'c', InputOption::VALUE_NONE, $createDescription);
         $this->addOption(
             'enforce-strict-order',
@@ -220,6 +233,35 @@ final class ValidateCommand extends Command
             }
         }
 
+        $stdinInput = $input->getOption('stdin-input');
+
+        if ($stdinInput !== false) {
+            $stdinInputContents = $this->inputReader->get();
+
+            if (!\strpos($stdinInputContents, 'export-ignore')) {
+                $warning = "Warning: The provided input stream seems to be no .gitattributes content.";
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
+
+                return Command::FAILURE;
+            }
+
+            $verboseOutput = '+ Validating .gitattributes content from STDIN.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+            if ($this->analyser->hasCompleteExportIgnoresFromString($stdinInputContents)) {
+                $info = 'The provided .gitattributes content is considered <info>valid</info>.';
+                $output->writeln($info);
+
+                return Command::SUCCESS;
+            }
+
+            $outputContent = 'The provided .gitattributes file is considered <error>invalid</error>.';
+            $output->writeln($outputContent);
+
+            return Command::FAILURE;
+        }
+
         $verboseOutput = '+ Scanning directory ' . $directory . '.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
@@ -301,7 +343,6 @@ final class ValidateCommand extends Command
                 return Command::FAILURE;
             }
         }
-
 
         $alignExportIgnores = $input->getOption('align-export-ignores');
 
