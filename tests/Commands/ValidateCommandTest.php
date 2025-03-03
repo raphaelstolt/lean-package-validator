@@ -2228,6 +2228,66 @@ CONTENT;
             ->assertFaulty();
     }
 
+    #[Test]
+    #[RunInSeparateProcess]
+    public function detectsValidGitattributeContentInStdinInput(): void
+    {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
+        $artifactFilenames = [
+            '.buildignore',
+            'phpspec.yml.dist',
+            '.php_cs.cache',
+            'composer.lock',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $gitattributesContent = <<<CONTENT
+*    text=auto
+
+.buildignore export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+.php_cs.cache export-ignore
+composer.lock export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $application = new Application();
+        $fakeInputReader = new FakeInputReader();
+        $fakeInputReader->set($gitattributesContent);
+
+        $analyserCommand = new ValidateCommand(
+            new Analyser(new Finder(new PhpPreset())),
+            new Validator(new Archive($this->temporaryDirectory)),
+            $fakeInputReader
+        );
+
+        $application->add($analyserCommand);
+        $command = $application->find('validate');
+
+        $expectedDisplay = <<<CONTENT
+The provided .gitattributes content is considered valid.
+
+CONTENT;
+
+        TestCommand::for($command)
+            ->addOption('stdin-input')
+            ->execute()
+            ->assertOutputContains($expectedDisplay)
+            ->assertSuccessful();
+    }
+
     /**
      * @return array
      */
