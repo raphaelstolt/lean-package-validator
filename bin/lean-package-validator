@@ -22,7 +22,7 @@ if (false === $autoloaded) {
 }
 
 \define('WORKING_DIRECTORY', \getcwd());
-\define('VERSION', '4.3.6');
+\define('VERSION', '4.4.0');
 
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\TreeCommand;
