@@ -54,8 +54,8 @@
             "@lpv:test",
             "@lpv:cs-lint",
             "@lpv:static-analyse",
-            "@lpv:application-version-guard",
-            "@lpv:spell-check"
+            "@lpv:spell-check",
+            "@lpv:application-version-guard"
         ]
     },
     "config": {
