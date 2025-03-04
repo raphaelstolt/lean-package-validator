@@ -2232,10 +2232,6 @@ CONTENT;
     #[RunInSeparateProcess]
     public function detectsValidGitattributeContentInStdinInput(): void
     {
-        if ((new OsHelper())->isWindows()) {
-            $this->markTestSkipped('Skipping test on Windows systems');
-        }
-
         $artifactFilenames = [
             '.buildignore',
             'phpspec.yml.dist',
@@ -2278,7 +2274,6 @@ CONTENT;
 
         $expectedDisplay = <<<CONTENT
 The provided .gitattributes content is considered valid.
-
 CONTENT;
 
         TestCommand::for($command)
