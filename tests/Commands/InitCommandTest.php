@@ -70,6 +70,7 @@ CONTENT;
 *.{png,gif,jpeg,jpg,webp}
 *.xml
 *.yml
+*.toml
 phpunit*
 appveyor.yml
 box.json

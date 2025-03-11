@@ -19,6 +19,7 @@ final class PhpPreset implements Preset
             '*.{png,gif,jpeg,jpg,webp}',
             '*.xml',
             '*.yml',
+            '*.toml',
             'phpunit*',
             'appveyor.yml',
             'box.json',
