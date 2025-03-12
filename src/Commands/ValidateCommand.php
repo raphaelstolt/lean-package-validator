@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands;
 
-use function PHPUnit\Framework\stringContains;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 use SplFileInfo;
