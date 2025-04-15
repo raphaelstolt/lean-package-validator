@@ -110,7 +110,7 @@ class ArchiveTest extends TestCase
     }
 
     #[Test]
-    public function removeArchiveRemovesArchiveReturnsFalseOnNonExtistentFile(): void
+    public function removeArchiveRemovesArchiveReturnsFalseOnNonExistentFile(): void
     {
         $removed = (new Archive($this->temporaryDirectory, 'archive-nonexistent'))
             ->removeArchive();

@@ -1336,7 +1336,7 @@ CONTENT;
     }
 
     #[Test]
-    public function invalidDirectoryAgumentReturnsExpectedStatusCode(): void
+    public function invalidDirectoryArgumentReturnsExpectedStatusCode(): void
     {
         $nonExistentDirectoryOrFile = WORKING_DIRECTORY
             . DIRECTORY_SEPARATOR

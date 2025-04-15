@@ -4,6 +4,7 @@
         "words": [
             "php",
             "gitattributes",
+            "gitattribute",
             "analyser",
             "analyse",
             "windowsish",
@@ -26,7 +27,13 @@
             "gitignored",
             "str",
             "postfix",
-            "autoconfiguration"
+            "autoconfiguration",
+            "lean",
+            "unlean",
+            "licenseless",
+            "overwritable",
+            "infoed",
+            "stdin"
         ],
         "paths": []
     }
