@@ -1546,6 +1546,7 @@ CONTENT;
             'phpstan*',
             'sonar*',
             'rector*',
+            'phpkg.con*',
             'package*',
             'pint.json',
             'renovate.json',
