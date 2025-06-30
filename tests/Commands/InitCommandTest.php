@@ -88,6 +88,7 @@ pint.json
 renovate.json
 *debugbar.json
 ecs*
+llms.*
 *.dist.*
 *.dist
 {B,b}uild*
