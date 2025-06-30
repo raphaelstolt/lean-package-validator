@@ -1,0 +1,14 @@
+# lean-package-validator
+
+> lean-package-validator is a library and CLI for generating and validating the .gitattributes file of a Git repository, written in PHP.
+
+You can use the lean-package-validator to generate and validate the .gitattributes file. It prevents non-source code related
+artifacts to make it into package releases.
+
+The lean-package-validator includes several CLI commands to interact with a present .gitattributes file. Its focused group
+are package maintainers.
+
+## Reference
+
+- [gitattributes documentation](https://git-scm.com/docs/gitattributes)
+- [lean-package-validator documentation](https://github.com/raphaelstolt/lean-package-validator/blob/main/README.md)

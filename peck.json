@@ -33,7 +33,8 @@
             "licenseless",
             "overwritable",
             "infoed",
-            "stdin"
+            "stdin",
+            "llms"
         ],
         "paths": []
     }
