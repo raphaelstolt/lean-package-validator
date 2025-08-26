@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.4.5] - 2025-08-26
+
+### Added
+
+- Further Python preset expansion.
+
 ## [v4.4.4] - 2025-07-30
 
 ### Added
@@ -376,7 +382,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.4...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.5...HEAD
+[v4.4.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.4...v4.4.5
 [v4.4.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.3...v4.4.4
 [v4.4.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.2...v4.4.3
 [v4.4.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.1...v4.4.2
