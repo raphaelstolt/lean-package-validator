@@ -170,7 +170,7 @@ CONTENT;
     public function usingANonAvailablePresetShowsWarning(): void
     {
         $expectedDisplay = <<<CONTENT
-Warning: Chosen preset rust is not available. Maybe contribute it?.
+Warning: Chosen preset javascript is not available. Maybe contribute it?.
 
 CONTENT;
 
@@ -179,7 +179,7 @@ CONTENT;
         $commandTester->execute(
             ['command' => $command->getName(),
              'directory' => WORKING_DIRECTORY,
-             '--preset' => 'rust'],
+             '--preset' => 'javascript'],
         );
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());

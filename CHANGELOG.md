@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.5.0] - 2025-08-27
+
+### Added
+- New initial [Rust](https://www.rust-lang.org/) preset.
+
 ## [v4.4.6] - 2025-08-26
 
 ### Fixed
