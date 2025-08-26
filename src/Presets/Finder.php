@@ -25,10 +25,14 @@ class Finder
     {
         $dir = new \DirectoryIterator(\dirname(__FILE__));
         $availablePresets = [];
+
         foreach ($dir as $fileinfo) {
             if (!$fileinfo->isDot()) {
                 $presetsParts = \explode(self::PRESET_SUFFIX, $fileinfo->getBasename());
                 if (\count($presetsParts) == 2) {
+                    if ($presetsParts[0] === 'Common') {
+                        continue;
+                    }
                     $availablePresets[] = $presetsParts[0];
                 }
             }

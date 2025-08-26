@@ -63,14 +63,28 @@ CONTENT;
 
         $expectedDefaultLpvFileContent = <<<CONTENT
 .*
-*.lock
 *.txt
-*.rst
 *.{md,MD}
-*.{png,gif,jpeg,jpg,webp}
+*.rst
+*.toml
 *.xml
 *.yml
-*.toml
+*.dist.*
+llms.*
+*.dist
+{B,b}uild*
+{D,d}ist
+{D,d}oc*
+{A,a}rt*
+{A,a}sset*
+{T,t}ool*
+{T,t}est*
+{S,s}pec*
+{E,e}xample*
+LICENSE
+{M,m}ake
+*.{png,gif,jpeg,jpg,webp}
+*.lock
 phpunit*
 appveyor.yml
 box.json
@@ -88,20 +102,8 @@ pint.json
 renovate.json
 *debugbar.json
 ecs*
-llms.*
-*.dist.*
-*.dist
-{B,b}uild*
-{D,d}oc*
-{T,t}ool*
-{T,t}est*
-{S,s}pec*
-{A,a}rt*
-{A,a}sset*
-{E,e}xample*
-LICENSE
-{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file
 RMT
+{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file
 CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());

@@ -418,10 +418,6 @@ CONTENT;
     #[Test]
     public function collectExpectedExportIgnoresReturnsExpectedEntries(): void
     {
-        $temporaryGitattributesFile = $this->temporaryDirectory
-            . DIRECTORY_SEPARATOR
-            . '.gitattributes';
-
         $artifactFilenames = [
             'README.md',
             'Makefile',
@@ -434,7 +430,7 @@ CONTENT;
             ['documentation']
         );
 
-        $expectedExportIgnores = [
+        $expectedExportIgnores =[
             '.buildignore',
             '.travis.yml',
             'documentation/',
@@ -445,6 +441,9 @@ CONTENT;
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $actualExportIgnores = $analyser->collectExpectedExportIgnores();
+
+        \sort($expectedExportIgnores);
+        \sort($actualExportIgnores);
 
         $this->assertEquals(
             $expectedExportIgnores,
@@ -1526,51 +1525,58 @@ CONTENT;
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
 
         $expectedDefaultGlobPatterns = [
-            '.*',
+            '*.dist',
+            '*.dist.*',
             '*.lock',
-            '*.txt',
             '*.rst',
-            '*.{md,MD}',
-            '*.{png,gif,jpeg,jpg,webp}',
+            '*.toml',
+            '*.txt',
             '*.xml',
             '*.yml',
-            '*.toml',
-            'phpunit*',
-            'appveyor.yml',
-            'box.json',
-            'composer-dependency-analyser*',
-            'collision-detector*',
-            'captainhook.json',
-            'peck.json',
-            'infection*',
-            'phpstan*',
-            'sonar*',
-            'rector*',
-            'phpkg.con*',
-            'package*',
-            'pint.json',
-            'renovate.json',
-            '*debugbar.json',
-            'ecs*',
-            'llms.*',
-            '*.dist.*',
-            '*.dist',
-            '{B,b}uild*',
-            '{D,d}oc*',
-            '{T,t}ool*',
-            '{T,t}est*',
-            '{S,s}pec*',
-            '{A,a}rt*',
-            '{A,a}sset*',
-            '{E,e}xample*',
-            'LICENSE',
-            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
-            'RMT'
+            '*.{md,MD}',
+            '*.{png,gif,jpeg,jpg,webp}',
+             '*debugbar.json',
+             '.*',
+             'LICENSE',
+             'RMT',
+             'appveyor.yml',
+             'box.json',
+             'captainhook.json',
+             'collision-detector*',
+             'composer-dependency-analyser*',
+             'ecs*',
+             'infection*',
+             'llms.*',
+             'package*',
+             'peck.json',
+             'phpkg.con*',
+             'phpstan*',
+             'phpunit*',
+             'pint.json',
+             'rector*',
+             'renovate.json',
+             'sonar*',
+             '{A,a}rt*',
+             '{A,a}sset*',
+             '{B,b}uild*',
+             '{D,d}ist',
+             '{D,d}oc*',
+             '{E,e}xample*',
+             '{M,m}ake',
+             '{S,s}pec*',
+             '{T,t}est*',
+             '{T,t}ool*',
+             '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
         ];
+
+        $defaultGlobPattern = $analyser->getDefaultGlobPattern();
+
+        \sort($defaultGlobPattern);
+        \sort($expectedDefaultGlobPatterns);
 
         $this->assertEquals(
             $expectedDefaultGlobPatterns,
-            $analyser->getDefaultGlobPattern()
+            $defaultGlobPattern
         );
     }
 }

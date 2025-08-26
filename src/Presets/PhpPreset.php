@@ -6,20 +6,12 @@ namespace Stolt\LeanPackage\Presets;
 
 use Stolt\LeanPackage\Preset;
 
-final class PhpPreset implements Preset
+final class PhpPreset extends CommonPreset implements Preset
 {
     public function getPresetGlob(): array
     {
-        return [
-            '.*',
+        return \array_unique(\array_merge($this->getCommonGlob(), [
             '*.lock',
-            '*.txt',
-            '*.rst',
-            '*.{md,MD}',
-            '*.{png,gif,jpeg,jpg,webp}',
-            '*.xml',
-            '*.yml',
-            '*.toml',
             'phpunit*',
             'appveyor.yml',
             'box.json',
@@ -37,20 +29,8 @@ final class PhpPreset implements Preset
             'renovate.json',
             '*debugbar.json',
             'ecs*',
-            'llms.*',
-            '*.dist.*',
-            '*.dist',
-            '{B,b}uild*',
-            '{D,d}oc*',
-            '{T,t}ool*',
-            '{T,t}est*',
-            '{S,s}pec*',
-            '{A,a}rt*',
-            '{A,a}sset*',
-            '{E,e}xample*',
-            'LICENSE',
-            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
-            'RMT'
-        ];
+            'RMT',
+            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file'
+        ]));
     }
 }

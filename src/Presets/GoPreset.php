@@ -6,28 +6,17 @@ namespace Stolt\LeanPackage\Presets;
 
 use Stolt\LeanPackage\Preset;
 
-final class GoPreset implements Preset
+final class GoPreset extends CommonPreset implements Preset
 {
     public function getPresetGlob(): array
     {
-        return [
-            '.*',
-            '*.lock',
-            '*.txt',
-            '*.rst',
-            '*.{md,MD}',
-            '*.xml',
-            '*.yml',
-            '*.dist.*',
-            '*.dist',
-            '{B,b}uild*',
-            '{D,d}oc*',
-            '{T,t}ool*',
-            '{T,t}est*',
-            '{S,s}pec*',
-            '{E,e}xample*',
-            'LICENSE',
-            '{{M,m}ake,{V,v}agrant'
-        ];
+        return \array_unique(\array_merge($this->getCommonGlob(), [
+            'go.*',
+            'cmd/**',
+            'pkg/**',
+            'internal/**',
+            '*.go',
+            '*_test.go',
+        ]));
     }
 }
