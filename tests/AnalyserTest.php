@@ -1547,6 +1547,7 @@ CONTENT;
              'ecs*',
              'infection*',
              'llms.*',
+             '.githooks',
              'package*',
              'peck.json',
              'phpkg.con*',

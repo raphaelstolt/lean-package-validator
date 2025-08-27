@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.6.0] - 2025-08-27
+
+### Added
+- New initial [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) preset.
+
 ## [v4.5.0] - 2025-08-27
 
 ### Added

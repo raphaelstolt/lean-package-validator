@@ -18,6 +18,7 @@ class CommonPreset
             '*.yml',
             '*.dist.*',
             'llms.*',
+            '.githooks',
             '*.dist',
             '{B,b}uild*',
             '{D,d}ist',

@@ -71,6 +71,7 @@ CONTENT;
 *.yml
 *.dist.*
 llms.*
+.githooks
 *.dist
 {B,b}uild*
 {D,d}ist
@@ -170,7 +171,7 @@ CONTENT;
     public function usingANonAvailablePresetShowsWarning(): void
     {
         $expectedDisplay = <<<CONTENT
-Warning: Chosen preset javascript is not available. Maybe contribute it?.
+Warning: Chosen preset assembler is not available. Maybe contribute it?.
 
 CONTENT;
 
@@ -179,7 +180,7 @@ CONTENT;
         $commandTester->execute(
             ['command' => $command->getName(),
              'directory' => WORKING_DIRECTORY,
-             '--preset' => 'javascript'],
+             '--preset' => 'assembler'],
         );
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
