@@ -401,7 +401,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.5.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.6.0...HEAD
+[v4.6.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.5.0...v4.6.0
 [v4.5.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.6...v4.5.0
 [v4.4.6]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.5...v4.4.6
 [v4.4.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.4...v4.4.5
