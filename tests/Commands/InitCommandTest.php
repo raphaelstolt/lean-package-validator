@@ -99,7 +99,7 @@ sonar*
 rector*
 phpkg.con*
 package*
-pint.json
+pint.{json,php}
 renovate.json
 *debugbar.json
 ecs*

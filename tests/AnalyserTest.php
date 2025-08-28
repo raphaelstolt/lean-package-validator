@@ -1553,7 +1553,7 @@ CONTENT;
              'phpkg.con*',
              'phpstan*',
              'phpunit*',
-             'pint.json',
+             'pint.{json,php}',
              'rector*',
              'renovate.json',
              'sonar*',
