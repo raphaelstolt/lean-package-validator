@@ -17,6 +17,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Helpers\InputReader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,6 +33,8 @@ final class ValidateCommand extends Command
      * @var string
      */
     protected string $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
+
+    protected string $defaultPreset = 'Php';
 
     /**
      * Package analyser.
@@ -108,6 +111,7 @@ final class ValidateCommand extends Command
             . 'export-ignored';
         $globPatternFileDescription = 'Use this file with glob patterns '
             . 'to match artifacts which should be export-ignored';
+        $presetDescription = 'Use the glob pattern of the given language preset';
 
         $keepLicenseDescription = 'Do not export-ignore the license file';
         $keepReadmeDescription = 'Do not export-ignore the README file';
@@ -151,6 +155,13 @@ final class ValidateCommand extends Command
             InputOption::VALUE_OPTIONAL,
             $globPatternFileDescription,
             $this->defaultLpvFile
+        );
+        $this->addOption(
+            'preset',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            $presetDescription,
+            $this->defaultPreset
         );
         $this->addOption(
             'keep-license',
@@ -216,6 +227,7 @@ final class ValidateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory');
+        $chosenPreset = (string) $input->getOption('preset');
 
         if ($directory !== WORKING_DIRECTORY) {
             try {
@@ -380,6 +392,7 @@ final class ValidateCommand extends Command
 
                     $this->analyser->setGlobPatternFromFile($globPatternFile);
                 }
+
             } catch (NonExistentGlobPatternFile $e) {
                 $warning = "Warning: The provided glob pattern file "
                     . "'$globPatternFile' doesn't exist.";
@@ -396,6 +409,20 @@ final class ValidateCommand extends Command
                 $output->writeln($outputContent);
 
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+
+                return Command::FAILURE;
+            }
+        } elseif ($chosenPreset) {
+            try {
+
+                $verboseOutput = '+ Using the ' . $chosenPreset . ' language preset.';
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+                $this->analyser->setGlobPatternFromPreset($chosenPreset);
+            } catch (PresetNotAvailable $e) {
+                $warning = 'Warning: The chosen language preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
+                $outputContent = '<error>' . $warning . '</error>';
+                $output->writeln($outputContent);
 
                 return Command::FAILURE;
             }
@@ -456,7 +483,7 @@ final class ValidateCommand extends Command
                 . 'content.</info>';
             $output->writeln($outputContent);
 
-            return 1;
+            return Command::FAILURE;
         } elseif ($validateArchive) {
             try {
                 $verboseOutput = '+ Validating Git archive.';

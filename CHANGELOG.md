@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.7.0] - 2025-08-29
+
+### Added
+- New `preset` option for the validate command. Closes [#53](https://github.com/raphaelstolt/lean-package-validator/issues/53).
+
 ## [v4.6.0] - 2025-08-27
 
 ### Added

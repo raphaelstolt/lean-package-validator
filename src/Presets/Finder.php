@@ -48,6 +48,18 @@ class Finder
      */
     public function getPresetGlobByLanguageName(string $name): array
     {
+        $preset = $this->getPresetByLanguageName($name);
+
+        return $preset->getPresetGlob();
+    }
+
+    /**
+     * @param string $name
+     * @throws PresetNotAvailable
+     * @return Preset
+     */
+    public function getPresetByLanguageName(string $name): Preset
+    {
         $name = \ucfirst(\strtolower($name));
 
         if (!\in_array($name, $this->getAvailablePresets())) {
@@ -57,10 +69,7 @@ class Finder
 
         $presetClassName = \sprintf('Stolt\LeanPackage\Presets\%sPreset', $name);
 
-        /** @var Preset $preset **/
-        $preset = new $presetClassName();
-
-        return $preset->getPresetGlob();
+        return new $presetClassName();
     }
 
     /**

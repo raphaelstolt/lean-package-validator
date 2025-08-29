@@ -147,6 +147,9 @@ The `--enforce-alignment` option will enforce a strict alignment of export-ignor
 in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__
 no alignment is enforced.
 
+The `--preset=[<preset>]` option will use a predefined set of glob pattern.
+Available presets are `PHP`, `Python`, `Rust`, `JavaScript`, and `Go`. With `PHP` being the default.
+
 The `--validate-git-archive` option will validate that no common repository artifacts slip
 into the release/dist archive file. It will do so by creating a `temporary archive` from the
 current Git `HEAD` and inspecting its content. With a set `--keep-license` option a license

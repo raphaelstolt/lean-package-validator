@@ -17,6 +17,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
+use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use Stolt\LeanPackage\Presets\Finder;
@@ -34,7 +35,7 @@ class ValidateCommandTest extends TestCase
     use InteractsWithConsole;
 
     /**
-     * Set up test environment.
+     * Set up a test environment.
      */
     protected function setUp(): void
     {
@@ -53,7 +54,7 @@ class ValidateCommandTest extends TestCase
     }
 
     /**
-     * Tear down test environment.
+     * Tear down the test environment.
      *
      * @return void
      */
@@ -195,9 +196,10 @@ CONTENT;
     #[Test]
     public function filesInGlobalGitignoreAreExportIgnored(): void
     {
-        $analyserMock = Mockery::mock(Analyser::class)->makePartial();
-
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
+
+        $analyserMock = Mockery::mock(Analyser::class, [new Finder(new PhpPreset())])->makePartial();
+
         $analyserMock->setGlobPattern($globPattern);
 
         $application = $this->getApplicationWithMockedAnalyser($analyserMock);
@@ -265,7 +267,7 @@ CONTENT;
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/16')]
     public function gitattributesFileWithNoExportIgnoresContentShowsExpectedContent(): void
     {
-        $analyserMock = Mockery::mock(Analyser::class)->makePartial();
+        $analyserMock = Mockery::mock(Analyser::class, [new Finder(new PhpPreset())])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
         $analyserMock->setGlobPattern($globPattern);
@@ -1302,10 +1304,13 @@ CONTENT;
         $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
     }
 
+    /**
+     * @throws InvalidGlobPattern
+     */
     #[Test]
     public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed(): void
     {
-        $mock = Mockery::mock(Analyser::class)->makePartial();
+        $mock = Mockery::mock(Analyser::class, [new Finder(new PhpPreset())])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
         $mock->setGlobPattern($globPattern);
@@ -2281,6 +2286,51 @@ CONTENT;
             ->execute()
             ->assertOutputContains($expectedDisplay)
             ->assertSuccessful();
+    }
+
+    #[Test]
+    #[RunInSeparateProcess]
+    public function usesTheRustPresetIfRequested(): void
+    {
+        $artifactFilenames = [
+            'CODE_OF_CONDUCT.md',
+            '.rustfmt.toml',
+            '.clippy.toml',
+            'LICENSE.md',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['src']
+        );
+
+        $gitattributesContent = <<<CONTENT
+*    text=auto eol=lf
+
+.clippy.toml export-ignore
+.gitattributes export-ignore
+.rustfmt.toml export-ignore
+CODE_OF_CONDUCT.md export-ignore
+LICENSE.md export-ignore
+CONTENT;
+
+        $expectedDisplay = <<<CONTENT
+The present .gitattributes file is considered valid.
+
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--preset' => 'Rust',
+        ]);
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**

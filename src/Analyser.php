@@ -2,10 +2,10 @@
 
 namespace Stolt\LeanPackage;
 
-use PHPStan\Type\Php\DateIntervalDynamicReturnTypeExtension;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
 
 class Analyser
@@ -47,7 +47,7 @@ class Analyser
     private string $globPattern;
 
     /**
-     * The preferred end of line sequence
+     * The preferred end-of-line sequence
      *
      * @var string
      */
@@ -128,7 +128,7 @@ class Analyser
     private string $keepGlobPattern = '';
 
     /**
-     * Whether to align the export-ignores on create or overwrite
+     * Whether to align the export-ignores on creation or overwrite
      * or not.
      *
      * @var boolean
@@ -961,8 +961,9 @@ class Analyser
 
         $actualExportIgnores = $this->getPresentExportIgnores();
 
+        $staleExportIgnores = [];
+
         if ($this->isStaleExportIgnoresComparisonEnabled()) {
-            $staleExportIgnores = [];
             $unfilteredExportIgnores = $this->getPresentExportIgnores(false);
             foreach ($unfilteredExportIgnores as $unfilteredExportIgnore) {
                 if (false === \file_exists($unfilteredExportIgnore)) {
@@ -982,5 +983,13 @@ class Analyser
         }
 
         return \array_values($expectedExportIgnores) === \array_values($actualExportIgnores);
+    }
+
+    /**
+     * @throws PresetNotAvailable
+     */
+    public function setGlobPatternFromPreset(string $preset): void
+    {
+        $this->globPattern = '{' . \implode(',', $this->finder->getPresetGlobByLanguageName($preset)) . '}*';
     }
 }

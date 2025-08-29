@@ -19,3 +19,4 @@ parameters:
         - '#TMock#'
         - '#unknown class#'
         - '#set_error_handler expects#'
+        - '#getPresetByLanguageName#'
