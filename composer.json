@@ -12,7 +12,8 @@
     "require": {
         "php": ">=8.1",
         "sebastian/diff": "^7.0.0||^6.0.1||^5.0||^4.0.3",
-        "symfony/console": "^7.2.1||^v5.4.8"
+        "symfony/console": "^7.2.1||^v5.4.8",
+        "symfony/finder": "^7.2.1||^v5.4.8"
     },
     "autoload": {
         "psr-4": {
@@ -36,6 +37,7 @@
         "lpv:application-version-guard": "Checks that the application version matches the given Git tag.",
         "lpv:application-phar-version-guard": "Checks that the PHAR version matches the given Git tag.",
         "lpv:static-analyse": "Runs a static code analysis via PHPStan.",
+        "lpv:dependency-analyse": "Runs a dependency analysis to find shadowed dependencies.",
         "lpv:validate-gitattributes": "Checks the leanness of this package.",
         "lpv:pre-commit-check": "Does a final (aggregated) check before committing."
     },
@@ -50,10 +52,12 @@
         "lpv:static-analyse": "phpstan analyse --configuration phpstan.neon.dist",
         "lpv:validate-gitattributes": "bin/lean-package-validator validate",
         "lpv:spell-check": "./vendor/bin/peck",
+        "lpv:dependency-analyse": "./vendor/bin/composer-dependency-analyser",
         "lpv:pre-commit-check": [
             "@lpv:test",
             "@lpv:cs-lint",
             "@lpv:static-analyse",
+            "@lpv:dependency-analyse",
             "@lpv:spell-check",
             "@lpv:application-version-guard"
         ]
@@ -68,9 +72,11 @@
         "mockery/mockery": "^1.0",
         "peckphp/peck": "^0.1.2",
         "phlak/semver": "^4.1 || ^6.0",
+        "php-mock/php-mock": "^2.6",
         "php-mock/php-mock-phpunit": "^2.7||^1.1",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.4.4||^10.5.25",
+        "shipmonk/composer-dependency-analyser": "^1.8",
         "zenstruck/console-test": "^1.7"
     }
 }
