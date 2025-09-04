@@ -1,6 +1,19 @@
 # How to contribute
 
-Thanks for considering to contribute to the `lean package validator`. Please follow these guidelines:
+Thanks for considering to contribute to the `lean package validator`.
+
+## Setting up a development environment
+
+To set up a development environment, please follow the next shown instructions.
+
+```bash
+git clone git@github.com:raphaelstolt/lean-package-validator.git
+composer install
+// implement your changes
+composer pre-commit-check
+```
+
+Please follow these guidelines:
 
 - All code __MUST__ follow the PSR-2 coding standard. Please see [PSR-2](http://www.php-fig.org/psr/psr-2/) for more details.
 
