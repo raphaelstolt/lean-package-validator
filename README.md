@@ -230,6 +230,7 @@ Package: stolt/lean-package-validator
 ├── .gitignore
 ├── .gitmessage
 ├── LICENSE.md
+├── llms.txt
 ├── lpv-logo.png
 ├── peck.json
 ├── .php-cs-fixer.php
