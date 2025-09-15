@@ -20,3 +20,4 @@ parameters:
         - '#unknown class#'
         - '#set_error_handler expects#'
         - '#getPresetByLanguageName#'
+        - '#null might not exist on string#'
