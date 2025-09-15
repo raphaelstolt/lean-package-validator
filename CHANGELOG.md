@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v4.7.1] - 2025-09-15
+
+### Fixed
+- Avoid duplicated headers. Closes [#54](https://github.com/raphaelstolt/lean-package-validator/issues/54).
+
 ## [v4.7.0] - 2025-08-29
 
 ### Added
@@ -406,7 +411,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.7.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.7.1...HEAD
+[v4.7.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.7.0...v4.7.1
 [v4.7.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.6.0...v4.7.0
 [v4.6.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.5.0...v4.6.0
 [v4.5.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.4.6...v4.5.0
