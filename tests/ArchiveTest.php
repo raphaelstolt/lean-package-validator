@@ -21,7 +21,7 @@ class ArchiveTest extends TestCase
     }
 
     /**
-     * Tear down test environment.
+     * Tear down the test environment.
      *
      * @return void
      */

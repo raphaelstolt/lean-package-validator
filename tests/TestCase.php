@@ -23,11 +23,11 @@ class TestCase extends PHPUnit
     protected string $temporaryDirectory;
 
     /**
-     * Set up temporary directory.
+     * Set up a temporary directory.
      *
      * @return void
      */
-    protected function setUpTemporaryDirectory()
+    protected function setUpTemporaryDirectory(): void
     {
         $this->temporaryDirectory = \sys_get_temp_dir()
             . DIRECTORY_SEPARATOR
@@ -44,8 +44,9 @@ class TestCase extends PHPUnit
     }
 
     /**
-     * Remove directory and files in it.
+     * Remove the directory and files in it.
      *
+     * @param string $directory
      * @return void
      */
     protected function removeDirectory(string $directory): void
