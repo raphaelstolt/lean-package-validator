@@ -783,6 +783,7 @@ CONTENT;
     }
 
     #[Test]
+    #[RunInSeparateProcess]
     public function failingGitattributesFilesCreationReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = ['CONDUCT.md'];
@@ -809,6 +810,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --create option is deprecated. Please use the dedicated create command.
 Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 
 Creation of .gitattributes file failed.
@@ -841,6 +843,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --create option is deprecated. Please use the dedicated create command.
 Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 
 Created a .gitattributes file with the shown content:
@@ -879,6 +882,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --create option is deprecated. Please use the dedicated create command.
 Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 
 Created a .gitattributes file with the shown content:
@@ -924,6 +928,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --create option is deprecated. Please use the dedicated create command.
 Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 
 Created a .gitattributes file with the shown content:
@@ -1153,6 +1158,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --overwrite option is deprecated. Please use the dedicated update command.
 Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
 
 Created a .gitattributes file with the shown content:
@@ -1414,6 +1420,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --overwrite option is deprecated. Please use the dedicated update command.
 The present .gitattributes file is considered invalid.
 
 Overwrote it with the shown content:
@@ -1619,7 +1626,10 @@ CONTENT;
             '--omit-header' => true,
         ]);
 
+        $dedicatedCommand = $option === '--create' ? 'create' : 'update';
+
         $expectedDisplay = <<<CONTENT
+The $option option is deprecated. Please use the dedicated $dedicatedCommand command.
 The present .gitattributes file is considered invalid.
 
 Overwrote it with the shown content:
@@ -1641,6 +1651,7 @@ CONTENT;
 
     #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/8')]
+    #[RunInSeparateProcess]
     public function failingGitattributesFilesOverwriteReturnsExpectedStatusCode(): void
     {
         $gitattributesContent = <<<CONTENT
@@ -1676,6 +1687,7 @@ CONTENT;
         ]);
 
         $expectedDisplay = <<<CONTENT
+The --create option is deprecated. Please use the dedicated create command.
 The present .gitattributes file is considered invalid.
 
 Overwrite of .gitattributes file failed.

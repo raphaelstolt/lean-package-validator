@@ -19,6 +19,7 @@ class TestCase extends PHPUnit
      * @var Application
      */
     protected Application $application;
+
     protected string $temporaryDirectory;
 
     /**
@@ -28,13 +29,13 @@ class TestCase extends PHPUnit
      */
     protected function setUpTemporaryDirectory()
     {
+        $this->temporaryDirectory = \sys_get_temp_dir()
+            . DIRECTORY_SEPARATOR
+            . 'lpv';
+
         if ((new OsHelper())->isWindows() === false) {
             \ini_set('sys_temp_dir', '/tmp/lpv');
             $this->temporaryDirectory = '/tmp/lpv';
-        } else {
-            $this->temporaryDirectory = \sys_get_temp_dir()
-                . DIRECTORY_SEPARATOR
-                . 'lpv';
         }
 
         if (!\file_exists($this->temporaryDirectory)) {

@@ -90,6 +90,9 @@ with a nonexistent `.gitattributes` file implicates the `--create` option.
 ``` bash
 lean-package-validator validate --overwrite [<directory>]
 ```
+> [!WARNING]
+> As of release `v5.0` the `--create` and `--overwrite` options are deprecated and will be removed in the next major 
+> release. Please migrate to the dedicated commands `create` and `update`.
 
 The `--glob-pattern` option allows you to overwrite the default pattern used
 to match common repository artifacts. The amount of pattern in the grouping
@@ -192,6 +195,17 @@ cat .gitattributes | lean-package-validator validate --stdin-input
 ```
 
 ### Additional commands
+
+#### Create command
+
+The `create` command will create a `.gitattributes` file in the given directory. This command replaces the `--create` 
+option of the `validate` command. Please migrate to the dedicated commands.
+
+
+#### Update command
+
+The `update` command will update a present `.gitattributes` file in the given directory. This command replaces the `--overwrite`
+option of the `validate` command. Please migrate to the dedicated commands.
 
 #### Init command
 
