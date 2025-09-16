@@ -18,6 +18,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
+use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\InputReader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -54,6 +55,8 @@ final class ValidateCommand extends Command
      */
     protected Validator $archiveValidator;
 
+    protected GitattributesFileRepository $gitattributesFileRepository;
+
     /**
      * Input reader.
      *
@@ -70,6 +73,7 @@ final class ValidateCommand extends Command
     {
         $this->analyser = $analyser;
         $this->archiveValidator = $archiveValidator;
+        $this->gitattributesFileRepository = new GitattributesFileRepository($this->analyser);
         $this->inputReader = $inputReader;
 
         parent::__construct();
@@ -453,7 +457,7 @@ final class ValidateCommand extends Command
                             $expectedGitattributesFileContent = $this->generatedHeader . PHP_EOL . PHP_EOL . $expectedGitattributesFileContent;
                         }
 
-                        $outputContent .= $this->createGitattributesFile(
+                        $outputContent .= $this->gitattributesFileRepository->createGitattributesFile(
                             $expectedGitattributesFileContent
                         );
 
@@ -555,7 +559,7 @@ final class ValidateCommand extends Command
                             $expectedGitattributesFileContent = $this->modifiedHeader . PHP_EOL . PHP_EOL . $expectedGitattributesFileContent;
                         }
 
-                        $outputContent .= $this->overwriteGitattributesFile(
+                        $outputContent .= $this->gitattributesFileRepository->overwriteGitattributesFile(
                             $expectedGitattributesFileContent
                         );
 
@@ -658,8 +662,8 @@ final class ValidateCommand extends Command
      * Validate archive of current Git HEAD.
      *
      * @param boolean $validateLicenseFilePresence Whether the archive should have a license file or not.
+     * @throws GitNotAvailable|NoLicenseFilePresent
      * @throws GitHeadNotAvailable
-     * @throws GitNotAvailable
      * @return boolean
      */
     protected function isValidArchive(bool $validateLicenseFilePresence = false): bool
@@ -707,57 +711,5 @@ final class ValidateCommand extends Command
             . '.gitattributes file with the shown content.';
 
         return PHP_EOL . PHP_EOL . $content;
-    }
-
-    /**
-     * Create the gitattributes file.
-     *
-     * @param  string  $content The content of the gitattributes file
-     * @throws GitattributesCreationFailed
-     *
-     * @return string
-     */
-    protected function createGitattributesFile(string $content): string
-    {
-        $bytesWritten = file_put_contents(
-            $this->analyser->getGitattributesFilePath(),
-            $content
-        );
-
-        if ($bytesWritten) {
-            $content = 'Created a .gitattributes file with the shown content:'
-                . PHP_EOL . '<info>' . $content . '</info>';
-
-            return PHP_EOL . PHP_EOL . $content;
-        }
-
-        $message = 'Creation of .gitattributes file failed.';
-        throw new GitattributesCreationFailed($message);
-    }
-
-    /**
-     * Overwrite an existing gitattributes file.
-     *
-     * @param  string  $content The content of the gitattributes file
-     * @throws GitattributesCreationFailed
-     *
-     * @return string
-     */
-    protected function overwriteGitattributesFile(string $content): string
-    {
-        $bytesWritten = file_put_contents(
-            $this->analyser->getGitattributesFilePath(),
-            $content
-        );
-
-        if ($bytesWritten) {
-            $content = 'Overwrote it with the shown content:'
-                . PHP_EOL . '<info>' . $content . '</info>';
-
-            return PHP_EOL . PHP_EOL . $content;
-        }
-
-        $message = 'Overwrite of .gitattributes file failed.';
-        throw new GitattributesCreationFailed($message);
     }
 }

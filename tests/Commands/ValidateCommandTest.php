@@ -793,7 +793,7 @@ CONTENT;
         );
 
         $builder = new MockBuilder();
-        $builder->setNamespace('Stolt\LeanPackage\Commands')
+        $builder->setNamespace('Stolt\LeanPackage')
             ->setName('file_put_contents')
             ->setFunctionProvider(new FixedValueFunction(false));
 
@@ -1660,7 +1660,7 @@ CONTENT;
         );
 
         $builder = new MockBuilder();
-        $builder->setNamespace('Stolt\LeanPackage\Commands')
+        $builder->setNamespace('Stolt\LeanPackage')
             ->setName('file_put_contents')
             ->setFunctionProvider(new FixedValueFunction(false));
 
