@@ -264,6 +264,11 @@ final class ValidateCommand extends Command
                 return Command::FAILURE;
             }
 
+            // Apply generation-related options (e.g. --enforce-strict-order, --enforce-alignment, keep-*)
+            if (!$this->applyGenerationOptions($input, $output, $this->analyser)) {
+                return Command::FAILURE;
+            }
+
             $verboseOutput = '+ Validating .gitattributes content from STDIN.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 

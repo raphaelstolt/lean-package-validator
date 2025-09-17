@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - New dedicated `update` and `create` commands. Closes [#55](https://github.com/raphaelstolt/lean-package-validator/issues/55).
 
+### Fixed
+- When using `--stdin-input` it can be configured via the available options. Closes [#50](https://github.com/raphaelstolt/lean-package-validator/issues/50).
+
 ## [v4.7.1] - 2025-09-15
 
 ### Fixed
