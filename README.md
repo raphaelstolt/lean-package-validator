@@ -201,11 +201,11 @@ cat .gitattributes | lean-package-validator validate --stdin-input
 The `create` command will create a `.gitattributes` file in the given directory. This command replaces the `--create` 
 option of the `validate` command. Please migrate to the dedicated commands.
 
-
 #### Update command
 
 The `update` command will update a present `.gitattributes` file in the given directory. This command replaces the `--overwrite`
-option of the `validate` command. Please migrate to the dedicated commands.
+option of the `validate` command. Please migrate to the dedicated commands. Like the above-mentioned `create` command it 
+provides a `--dry-run` option to see what the `.gitattributes` content would look like.
 
 #### Init command
 

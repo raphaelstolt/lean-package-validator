@@ -68,6 +68,34 @@ final class CreateCommandTest extends TestCase
     }
 
     #[Test]
+    public function printsExpectedContentWithoutWritingAFile(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new CreateCommand($analyser, $repository);
+
+        $artifactFilenames = ['README.md', '.gitignore'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests']
+        );
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->execute()
+            ->assertSuccessful();
+
+        $output = $result->output();
+
+        $this->assertStringContainsString('export-ignore', $output);
+        $this->assertStringNotContainsString('has been created', $output);
+
+        $this->assertFileDoesNotExist($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+    }
+
+    #[Test]
     public function failsIfGitattributesAlreadyExists(): void
     {
         if ((new OsHelper())->isWindows()) {

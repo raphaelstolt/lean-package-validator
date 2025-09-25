@@ -6,6 +6,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\Commands\UpdateCommand;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
@@ -79,7 +80,6 @@ CONTENT;
         $this->assertStringContainsString('tests/', $content);
         $this->assertStringContainsString('export-ignore', $content);
     }
-
     #[Test]
     public function failsWhenNoGitattributesFileIsPresent(): void
     {
@@ -99,5 +99,34 @@ CONTENT;
             ->execute()
             ->assertFaulty()
             ->assertOutputContains('No .gitattributes file found. Use the create command to create one first.');
+    }
+
+    #[Test]
+    public function printsExpectedContentWithoutWritingAFile(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new UpdateCommand($analyser, $repository);
+
+        $artifactFilenames = ['README.md', '.gitignore', 'phpunit.xml.dist'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['tests']
+        );
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->addOption('align-export-ignores')
+            ->execute()
+            ->assertSuccessful();
+
+        $output = $result->output();
+
+        $this->assertStringContainsString('export-ignore', $output);
+        $this->assertStringNotContainsString('has been updated', $output);
+
+        $this->assertFileDoesNotExist($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
     }
 }

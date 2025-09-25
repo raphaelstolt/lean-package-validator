@@ -48,6 +48,13 @@ final class UpdateCommand extends Command
             $this->getDefinition()->addOption(new InputOption(...$args));
         });
 
+        // Add dry-run option
+        $this->getDefinition()->addOption(new InputOption(
+            'dry-run',
+            null,
+            InputOption::VALUE_NONE,
+            'Do not write any files. Output the expected .gitattributes content'
+        ));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -62,7 +69,7 @@ final class UpdateCommand extends Command
 
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
 
-        if (!\file_exists($gitattributesPath)) {
+        if (!\file_exists($gitattributesPath) && $input->getOption('dry-run') !== true) {
             $output->writeln('No .gitattributes file found. Use the <info>create</info> command to create one first.');
 
             return self::FAILURE;
@@ -74,6 +81,13 @@ final class UpdateCommand extends Command
             $output->writeln('Unable to determine expected .gitattributes content for the given directory.');
 
             return self::FAILURE;
+        }
+
+        // Support dry-run: print expected content and exit successfully without writing.
+        if ($input->getOption('dry-run') === true) {
+            $output->writeln($expected);
+
+            return self::SUCCESS;
         }
 
         try {
