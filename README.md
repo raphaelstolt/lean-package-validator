@@ -217,8 +217,10 @@ lean-package-validator init [<directory>]
 
 The `--overwrite|-o` option overwrites an existing `.lpv` file.
 
-The `--preset` option allows to choose from a predefined set of glob pattern.
-Available presets are `PHP`, `Python`, `Rust`, `JavaScript`, and `Go`. With `PHP` being the default.
+The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
+`JavaScript`, and `Go`. With `PHP` being the default.
+
+The `--dry-run` option will show the content of the `.lpv` file that would be created.
 
 #### Tree command
 
