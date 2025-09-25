@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.1.0] - 2025-09-26
+
+### Added
+- New `--dry-run` option for the `update` and `create` command.
+
 ## [v5.0.0] - 2025-09-17
 
 ### Added
@@ -419,7 +424,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.0.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.1.0...HEAD
+[v5.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.0.0...v5.1.0
 [v5.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.7.1...v5.0.0
 [v4.7.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.7.0...v4.7.1
 [v4.7.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v4.6.0...v4.7.0
