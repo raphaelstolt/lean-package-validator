@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class InitCommandTest extends TestCase
 {
     /**
-     * Set up test environment.
+     * Set up a test environment.
      */
     protected function setUp(): void
     {
@@ -32,7 +32,7 @@ class InitCommandTest extends TestCase
     }
 
     /**
-     * Tear down test environment.
+     * Tear down the test environment.
      *
      * @return void
      */
@@ -43,6 +43,25 @@ class InitCommandTest extends TestCase
         }
     }
 
+    #[Test]
+    public function printsContentWithoutWritingAFile(): void
+    {
+        $command = new InitCommand(new Analyser(new Finder(new PhpPreset())));
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([
+            '--preset' => 'PHP',
+            '--dry-run' => true,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $display = $tester->getDisplay();
+
+        $this->assertStringContainsString('phpunit*', $display);
+
+        $this->assertFileDoesNotExist($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.lpv');
+    }
     #[Test]
     public function createsExpectedDefaultLpvFile(): void
     {

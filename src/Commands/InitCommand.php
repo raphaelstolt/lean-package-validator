@@ -75,6 +75,12 @@ final class InitCommand extends Command
             $presetDescription,
             self::DEFAULT_PRESET
         );
+        $this->getDefinition()->addOption(new InputOption(
+            'dry-run',
+            null,
+            InputOption::VALUE_NONE,
+            'Do not write any files. Output the content that would be written'
+        ));
     }
 
     /**
@@ -153,6 +159,12 @@ final class InitCommand extends Command
         }
 
         $lpvFileContent = \implode("\n", $defaultGlobPattern);
+
+        if ($input->getOption('dry-run') === true) {
+            $output->writeln($lpvFileContent);
+
+            return self::SUCCESS;
+        }
 
         $bytesWritten = file_put_contents(
             $defaultLpvFile,
