@@ -10,12 +10,17 @@
 
 <p align="center">
     <img src="lpv-logo.png" 
+         title="lpv: the lean package validator"
          alt="Lean package validator logo">
 </p>
 
 The lean package validator or its abbreviation lpv is a utility tool that validates a project/micro-package
 for its `leanness`. A project/micro-package is considered `lean` when its common
 repository artifacts won't be included in release assets.
+
+It can also [create](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#create-command) and
+[update](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#update-command) the `leanness`
+enforcing export-ignore entries of a `.gitattributes` file.
 
 ## Installation
 
