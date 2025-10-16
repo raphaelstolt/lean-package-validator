@@ -18,6 +18,7 @@ example/ export-ignore
 LICENSE.md export-ignore
 llms.txt export-ignore
 lpv-logo.png export-ignore
+mago.toml export-ignore
 peck.json export-ignore
 phpstan.neon.dist export-ignore
 phpunit.xml.dist export-ignore

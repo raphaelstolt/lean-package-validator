@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace Stolt\LeanPackage;
 
 use PharData;
@@ -166,7 +169,7 @@ class Archive
             if ($archiveFile instanceof \SplFileInfo) {
                 if ($archiveFile->isDir()) {
                     $file = \basename($archiveFile) . '/';
-                    if (\in_array($file, $unexpectedArtifacts)) {
+                    if (\in_array($file, $unexpectedArtifacts, strict: true)) {
                         $foundUnexpectedArtifacts[] = $file;
                     }
                     continue;
@@ -179,7 +182,7 @@ class Archive
                     }
                 }
 
-                if (\in_array($file, $unexpectedArtifacts)) {
+                if (\in_array($file, $unexpectedArtifacts, strict: true)) {
                     $foundUnexpectedArtifacts[] = $file;
                 }
             }
