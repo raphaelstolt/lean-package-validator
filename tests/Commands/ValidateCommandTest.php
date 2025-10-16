@@ -19,6 +19,7 @@ use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
+use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
@@ -1617,13 +1618,24 @@ CONTENT;
             ['specs']
         );
 
+        $header = GitattributesFileRepository::GENERATED_HEADER . PHP_EOL . PHP_EOL;
+
+        if ($option === '--overwrite') {
+            $header = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL;
+        }
+
+        if ($option === '--create') {
+            $header = GitattributesFileRepository::GENERATED_HEADER . PHP_EOL . PHP_EOL;
+            \unlink(WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes');
+        }
+
         $command = $this->application->find('validate');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
             $option => true,
-            '--omit-header' => true,
+            '--omit-header' => false,
         ]);
 
         $dedicatedCommand = $option === '--create' ? 'create' : 'update';
@@ -1633,6 +1645,7 @@ The $option option is deprecated. Please use the dedicated $dedicatedCommand com
 The present .gitattributes file is considered invalid.
 
 Overwrote it with the shown content:
+$header
 * text=auto eol=lf
 
 .gitattributes export-ignore

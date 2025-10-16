@@ -288,7 +288,7 @@ final class ValidateCommand extends Command
         $verboseOutput = '+ Scanning directory ' . $directory . '.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-        // Print deprecation notices for legacy options but do NOT change exit code.
+        // Print deprecation notices for legacy options but do NOT change the exit code.
         if ($input->hasOption('create') && (bool) $input->getOption('create')) {
             $output->writeln('<comment>The --create option is deprecated. Please use the dedicated <info>create</info> command.</comment>');
         }
@@ -307,6 +307,7 @@ final class ValidateCommand extends Command
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
         $omitHeader = $input->getOption('omit-header');
+
         $showDifference = $input->getOption('diff');
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
 
@@ -457,9 +458,11 @@ final class ValidateCommand extends Command
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         if (!$this->analyser->hasGitattributesFile()) {
-            $warning = 'Warning: There is no .gitattributes file present in '
-                . $this->analyser->getDirectory() . '.';
-            $outputContent = '<error>' . $warning . '</error>';
+            if ($createGitattributesFile === false) {
+                $warning = 'Warning: There is no .gitattributes file present in '
+                    . $this->analyser->getDirectory() . '.';
+                $outputContent = '<error>' . $warning . '</error>';
+            }
 
             $expectedGitattributesFileContent = $this->analyser
                 ->getExpectedGitattributesContent();
@@ -467,7 +470,10 @@ final class ValidateCommand extends Command
             $verboseOutput = '+ Getting expected .gitattribute file content.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
+            $outputContent = '';
+
             if ($expectedGitattributesFileContent !== '') {
+
                 if ($createGitattributesFile || $overwriteGitattributesFile) {
                     try {
                         $outputContent .= $this->gitattributesFileRepository->createGitattributesFile(
@@ -561,17 +567,6 @@ final class ValidateCommand extends Command
                             $verboseOutput = "+ Trying to overwrite existing .gitattribute file with expected content.";
                         }
                         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-
-                        if ($omitHeader === false) {
-                            if (\str_contains($expectedGitattributesFileContent, GitattributesFileRepository::GENERATED_HEADER)) {
-                                $expectedGitattributesFileContent = \str_replace(
-                                    GitattributesFileRepository::GENERATED_HEADER . PHP_EOL . PHP_EOL,
-                                    '',
-                                    $expectedGitattributesFileContent
-                                );
-                            }
-                            $expectedGitattributesFileContent = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL . PHP_EOL . $expectedGitattributesFileContent;
-                        }
 
                         $outputContent .= $this->gitattributesFileRepository->overwriteGitattributesFile(
                             $expectedGitattributesFileContent
