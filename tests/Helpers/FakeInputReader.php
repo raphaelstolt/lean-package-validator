@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Tests\Helpers;
 
-use Stolt\LeanPackage\Helpers\InputReader;
+use Stolt\LeanPackage\Helpers\InputReaderInterface;
 
-class FakeInputReader implements InputReader
+class FakeInputReader implements InputReaderInterface
 {
     private string $input = '';
 

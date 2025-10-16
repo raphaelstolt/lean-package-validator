@@ -86,7 +86,7 @@ CONTENT;
         }
 
         // Remove the file
-        @\unlink($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+        \unlink($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
 
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $repository = new GitattributesFileRepository($analyser);

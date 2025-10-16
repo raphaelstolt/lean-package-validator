@@ -59,13 +59,13 @@ class TestCase extends PHPUnit
         /** @var \SplFileInfo $fileinfo */
         foreach ($files as $fileinfo) {
             if ($fileinfo->isDir()) {
-                @\rmdir($fileinfo->getRealPath());
+                \rmdir($fileinfo->getRealPath());
                 continue;
             }
-            @\unlink($fileinfo->getRealPath());
+            \unlink($fileinfo->getRealPath());
         }
 
-        @\rmdir($directory);
+        \rmdir($directory);
     }
 
     /**

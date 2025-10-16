@@ -211,7 +211,7 @@ class Analyser
         );
 
         $globPatterns = [];
-        \array_filter($globPatternLines, function ($line) use (&$globPatterns) {
+        \array_filter($globPatternLines, function (string $line) use (&$globPatterns) {
             if (\trim($line) !== '') {
                 $globPatterns[] = \trim($line);
             }
@@ -253,7 +253,7 @@ class Analyser
 
         $globPatterns = \explode(',', $bracesContent);
 
-        if (\count($globPatterns) == 1) {
+        if (\count($globPatterns) === 1) {
             $invalidGlobPattern = true;
         }
 
@@ -650,8 +650,8 @@ class Analyser
                 $pattern = \trim($pattern);
 
                 if ($patternMatches
-                    && !\in_array($pattern, $globPatternMatchingExportIgnores)
-                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores)
+                    && !\in_array($pattern, $globPatternMatchingExportIgnores, strict: true)
+                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores, strict: true)
                 ) {
                     return $exportIgnoresToPreserve[] = \trim($pattern);
                 }
@@ -686,7 +686,7 @@ class Analyser
         }
 
         foreach ($globMatches as $filename) {
-            if (!\in_array($filename, $ignoredGlobMatches)) {
+            if (!\in_array($filename, $ignoredGlobMatches, strict: true)) {
                 if (\is_dir($filename)) {
                     $expectedExportIgnores[] = $filename . '/';
                     continue;
@@ -828,7 +828,7 @@ class Analyser
         $exportIgnoresPlacementPlaceholderSet = false;
         $exportIgnoresPlacementPlaceholder = self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
 
-        \array_filter($gitattributesLines, function ($line) use (
+        \array_filter($gitattributesLines, function (string $line) use (
             &$nonExportIgnoreLines,
             &$exportIgnoresPlacementPlaceholderSet,
             &$exportIgnoresPlacementPlaceholder
@@ -870,7 +870,7 @@ class Analyser
         );
 
         $exportIgnores = [];
-        \array_filter($gitattributesLines, function ($line) use (&$exportIgnores, &$applyGlob) {
+        \array_filter($gitattributesLines, function (string $line) use (&$exportIgnores, &$applyGlob) {
             if (\strstr($line, 'export-ignore', true)) {
                 list($line, $void) = \explode('export-ignore', $line);
                 if ($applyGlob) {
@@ -910,7 +910,7 @@ class Analyser
     {
         $longestArtifact = \max(\array_map('strlen', $artifacts));
 
-        return \array_map(function ($artifact) use (&$longestArtifact) {
+        return \array_map(function (string $artifact) use (&$longestArtifact) {
             if (\strlen($artifact) < $longestArtifact) {
                 return $artifact . \str_repeat(
                     ' ',
@@ -923,12 +923,13 @@ class Analyser
 
     private function getByDirectoriesToFilesExportIgnoreArtifacts(array $artifacts): array
     {
-        $directories = \array_filter($artifacts, function ($artifact) {
+        $directories = \array_filter($artifacts, function (string $artifact) {
             if (\strpos($artifact, '/')) {
                 return $artifact;
             }
         });
-        $files = \array_filter($artifacts, function ($artifact) {
+
+        $files = \array_filter($artifacts, function (string $artifact) {
             if (\strpos($artifact, '/') === false) {
                 return $artifact;
             }

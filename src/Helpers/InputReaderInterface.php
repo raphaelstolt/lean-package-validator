@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Helpers;
 
-interface InputReader
+interface InputReaderInterface
 {
     public function get(): string|false;
 }

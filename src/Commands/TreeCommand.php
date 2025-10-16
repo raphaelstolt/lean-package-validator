@@ -61,7 +61,7 @@ final class TreeCommand extends Command
 
         if (!\is_dir($this->directoryToOperateOn)) {
             $warning = "Warning: The provided directory "
-                . "'$this->directoryToOperateOn' does not exist or is not a directory.";
+                . "'{$this->directoryToOperateOn}' does not exist or is not a directory.";
             $outputContent = '<error>' . $warning . '</error>';
             $output->writeln($outputContent);
 

@@ -122,7 +122,7 @@ final class InitCommand extends Command
                 $this->analyser->setDirectory($directory);
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
-                    . "'$directory' does not exist or is not a directory.";
+                    . "'{$directory}' does not exist or is not a directory.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
@@ -145,7 +145,7 @@ final class InitCommand extends Command
             return Command::FAILURE;
         }
 
-        if ($chosenPreset && \in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()))) {
+        if ($chosenPreset && \in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()), strict: true)) {
             $verboseOutput = '+ Loading preset ' . $chosenPreset . '.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
             $globPatternFromPreset = true;
@@ -158,7 +158,7 @@ final class InitCommand extends Command
             return Command::FAILURE;
         }
 
-        $lpvFileContent = \implode("\n", $defaultGlobPattern);
+        $lpvFileContent = \implode(PHP_EOL, $defaultGlobPattern);
 
         if ($input->getOption('dry-run') === true) {
             $output->writeln($lpvFileContent);
@@ -187,7 +187,7 @@ final class InitCommand extends Command
             return Command::FAILURE;
         }
 
-        $info = "<info>Created default '$defaultLpvFile' file.</info>";
+        $info = "<info>Created default '{$defaultLpvFile}' file.</info>";
         $output->writeln($info);
 
         return Command::SUCCESS;

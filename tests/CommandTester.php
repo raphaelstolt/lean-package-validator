@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace Stolt\LeanPackage\Tests;
 
 use Symfony\Component\Console\Tester\CommandTester as ConsoleCommandTester;

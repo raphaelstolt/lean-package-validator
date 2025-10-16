@@ -47,7 +47,7 @@ CONTENT;
 
         $generatedHeader = GitattributesFileRepository::GENERATED_HEADER . PHP_EOL . PHP_EOL;
         $fakeGitattributesContent = <<<CONTENT
-$generatedHeader
+{$generatedHeader}
 
 .gitattributes export-ignore
 phpspec.yml.dist export-ignore
@@ -63,7 +63,7 @@ CONTENT;
 
         $modifiedHeader = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL . PHP_EOL;
         $fakeGitattributesContent = <<<CONTENT
-$modifiedHeader
+{$modifiedHeader}
 
 .gitattributes export-ignore
 phpspec.yml.dist export-ignore
