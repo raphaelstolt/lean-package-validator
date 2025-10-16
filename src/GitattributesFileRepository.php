@@ -98,7 +98,7 @@ final class GitattributesFileRepository
             return $contentToWrite;
         }
 
-        $presentContent = (string) @\file_get_contents($gitattributesPath);
+        $presentContent = (string) \file_get_contents($gitattributesPath);
         if ($presentContent === '') {
             return $contentToWrite;
         }

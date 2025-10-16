@@ -1629,7 +1629,7 @@ CONTENT;
         $dedicatedCommand = $option === '--create' ? 'create' : 'update';
 
         $expectedDisplay = <<<CONTENT
-The $option option is deprecated. Please use the dedicated $dedicatedCommand command.
+The {$option} option is deprecated. Please use the dedicated {$dedicatedCommand} command.
 The present .gitattributes file is considered invalid.
 
 Overwrote it with the shown content:

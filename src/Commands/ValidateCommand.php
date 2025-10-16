@@ -241,7 +241,7 @@ final class ValidateCommand extends Command
                 $this->analyser->setDirectory($directory);
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
-                    . "'$directory' does not exist or is not a directory.";
+                    . "'{$directory}' does not exist or is not a directory.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
@@ -370,7 +370,7 @@ final class ValidateCommand extends Command
                 $this->analyser->setKeepGlobPattern($keepGlobPattern);
             } catch (InvalidGlobPattern $e) {
                 $warning = "Warning: The provided glob pattern "
-                    . "'$keepGlobPattern' is considered invalid.";
+                    . "'{$keepGlobPattern}' is considered invalid.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
@@ -391,13 +391,13 @@ final class ValidateCommand extends Command
 
         if ($globPattern || $globPattern === '') {
             try {
-                $verboseOutput = "+ Using glob pattern <info>$globPattern</info>.";
+                $verboseOutput = "+ Using glob pattern <info>{$globPattern}</info>.";
                 $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
                 $this->analyser->setGlobPattern((string) $globPattern);
             } catch (InvalidGlobPattern $e) {
                 $warning = "Warning: The provided glob pattern "
-                    . "'$globPattern' is considered invalid.";
+                    . "'{$globPattern}' is considered invalid.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
@@ -420,7 +420,7 @@ final class ValidateCommand extends Command
 
             } catch (NonExistentGlobPatternFile $e) {
                 $warning = "Warning: The provided glob pattern file "
-                    . "'$globPatternFile' doesn't exist.";
+                    . "'{$globPatternFile}' doesn't exist.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
@@ -429,7 +429,7 @@ final class ValidateCommand extends Command
                 return Command::FAILURE;
             } catch (InvalidGlobPatternFile $e) {
                 $warning = "Warning: The provided glob pattern file "
-                    . "'$globPatternFile' is considered invalid.";
+                    . "'{$globPatternFile}' is considered invalid.";
                 $outputContent = '<error>' . $warning . '</error>';
                 $output->writeln($outputContent);
 
