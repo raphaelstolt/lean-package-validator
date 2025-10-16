@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
-use Stolt\LeanPackage\Analyser;
-use Stolt\LeanPackage\Commands\InitCommand;
+
+
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
-use Stolt\LeanPackage\Presets\Finder;
-use Stolt\LeanPackage\Presets\PhpPreset;
+
+
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 
@@ -59,13 +59,13 @@ class TestCase extends PHPUnit
         /** @var \SplFileInfo $fileinfo */
         foreach ($files as $fileinfo) {
             if ($fileinfo->isDir()) {
-                @\rmdir($fileinfo->getRealPath());
+                \rmdir($fileinfo->getRealPath());
                 continue;
             }
-            @\unlink($fileinfo->getRealPath());
+            \unlink($fileinfo->getRealPath());
         }
 
-        @\rmdir($directory);
+        \rmdir($directory);
     }
 
     /**

@@ -6,7 +6,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
-use Stolt\LeanPackage\Commands\CreateCommand;
+
 use Stolt\LeanPackage\Commands\UpdateCommand;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
@@ -86,7 +86,10 @@ CONTENT;
         }
 
         // Remove the file
-        @\unlink($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+        $gitattributesFile = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
+        if (\file_exists($gitattributesFile)) {
+            \unlink($gitattributesFile);
+        }
 
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $repository = new GitattributesFileRepository($analyser);
@@ -170,7 +173,10 @@ CONTENT;
             $this->markTestSkipped('Skipping test on Windows systems');
         }
 
-        @\unlink($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+        $gitattributesFile = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
+        if (\file_exists($gitattributesFile)) {
+            \unlink($gitattributesFile);
+        }
 
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
         $repository = new GitattributesFileRepository($analyser);

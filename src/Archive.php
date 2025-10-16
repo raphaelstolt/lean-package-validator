@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 namespace Stolt\LeanPackage;
 
 use PharData;
@@ -163,26 +166,26 @@ class Archive
         $hasLicenseFile = false;
 
         foreach ($archive as $archiveFile) {
-            if ($archiveFile instanceof \SplFileInfo) {
-                if ($archiveFile->isDir()) {
-                    $file = \basename($archiveFile) . '/';
-                    if (\in_array($file, $unexpectedArtifacts)) {
+            if (!($archiveFile instanceof \SplFileInfo)) { continue; }
+
+if ($archiveFile->isDir()) {
+                    $file = $archiveFile->getFilename() . '/';
+                    if (\in_array($file, $unexpectedArtifacts, strict: true)) {
                         $foundUnexpectedArtifacts[] = $file;
                     }
                     continue;
                 }
 
-                $file = \basename($archiveFile);
+                $file = $archiveFile->getFilename();
                 if ($this->validateLicenseFilePresence()) {
                     if (\preg_match('/(License.*)/i', $file)) {
                         $hasLicenseFile = true;
                     }
                 }
 
-                if (\in_array($file, $unexpectedArtifacts)) {
+                if (\in_array($file, $unexpectedArtifacts, strict: true)) {
                     $foundUnexpectedArtifacts[] = $file;
                 }
-            }
         }
 
         if ($this->validateLicenseFilePresence() && $hasLicenseFile === false) {

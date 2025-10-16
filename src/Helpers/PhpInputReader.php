@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Helpers;
 
-use Stolt\LeanPackage\Helpers\InputReader;
 
-class PhpInputReader implements InputReader
+
+class PhpInputReader implements InputReaderInterface
 {
     public function get(): string|false
     {

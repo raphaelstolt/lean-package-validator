@@ -1,0 +1,28 @@
+# Mago configuration file
+# For more information, see https://mago.carthage.software/#/getting-started/configuration
+php-version = "8.2.0"
+
+[source]
+paths = ["src/", "tests/"]
+includes = ["vendor"]
+excludes = ["src/Glob.php"]
+
+[formatter]
+print-width = 120
+tab-width = 4
+use-tabs = false
+
+[linter]
+integrations = ["symfony", "phpunit"]
+
+[linter.rules.cyclomatic-complexity]
+level = "warning"
+
+[linter.rules.too-many-methods]
+level = "warning"
+
+[linter.rules.too-many-properties]
+level = "warning"
+
+[linter.rules.kan-defect]
+level = "warning"

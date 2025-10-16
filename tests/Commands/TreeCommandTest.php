@@ -11,7 +11,7 @@ use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Tree;
-use Symfony\Component\Console\Command\Command;
+
 
 class TreeCommandTest extends TestCase
 {

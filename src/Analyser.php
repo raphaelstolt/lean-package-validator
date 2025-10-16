@@ -211,7 +211,7 @@ class Analyser
         );
 
         $globPatterns = [];
-        \array_filter($globPatternLines, function ($line) use (&$globPatterns) {
+        \array_filter($globPatternLines, static function (string $line) use (&$globPatterns) {
             if (\trim($line) !== '') {
                 $globPatterns[] = \trim($line);
             }
@@ -247,13 +247,13 @@ class Analyser
 
         $bracesContent = \trim(\substr($pattern, 1, -1));
 
-        if (empty($bracesContent)) {
+        if ($bracesContent === '') {
             $invalidGlobPattern = true;
         }
 
         $globPatterns = \explode(',', $bracesContent);
 
-        if (\count($globPatterns) == 1) {
+        if (\count($globPatterns) === 1) {
             $invalidGlobPattern = true;
         }
 
@@ -519,7 +519,7 @@ class Analyser
 
         $gitignoredPatterns = [];
 
-        \array_filter($gitignoreLines, function ($line) use (&$gitignoredPatterns) {
+        \array_filter($gitignoreLines, static function ($line) use (&$gitignoredPatterns) {
             $line = \trim($line);
             if ($line !== '' && \strpos($line, '#') === false) {
                 if (\substr($line, 0, 1) === "/") {
@@ -650,8 +650,8 @@ class Analyser
                 $pattern = \trim($pattern);
 
                 if ($patternMatches
-                    && !\in_array($pattern, $globPatternMatchingExportIgnores)
-                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores)
+                    && !\in_array($pattern, $globPatternMatchingExportIgnores, strict: true)
+                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores, strict: true)
                 ) {
                     return $exportIgnoresToPreserve[] = \trim($pattern);
                 }
@@ -686,13 +686,13 @@ class Analyser
         }
 
         foreach ($globMatches as $filename) {
-            if (!\in_array($filename, $ignoredGlobMatches)) {
-                if (\is_dir($filename)) {
+            if (\in_array($filename, $ignoredGlobMatches, strict: true)) { continue; }
+
+if (\is_dir($filename)) {
                     $expectedExportIgnores[] = $filename . '/';
                     continue;
                 }
                 $expectedExportIgnores[] = $filename;
-            }
         }
 
         \chdir($initialWorkingDirectory);
@@ -708,7 +708,7 @@ class Analyser
 
         if ($this->isKeepLicenseEnabled()) {
             $licenseLessExpectedExportIgnores = [];
-            \array_filter($expectedExportIgnores, function ($exportIgnore) use (
+            \array_filter($expectedExportIgnores, static function ($exportIgnore) use (
                 &$licenseLessExpectedExportIgnores
             ) {
                 if (!\preg_match('/(License.*)/i', $exportIgnore)) {
@@ -721,7 +721,7 @@ class Analyser
 
         if ($this->isKeepReadmeEnabled()) {
             $readmeLessExpectedExportIgnores = [];
-            \array_filter($expectedExportIgnores, function ($exportIgnore) use (
+            \array_filter($expectedExportIgnores, static function ($exportIgnore) use (
                 &$readmeLessExpectedExportIgnores
             ) {
                 if (!\preg_match('/(Readme.*)/i', $exportIgnore)) {
@@ -754,10 +754,10 @@ class Analyser
         $eols = ["\n", "\r", "\n\r", "\r\n"];
 
         foreach ($eols as $eol) {
-            if (($count = \substr_count($content, $eol)) >= $maxCount) {
-                $maxCount = $count;
+            if (($count = \substr_count($content, $eol)) < $maxCount) { continue; }
+
+$maxCount = $count;
                 $preferredEol = $eol;
-            }
         }
 
         $this->preferredEol = $preferredEol;
@@ -828,7 +828,7 @@ class Analyser
         $exportIgnoresPlacementPlaceholderSet = false;
         $exportIgnoresPlacementPlaceholder = self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
 
-        \array_filter($gitattributesLines, function ($line) use (
+        \array_filter($gitattributesLines, static function (string $line) use (
             &$nonExportIgnoreLines,
             &$exportIgnoresPlacementPlaceholderSet,
             &$exportIgnoresPlacementPlaceholder
@@ -870,7 +870,7 @@ class Analyser
         );
 
         $exportIgnores = [];
-        \array_filter($gitattributesLines, function ($line) use (&$exportIgnores, &$applyGlob) {
+        \array_filter($gitattributesLines, function (string $line) use (&$exportIgnores, &$applyGlob) {
             if (\strstr($line, 'export-ignore', true)) {
                 list($line, $void) = \explode('export-ignore', $line);
                 if ($applyGlob) {
@@ -910,7 +910,7 @@ class Analyser
     {
         $longestArtifact = \max(\array_map('strlen', $artifacts));
 
-        return \array_map(function ($artifact) use (&$longestArtifact) {
+        return \array_map(static function (string $artifact) use (&$longestArtifact) {
             if (\strlen($artifact) < $longestArtifact) {
                 return $artifact . \str_repeat(
                     ' ',
@@ -923,12 +923,13 @@ class Analyser
 
     private function getByDirectoriesToFilesExportIgnoreArtifacts(array $artifacts): array
     {
-        $directories = \array_filter($artifacts, function ($artifact) {
+        $directories = \array_filter($artifacts, static function (string $artifact) {
             if (\strpos($artifact, '/')) {
                 return $artifact;
             }
         });
-        $files = \array_filter($artifacts, function ($artifact) {
+
+        $files = \array_filter($artifacts, static function (string $artifact) {
             if (\strpos($artifact, '/') === false) {
                 return $artifact;
             }
@@ -964,9 +965,9 @@ class Analyser
         if ($this->isStaleExportIgnoresComparisonEnabled()) {
             $unfilteredExportIgnores = $this->getPresentExportIgnores(false);
             foreach ($unfilteredExportIgnores as $unfilteredExportIgnore) {
-                if (false === \file_exists($unfilteredExportIgnore)) {
-                    $staleExportIgnores[] = $unfilteredExportIgnore;
-                }
+                if (false !== \file_exists($unfilteredExportIgnore)) { continue; }
+
+$staleExportIgnores[] = $unfilteredExportIgnore;
             }
         }
 

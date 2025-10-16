@@ -41,7 +41,7 @@ class CommonPreset
      */
     public function formatAvailablePresetDefinitionsForDescription(array $presets): string
     {
-        $presets = \array_map(function ($preset) {
+        $presets = \array_map(static function ($preset) {
             return '<comment>' . $preset . '</comment>';
         }, $presets);
 

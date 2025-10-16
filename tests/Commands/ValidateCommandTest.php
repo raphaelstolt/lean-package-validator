@@ -18,7 +18,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
-use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
+
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\GitattributesFileRepository;
@@ -1633,11 +1633,11 @@ CONTENT;
         $dedicatedCommand = $option === '--create' ? 'create' : 'update';
 
         $expectedDisplay = <<<CONTENT
-The $option option is deprecated. Please use the dedicated $dedicatedCommand command.
+The {$option} option is deprecated. Please use the dedicated {$dedicatedCommand} command.
 The present .gitattributes file is considered invalid.
 
 Overwrote it with the shown content:
-$header
+{$header}
 * text=auto eol=lf
 
 .gitattributes export-ignore

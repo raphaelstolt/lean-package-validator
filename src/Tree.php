@@ -100,7 +100,7 @@ final class Tree
         return \implode(PHP_EOL, $tree);
     }
 
-    protected function removeDirectory(string $directory): void
+    private function removeDirectory(string $directory): void
     {
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
@@ -110,12 +110,12 @@ final class Tree
         /** @var \SplFileInfo $fileinfo */
         foreach ($files as $fileinfo) {
             if ($fileinfo->isDir()) {
-                @\rmdir($fileinfo->getRealPath());
+                \rmdir($fileinfo->getRealPath());
                 continue;
             }
-            @\unlink($fileinfo->getRealPath());
+            \unlink($fileinfo->getRealPath());
         }
 
-        @\rmdir($directory);
+        \rmdir($directory);
     }
 }

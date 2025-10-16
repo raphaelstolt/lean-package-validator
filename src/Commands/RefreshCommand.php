@@ -106,7 +106,7 @@ final class RefreshCommand extends Command
                 $this->analyser->setDirectory($directory);
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
-                    . "'$directory' does not exist or is not a directory.";
+                    . "'{$directory}' does not exist or is not a directory.";
                 if ($isAgenticRun) {
                     $this->writeAgenticOutput($output, 'refresh', false, $warning);
                 } else {
@@ -185,7 +185,7 @@ final class RefreshCommand extends Command
             return Command::FAILURE;
         }
 
-        $message = "Refreshed default '$defaultLpvFile' file.";
+        $message = "Refreshed default '{$defaultLpvFile}' file.";
         if ($isAgenticRun) {
             $this->writeAgenticOutput($output, 'refresh', true, $message, ['lpv_file_path' => $defaultLpvFile]);
         } else {

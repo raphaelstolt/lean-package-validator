@@ -27,15 +27,15 @@ class Finder
         $availablePresets = [];
 
         foreach ($dir as $fileinfo) {
-            if (!$fileinfo->isDot()) {
-                $presetsParts = \explode(self::PRESET_SUFFIX, $fileinfo->getBasename());
-                if (\count($presetsParts) == 2) {
+            if ($fileinfo->isDot()) { continue; }
+
+$presetsParts = \explode(self::PRESET_SUFFIX, $fileinfo->getBasename());
+                if (\count($presetsParts) === 2) {
                     if ($presetsParts[0] === 'Common') {
                         continue;
                     }
                     $availablePresets[] = $presetsParts[0];
                 }
-            }
         }
 
         return $availablePresets;
@@ -62,7 +62,7 @@ class Finder
     {
         $name = \ucfirst(\strtolower($name));
 
-        if (!\in_array($name, $this->getAvailablePresets())) {
+        if (!\in_array($name, $this->getAvailablePresets(), strict: true)) {
             $message = \sprintf('Preset for %s not available. Maybe contribute it?.', $name);
             throw new PresetNotAvailable($message);
         }
