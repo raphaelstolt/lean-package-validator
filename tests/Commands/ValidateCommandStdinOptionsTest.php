@@ -61,7 +61,6 @@ final class ValidateCommandStdinOptionsTest extends TestCase
 
         // Shuffled order: README before dotfiles, etc.
         $stdinContent = <<<GITATTR
-* text=auto eol=lf
 
 README.md export-ignore
 tests/ export-ignore
@@ -94,7 +93,6 @@ GITATTR;
 
         // Likely expected order: .gitattributes, .gitignore, README.md, tests/
         $stdinContent = <<<GITATTR
-* text=auto eol=lf
 
 .gitattributes export-ignore
 .gitignore export-ignore
@@ -127,7 +125,6 @@ GITATTR;
 
         // Likely expected order: .gitattributes, .gitignore, README.md, tests/
         $stdinContent = <<<GITATTR
-* text=auto eol=lf
 
 .gitattributes export-ignore
 .gitignore     export-ignore
