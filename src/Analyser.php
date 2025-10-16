@@ -597,9 +597,7 @@ class Analyser
                         . $exportIgnoreContent;
                 }
             } else {
-                $content = "* text=auto eol=lf"
-                    . \str_repeat($this->preferredEol, 2)
-                    . $content;
+                $content = "* text=auto eol=lf" . \str_repeat($this->preferredEol, 2) . $content;
             }
 
             return $content;

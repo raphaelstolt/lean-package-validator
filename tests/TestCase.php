@@ -109,7 +109,6 @@ class TestCase extends PHPUnit
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
 
-
         $bytesWritten = file_put_contents($temporaryGitattributesFile, $content);
 
         return $bytesWritten > 0;

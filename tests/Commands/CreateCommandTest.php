@@ -103,7 +103,6 @@ final class CreateCommandTest extends TestCase
         }
 
         $gitattributesContent = <<<CONTENT
-* text=auto eol=lf
 
 phpspec.yml.dist export-ignore
 specs/ export-ignore
