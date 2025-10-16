@@ -848,7 +848,9 @@ CONTENT;
 
         $this->assertStringNotContainsString(GitattributesFileRepository::GENERATED_HEADER, $commandTester->getDisplay());
         $this->assertStringNotContainsString(GitattributesFileRepository::MODIFIED_HEADER, $commandTester->getDisplay());
+
         $commandTester->assertCommandIsSuccessful();
+
         $this->assertFileExists(
             WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
         );
@@ -1567,6 +1569,35 @@ CONTENT;
     }
 
     #[Test]
+    public function addsCreatedHeaderAsExpected(): void
+    {
+        $artifactFilenames = ['phpspec.yml.dist', 'version-increase-command'];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--create' => true,
+            '--omit-header' => false,
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertFileExists(
+            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+        );
+        $this->assertStringContainsString(
+            GitattributesFileRepository::GENERATED_HEADER,
+            \file_get_contents(WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes')
+        );
+    }
+
+    #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/8')]
     #[DataProvider('optionProvider')]
     public function incompleteGitattributesFileIsOverwritten(string $option): void
@@ -1588,15 +1619,7 @@ CONTENT;
             ['specs']
         );
 
-        $header = GitattributesFileRepository::GENERATED_HEADER . PHP_EOL . PHP_EOL;
-
-        if ($option === '--overwrite') {
-            $header = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL;
-        }
-
-        if ($option === '--create') {
-            $header = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL . PHP_EOL;
-        }
+        $header = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL;
 
         $command = $this->application->find('validate');
         $commandTester = new CommandTester($command);

@@ -307,7 +307,6 @@ final class ValidateCommand extends Command
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
         $omitHeader = (boolean) $input->getOption('omit-header');
-
         $showDifference = $input->getOption('diff');
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
 
@@ -477,7 +476,7 @@ final class ValidateCommand extends Command
                     try {
                         $outputContent .= $this->gitattributesFileRepository->createGitattributesFile(
                             $expectedGitattributesFileContent,
-                            $omitHeader
+                            $omitHeader === true ? false : true
                         );
                         $output->writeln($outputContent);
 
