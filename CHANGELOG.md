@@ -7,8 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-
-## [v5.2.1] - 2025-10-17
+## [v5.2.1] - 2025-10-20
 
 ### Fixed
 - The correct file `HEADERS` (generated|modified) are written.
