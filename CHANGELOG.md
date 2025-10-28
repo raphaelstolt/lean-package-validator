@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.2.2] - 2025-10-29
+
+### Fixed
+- The complete directory path is used in user output. Closes [#59](https://github.com/raphaelstolt/lean-package-validator/issues/59).
+
 ## [v5.2.1] - 2025-10-20
 
 ### Fixed
@@ -434,7 +439,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.2...HEAD
+[v5.2.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.1...v5.2.2
 [v5.2.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.0...v5.2.1
 [v5.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.1.0...v5.2.0
 [v5.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.0.0...v5.1.0
