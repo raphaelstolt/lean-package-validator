@@ -98,7 +98,8 @@ final class UpdateCommand extends Command
             return self::FAILURE;
         }
 
-        $output->writeln("The .gitattributes file at {$directory} has been updated.");
+        $directory = \realpath($directory);
+        $output->writeln("The .gitattributes file in {$directory} has been updated.");
 
         return self::SUCCESS;
     }

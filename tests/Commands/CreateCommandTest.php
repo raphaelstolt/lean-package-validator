@@ -48,7 +48,7 @@ final class CreateCommandTest extends TestCase
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
-            ->assertOutputContains("A .gitattributes file has been created at {$this->temporaryDirectory}.");
+            ->assertOutputContains("A .gitattributes file has been created in {$this->temporaryDirectory}.");
 
         $gitattributesPath = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
         $this->assertFileExists($gitattributesPath);

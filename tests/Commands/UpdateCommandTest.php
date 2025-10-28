@@ -59,7 +59,7 @@ CONTENT;
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
-            ->assertOutputContains("The .gitattributes file at {$this->temporaryDirectory} has been updated.");
+            ->assertOutputContains("The .gitattributes file in {$this->temporaryDirectory} has been updated.");
 
         $gitattributesPath = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
         $this->assertFileExists($gitattributesPath);

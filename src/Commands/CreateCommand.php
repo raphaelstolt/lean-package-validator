@@ -96,7 +96,8 @@ final class CreateCommand extends Command
             return self::FAILURE;
         }
 
-        $output->writeln("A .gitattributes file has been created at {$directory}.");
+        $directory = \realpath($directory);
+        $output->writeln("A .gitattributes file has been created in {$directory}.");
 
         return self::SUCCESS;
     }
