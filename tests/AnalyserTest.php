@@ -1550,6 +1550,7 @@ CONTENT;
              '.githooks',
              'package*',
              'peck.json',
+             'phpinsights*',
              'phpkg.con*',
              'phpstan*',
              'phpunit*',

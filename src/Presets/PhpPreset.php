@@ -28,6 +28,7 @@ final class PhpPreset extends CommonPreset implements Preset
             'pint.{json,php}',
             'renovate.json',
             '*debugbar.json',
+            'phpinsights*',
             'ecs*',
             'RMT',
             '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file'
