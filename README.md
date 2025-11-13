@@ -14,7 +14,7 @@
          alt="Lean package validator logo">
 </p>
 
-The lean package validator or its abbreviation lpv is a utility tool that validates a project/micro-package
+The lean package validator or its abbreviation __lpv__ is a utility tool that validates a project/micro-package
 for its `leanness`. A project/micro-package is considered `lean` when its common
 repository artifacts won't be included in release assets.
 
