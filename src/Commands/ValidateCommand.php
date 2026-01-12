@@ -306,7 +306,7 @@ final class ValidateCommand extends Command
         $validateArchive = $input->getOption('validate-git-archive');
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
-        $omitHeader = (boolean) $input->getOption('omit-header');
+        $omitHeader = (bool) $input->getOption('omit-header');
         $showDifference = $input->getOption('diff');
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
 
@@ -343,7 +343,7 @@ final class ValidateCommand extends Command
             $this->analyser->enableStrictAlignmentComparison();
         }
 
-        $keepLicense = (boolean) $input->getOption('keep-license');
+        $keepLicense = (bool) $input->getOption('keep-license');
 
         if ($keepLicense) {
             $verboseOutput = '+ Keeping the license file.';
@@ -352,7 +352,7 @@ final class ValidateCommand extends Command
             $this->analyser->keepLicense();
         }
 
-        $keepReadme = (boolean) $input->getOption('keep-readme');
+        $keepReadme = (bool) $input->getOption('keep-readme');
 
         if ($keepReadme) {
             $verboseOutput = '+ Keeping the README file.';
