@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.2.4] - 2026-01-12
+
+### Fixed
+- Non-standard (boolean) cast is deprecated in PHP 8.5, (bool) is used instead.
+
 ## [v5.2.3] - 2025-11-03
 
 ### Added
@@ -444,7 +449,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.3...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.4...HEAD
+[v5.2.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.3...v5.2.4
 [v5.2.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.2...v5.2.3
 [v5.2.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.1...v5.2.2
 [v5.2.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.0...v5.2.1
