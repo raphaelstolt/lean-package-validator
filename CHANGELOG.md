@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.3.0] - 2026-01-28
+
+### Added
+- Three new AI skills for `validating`, `creating`, and `updating` the package's .gitattributes file.
+
 ## [v5.2.4] - 2026-01-12
 
 ### Fixed
@@ -449,7 +454,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.4...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.0...HEAD
+[v5.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.4...v5.3.0
 [v5.2.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.3...v5.2.4
 [v5.2.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.2...v5.2.3
 [v5.2.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.1...v5.2.2
