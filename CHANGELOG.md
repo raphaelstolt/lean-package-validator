@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.3.1] - 2026-01-28
+
+### Fixed
+- Fixed changed test expectation.
+- Fixed preset for distributable AI skills.
+
 ## [v5.3.0] - 2026-01-28
 
 ### Added
@@ -454,7 +460,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.1...HEAD
+[v5.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.0...v5.3.1
 [v5.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.4...v5.3.0
 [v5.2.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.3...v5.2.4
 [v5.2.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.2...v5.2.3
