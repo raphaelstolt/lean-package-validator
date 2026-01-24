@@ -9,7 +9,7 @@ class CommonPreset
     protected function getCommonGlob(): array
     {
         return [
-            '.*',
+            '.*[!ai]',
             '*.txt',
             '*.{md,MD}',
             '*.rst',
