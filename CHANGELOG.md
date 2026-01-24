@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.3.3] - 2026-01-28
+
+### Fixed
+- Updated the command used in the updating skill.
+
 ## [v5.3.2] - 2026-01-28
 
 ### Fixed
@@ -465,7 +470,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.2...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.3...HEAD
+[v5.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.2...v5.3.3
 [v5.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.1...v5.3.2
 [v5.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.0...v5.3.1
 [v5.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.2.4...v5.3.0
