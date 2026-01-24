@@ -22,7 +22,7 @@ if (false === $autoloaded) {
 }
 
 \define('WORKING_DIRECTORY', \getcwd());
-\define('VERSION', '5.3.1');
+\define('VERSION', '5.3.2');
 
 use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\Commands\InitCommand;
