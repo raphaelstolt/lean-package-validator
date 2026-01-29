@@ -297,6 +297,13 @@ cpx stolt/lean-package-validator validate
 
 For utilising a dedicated GitHub Action have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
 
+### Included AI skills
+
+This project [includes](./resources/boost/skills) three AI skills focused on managing the `.gitattributes` file for a package:
+- validating: check whether the current `.gitattributes` content matches the expected export-ignore rules.
+- creating: generate a `.gitattributes` file when it is missing.
+- updating: reconcile an existing `.gitattributes` file with expected export-ignore rules.
+
 ### Running tests
 
 ``` bash
