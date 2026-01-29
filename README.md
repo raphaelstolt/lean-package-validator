@@ -237,29 +237,35 @@ lean-package-validator tree --src [<directory>]
 
 Package: stolt/lean-package-validator
 .
-├── bin
-├── example
-├── .github
-├── src
-├── tests
-├── box.json.dist
-├── CHANGELOG.md
-├── composer.json
-├── composer.lock
+├── .aiassistant/
+├── .github/
+├── .idea/
+├── .phpunit.cache/
+├── bin/
+├── coverage-reports/
+├── example/
+├── resources/
+├── src/
+├── tests/
+├── vendor/
 ├── .editorconfig
 ├── .gitattributes
 ├── .gitignore
 ├── .gitmessage
+├── .php-cs-fixer.php
+├── CHANGELOG.md
 ├── LICENSE.md
+├── README.md
+├── box.json.dist
+├── composer.json
+├── composer.lock
 ├── llms.txt
 ├── lpv-logo.png
 ├── peck.json
-├── .php-cs-fixer.php
 ├── phpstan.neon.dist
-├── phpunit.xml.dist
-└── README.md
+└── phpunit.xml.dist
 
-5 directories, 15 files
+11 directories, 16 files
 ```
 
 ``` bash
@@ -267,11 +273,12 @@ lean-package-validator tree --dist-package [<directory>]
 
 Package: stolt/lean-package-validator
 .
-├── bin
-├── composer.json
-└── src
+├── bin/
+├── resources/
+├── src/
+└── composer.json
 
-2 directories, 1 file
+3 directories, 1 file
 ```
 
 ## Utilisation via Composer scripts, cpx, or it's dedicated GitHub Action
