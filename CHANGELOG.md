@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- New `Homebrew` formula and usage documentation. Closes [#45](https://github.com/raphaelstolt/lean-package-validator/issues/45).
+
 ## [v5.3.3] - 2026-01-28
 
 ### Fixed

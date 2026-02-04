@@ -61,6 +61,13 @@ wget --quiet https://github.com/raphaelstolt/lean-package-validator/releases/dow
 mv lean-package-validator.phar /usr/local/bin/lean-package-validator
 ```
 
+The lean package validator also can be installed globally via [Homebrew](https://brew.sh/) on macOS systems:
+
+``` bash
+brew tap raphaelstolt/lean-package-validator
+brew install lean-package-validator
+```
+
 ## Usage
 
 Run the lean package validator CLI within or against a project/micro-package

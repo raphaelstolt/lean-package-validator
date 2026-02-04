@@ -15,6 +15,7 @@ bin/start-watchman export-ignore
 box.json.dist export-ignore
 CHANGELOG.md export-ignore
 example/ export-ignore
+Formula/ export-ignore
 LICENSE.md export-ignore
 llms.txt export-ignore
 lpv-logo.png export-ignore
