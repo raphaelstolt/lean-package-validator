@@ -34,4 +34,22 @@ class CommonPreset
             '*.{png,gif,jpeg,jpg,webp}',
         ];
     }
+
+    /**
+     * @param array $presets
+     * @return string
+     */
+    public function formatAvailablePresetDefinitionsForDescription(array $presets): string
+    {
+        $presets = \array_map(function ($preset) {
+            return '<comment>' . $preset . '</comment>';
+        }, $presets);
+
+        if (\count($presets)  > 2) {
+            $lastPreset = \array_pop($presets);
+            return \implode(', ', $presets) . ', and ' . $lastPreset;
+        }
+
+        return $presets[0] . ' and ' . $presets[1];
+    }
 }

@@ -234,6 +234,24 @@ The `--preset` option allows choosing from a predefined set of glob pattern. Ava
 
 The `--dry-run` option will show the content of the `.lpv` file that would be created.
 
+#### Refresh command
+
+The `refresh` command updates an existing `.lpv` file by adding missing preset patterns while keeping any manual
+modifications already present in the file.
+
+``` bash
+lean-package-validator refresh [<directory>]
+```
+
+The command expects a present `.lpv` file in the target directory and will fail if none existent.
+
+The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
+`JavaScript`, and `Go`. With `PHP` being the default.
+
+The `--dry-run` option shows the refreshed `.lpv` content without writing any changes to disk.
+
+Existing lines are __preserved__, so custom entries remain untouched while missing preset entries are appended.
+
 #### Tree command
 
 The `tree` command of the lean package validator allows you to inspect the __flat__ `source` and `dist package` structure

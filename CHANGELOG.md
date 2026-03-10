@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 - New `Homebrew` formula and usage documentation. Closes [#45](https://github.com/raphaelstolt/lean-package-validator/issues/45).
+- New `refresh` command to update a present `.lpv` file with the latest preset glob patterns. 
+Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ## [v5.3.3] - 2026-01-28
 

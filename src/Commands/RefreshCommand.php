@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class InitCommand extends Command
+class RefreshCommand extends Command
 {
     private const DEFAULT_PRESET = 'PHP';
 
@@ -49,17 +49,16 @@ final class InitCommand extends Command
     protected function configure(): void
     {
         $this->analyser->setDirectory(WORKING_DIRECTORY);
-        $this->setName('init');
-        $description = 'Creates a default .lpv file in a given '
-            . 'project/micro-package repository';
-        $this->setDescription($description);
+
+        $this
+            ->setName('refresh')
+            ->setDescription('Refresh a present .lpv file');
 
         $availablePresets = (new CommonPreset())->formatAvailablePresetDefinitionsForDescription(
             $this->finder->getAvailablePresets()
         );
 
         $directoryDescription = 'The directory of a project/micro-package repository';
-        $overwriteDescription = 'Overwrite existing default .lpv file file';
         $presetDescription = 'The preset to use for the .lpv file. Available ones are ' . $availablePresets . '.';
 
         $this->addArgument(
@@ -68,7 +67,7 @@ final class InitCommand extends Command
             $directoryDescription,
             $this->analyser->getDirectory()
         );
-        $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, $overwriteDescription);
+
         $this->addOption(
             'preset',
             null,
@@ -96,19 +95,16 @@ final class InitCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory');
-        $overwriteDefaultLpvFile = $input->getOption('overwrite');
         $chosenPreset = (string) $input->getOption('preset');
-        $globPatternFromPreset = false;
+        $dryRun = (bool) $input->getOption('dry-run');
 
-        if ($directory !== WORKING_DIRECTORY) {
+        if ($directory !== '' && $directory !== WORKING_DIRECTORY) {
             try {
                 $this->analyser->setDirectory($directory);
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
                     . "'$directory' does not exist or is not a directory.";
-                $outputContent = '<error>' . $warning . '</error>';
-                $output->writeln($outputContent);
-
+                $output->writeln('<error>' . $warning . '</error>');
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
                 return Command::FAILURE;
@@ -117,61 +113,61 @@ final class InitCommand extends Command
 
         $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
 
-        $verboseOutput = "+ Checking .lpv file existence in " . WORKING_DIRECTORY . ".";
-        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-
-        if (\file_exists($defaultLpvFile) && $overwriteDefaultLpvFile === false) {
-            $warning = 'Warning: A default .lpv file already exists.';
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
+        if (!\file_exists($defaultLpvFile) && $dryRun !== true) {
+            $output->writeln('<error>Warning: No default .lpv file exists to refresh.</error>');
 
             return Command::FAILURE;
         }
 
-        if ($chosenPreset && \in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()))) {
-            $verboseOutput = '+ Loading preset ' . $chosenPreset . '.';
-            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-            $globPatternFromPreset = true;
-            $defaultGlobPattern = $this->finder->getPresetGlobByLanguageName($chosenPreset);
-        } else {
+        if ($chosenPreset === '' || !\in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()), true)) {
             $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
+            $output->writeln('<error>' . $warning . '</error>');
 
             return Command::FAILURE;
         }
 
-        $lpvFileContent = \implode("\n", $defaultGlobPattern);
+        $expectedGlobPattern = $this->finder->getPresetGlobByLanguageName($chosenPreset);
+        $expectedContent = \implode("\n", $expectedGlobPattern);
 
-        if ($input->getOption('dry-run') === true) {
-            $output->writeln($lpvFileContent);
-
-            return self::SUCCESS;
+        $existingContent = '';
+        if (\file_exists($defaultLpvFile)) {
+            $existingContent = (string) \file_get_contents($defaultLpvFile);
         }
 
-        $bytesWritten = file_put_contents(
-            $defaultLpvFile,
-            $lpvFileContent
-        );
+        $existingLines = \array_values(\array_filter(
+            \preg_split('/\r\n|\r|\n/', $existingContent) ?: [],
+            static fn (string $line): bool => \trim($line) !== ''
+        ));
 
-        $verboseOutput = '+ Writing default glob pattern to .lpv file in ' . WORKING_DIRECTORY . '.';
+        $mergedLines = $existingLines;
+        foreach (\preg_split('/\r\n|\r|\n/', $expectedContent) ?: [] as $line) {
+            $line = \trim((string) $line);
+            if ($line === '') {
+                continue;
+            }
 
-        if ($globPatternFromPreset === true) {
-            $verboseOutput = '+ Writing glob pattern for preset ' . $chosenPreset . ' to .lpv file in ' . WORKING_DIRECTORY . '.';
+            if (!\in_array($line, $mergedLines, true)) {
+                $mergedLines[] = $line;
+            }
         }
 
-        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+        $refreshedContent = \implode("\n", $mergedLines);
+
+        if ($dryRun === true) {
+            $output->writeln($refreshedContent);
+
+            return Command::SUCCESS;
+        }
+
+        $bytesWritten = file_put_contents($defaultLpvFile, $refreshedContent);
 
         if ($bytesWritten === false) {
-            $warning = 'Warning: The creation of the default .lpv file failed.';
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
+            $output->writeln('<error>Warning: The refresh of the default .lpv file failed.</error>');
 
             return Command::FAILURE;
         }
 
-        $info = "<info>Created default '$defaultLpvFile' file.</info>";
-        $output->writeln($info);
+        $output->writeln('Refreshed default \'' . $defaultLpvFile . '\' file.');
 
         return Command::SUCCESS;
     }

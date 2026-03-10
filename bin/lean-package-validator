@@ -26,6 +26,7 @@ if (false === $autoloaded) {
 
 use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\Commands\InitCommand;
+use Stolt\LeanPackage\Commands\RefreshCommand;
 use Stolt\LeanPackage\Commands\TreeCommand;
 use Stolt\LeanPackage\Commands\UpdateCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;
@@ -46,6 +47,11 @@ $analyser = new Analyser($finder);
 $initCommand = new InitCommand(
     $analyser
 );
+
+$refreshCommand = new RefreshCommand(
+    $analyser
+);
+
 $validateCommand = new ValidateCommand(
     $analyser,
     new Validator($archive),
@@ -57,6 +63,6 @@ $treeCommand = new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY,'tree-temp
 
 $application = new Application('Lean package validator', VERSION);
 $application->addCommands(
-    [$initCommand, $validateCommand, $createCommand, $updateCommand, $treeCommand]
+    [$initCommand, $refreshCommand, $validateCommand, $createCommand, $updateCommand, $treeCommand]
 );
 $application->run();
