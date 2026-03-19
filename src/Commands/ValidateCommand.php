@@ -87,7 +87,7 @@ final class ValidateCommand extends Command
     {
         $this->analyser->setDirectory(WORKING_DIRECTORY);
         $this->setName('validate');
-        $description = 'Validates the .gitattributes file of a given '
+        $description = 'Validate the .gitattributes file of a given '
             . 'project/micro-package repository';
         $this->setDescription($description);
 

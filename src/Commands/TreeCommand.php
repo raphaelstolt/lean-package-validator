@@ -35,7 +35,7 @@ final class TreeCommand extends Command
     {
         $this->directoryToOperateOn = WORKING_DIRECTORY;
         $this->setName('tree');
-        $description = 'Displays the source structure of a given '
+        $description = 'Display the source structure of a given '
             . "project/micro-package repository or it's dist package";
         $this->setDescription($description);
 

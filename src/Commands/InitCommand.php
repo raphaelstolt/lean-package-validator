@@ -50,7 +50,7 @@ final class InitCommand extends Command
     {
         $this->analyser->setDirectory(WORKING_DIRECTORY);
         $this->setName('init');
-        $description = 'Creates a default .lpv file in a given '
+        $description = 'Create a default .lpv file in a given '
             . 'project/micro-package repository';
         $this->setDescription($description);
 
