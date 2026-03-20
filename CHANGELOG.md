@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.4.0] - 2026-03-20
+
 ### Added
 - New `Homebrew` formula and usage documentation. Closes [#45](https://github.com/raphaelstolt/lean-package-validator/issues/45).
 - New `refresh` command to update a present `.lpv` file with the latest preset glob patterns. 
@@ -475,7 +477,8 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.3...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.4.0...HEAD
+[v5.4.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.3...v5.4.0
 [v5.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.2...v5.3.3
 [v5.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.1...v5.3.2
 [v5.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.0...v5.3.1
