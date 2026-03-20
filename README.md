@@ -227,7 +227,7 @@ The `init` command will create an initial `.lpv` file with the default patterns 
 lean-package-validator init [<directory>]
 ```
 
-The `--overwrite|-o` option overwrites an existing `.lpv` file.
+The `--overwrite|-o` option overwrites an existing `.lpv` file. Also see the [refresh](#refresh-command) command.
 
 The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
 `JavaScript`, and `Go`. With `PHP` being the default.
@@ -243,7 +243,7 @@ modifications already present in the file.
 lean-package-validator refresh [<directory>]
 ```
 
-The command expects a present `.lpv` file in the target directory and will fail if none existent.
+The command expects a present `.lpv` file in the target directory and will fail if none is existent.
 
 The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
 `JavaScript`, and `Go`. With `PHP` being the default.
@@ -332,9 +332,9 @@ For utilising a dedicated GitHub Action have a look at the documentation over [h
 ### Included AI skills
 
 This project [includes](./resources/boost/skills) three AI skills focused on managing the `.gitattributes` file for a package:
-- validating: check whether the current `.gitattributes` content matches the expected export-ignore rules.
-- creating: generate a `.gitattributes` file when it is missing.
-- updating: reconcile an existing `.gitattributes` file with expected export-ignore rules.
+- __validate__: check whether the current `.gitattributes` content matches the expected export-ignore rules.
+- __create__: generate a `.gitattributes` file when it is missing.
+- __update__: reconcile an existing `.gitattributes` file with expected export-ignore rules.
 
 ### Running tests
 
