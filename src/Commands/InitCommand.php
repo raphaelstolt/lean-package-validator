@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\CommonPreset;
 use Stolt\LeanPackage\Presets\Finder;
@@ -16,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class InitCommand extends Command
 {
+    use OutputOptions;
+
     private const DEFAULT_PRESET = 'PHP';
 
     /**
@@ -82,6 +85,9 @@ final class InitCommand extends Command
             InputOption::VALUE_NONE,
             'Do not write any files. Output the content that would be written'
         ));
+        $this->addAgenticOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        });
     }
 
     /**
@@ -99,6 +105,7 @@ final class InitCommand extends Command
         $overwriteDefaultLpvFile = $input->getOption('overwrite');
         $chosenPreset = (string) $input->getOption('preset');
         $globPatternFromPreset = false;
+        $isAgenticRun = $this->isAgenticRun($input);
 
         if ($directory !== WORKING_DIRECTORY) {
             try {
@@ -106,9 +113,11 @@ final class InitCommand extends Command
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
                     . "'$directory' does not exist or is not a directory.";
-                $outputContent = '<error>' . $warning . '</error>';
-                $output->writeln($outputContent);
-
+                if ($isAgenticRun) {
+                    $this->writeAgenticOutput($output, 'init', false, $warning);
+                } else {
+                    $output->writeln('<error>' . $warning . '</error>');
+                }
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
                 return Command::FAILURE;
@@ -122,9 +131,11 @@ final class InitCommand extends Command
 
         if (\file_exists($defaultLpvFile) && $overwriteDefaultLpvFile === false) {
             $warning = 'Warning: A default .lpv file already exists.';
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
-
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'init', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
             return Command::FAILURE;
         }
 
@@ -135,9 +146,11 @@ final class InitCommand extends Command
             $defaultGlobPattern = $this->finder->getPresetGlobByLanguageName($chosenPreset);
         } else {
             $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
-
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'init', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
             return Command::FAILURE;
         }
 
@@ -164,14 +177,22 @@ final class InitCommand extends Command
 
         if ($bytesWritten === false) {
             $warning = 'Warning: The creation of the default .lpv file failed.';
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'init', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
 
             return Command::FAILURE;
         }
 
-        $info = "<info>Created default '$defaultLpvFile' file.</info>";
-        $output->writeln($info);
+        $message = "Created default '$defaultLpvFile' file.";
+
+        if ($isAgenticRun) {
+            $this->writeAgenticOutput($output, 'init', true, $message, ['lpv_file_path' => $defaultLpvFile]);
+        } else {
+            $output->writeln("<info>{$message}</info>");
+        }
 
         return Command::SUCCESS;
     }

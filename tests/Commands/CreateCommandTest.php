@@ -48,7 +48,7 @@ final class CreateCommandTest extends TestCase
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
-            ->assertOutputContains("A .gitattributes file has been created in {$this->temporaryDirectory}.");
+            ->assertOutputContains('A .gitattributes file has been created in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . '.');
 
         $gitattributesPath = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
         $this->assertFileExists($gitattributesPath);
@@ -119,5 +119,61 @@ CONTENT;
             ->execute()
             ->assertFaulty()
             ->assertOutputContains('A .gitattributes file already exists. Use the update command to modify it.');
+    }
+
+    #[Test]
+    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new CreateCommand($analyser, $repository);
+
+        $this->createTemporaryFiles(['README.md', '.gitignore'], ['tests']);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('agentic-run')
+            ->execute()
+            ->assertSuccessful();
+
+        $json = \json_decode(\trim($result->output()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('create', $json['command']);
+        $this->assertSame('success', $json['status']);
+        $this->assertStringContainsString($this->temporaryDirectory, $json['message']);
+        $this->assertArrayHasKey('gitattributes_file_path', $json);
+    }
+
+    #[Test]
+    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    {
+        $gitattributesContent = <<<CONTENT
+
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+CONTENT;
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new CreateCommand($analyser, $repository);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('agentic-run')
+            ->execute()
+            ->assertFaulty();
+
+        $json = \json_decode(\trim($result->output()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('create', $json['command']);
+        $this->assertSame('failure', $json['status']);
+        $this->assertStringContainsString('already exists', $json['message']);
     }
 }

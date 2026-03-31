@@ -2467,4 +2467,95 @@ CONTENT;
 
         return $application;
     }
+
+    #[Test]
+    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    {
+        $artifactFilenames = ['.buildignore', 'phpspec.yml.dist', 'foo.txt'];
+        $this->createTemporaryFiles($artifactFilenames, ['specs']);
+
+        $gitattributesContent = <<<CONTENT
+*    text=auto eol=lf
+
+.gitattributes export-ignore
+.buildignore export-ignore
+foo.txt export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+CONTENT;
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--agentic-run' => true,
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+
+        $json = \json_decode(\trim($commandTester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('validate', $json['command']);
+        $this->assertSame('success', $json['status']);
+        $this->assertTrue($json['valid']);
+    }
+
+    #[Test]
+    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    {
+        $artifactFilenames = ['.buildignore', 'phpspec.yml.dist'];
+        $this->createTemporaryFiles($artifactFilenames, ['specs']);
+
+        $gitattributesContent = <<<CONTENT
+*    text=auto eol=lf
+
+.gitattributes export-ignore
+CONTENT;
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--agentic-run' => true,
+        ]);
+
+        $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
+
+        $json = \json_decode(\trim($commandTester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('validate', $json['command']);
+        $this->assertSame('failure', $json['status']);
+        $this->assertFalse($json['valid']);
+        $this->assertArrayHasKey('expected_gitattributes_content', $json);
+    }
+
+    #[Test]
+    public function outputsJsonOnMissingGitattributesFileWhenAgenticRunOptionIsSet(): void
+    {
+        $this->createTemporaryFiles(['.buildignore', 'phpspec.yml.dist'], ['specs']);
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--agentic-run' => true,
+        ]);
+
+        $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
+
+        $json = \json_decode(\trim($commandTester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('validate', $json['command']);
+        $this->assertSame('failure', $json['status']);
+        $this->assertFalse($json['valid']);
+        $this->assertArrayHasKey('expected_gitattributes_content', $json);
+    }
 }

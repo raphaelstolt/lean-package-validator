@@ -336,6 +336,34 @@ This project [includes](./resources/boost/skills) three AI skills focused on man
 - __create__: generate a `.gitattributes` file when it is missing.
 - __update__: reconcile an existing `.gitattributes` file with expected export-ignore rules.
 
+### Agentic-friendly output
+
+All commands support the `--agentic-run` option, which switches the output from human-readable text to a structured JSON object. This is useful when integrating the tool into AI workflows or automation pipelines where machine-readable output is preferred.
+
+``` bash
+lean-package-validator validate --agentic-run [<directory>]
+```
+
+``` json
+{
+    "command": "validate",
+    "status": "success",
+    "message": "The .gitattributes file is considered valid.",
+    "valid": true
+}
+```
+
+Each response always includes `command`, `status` (`success` or `failure`), and `message` fields. Commands also include additional context-specific fields:
+
+| Command    | Additional fields on success                          |
+|------------|-------------------------------------------------------|
+| `validate` | `valid`, `warnings` (if any), `expected_gitattributes_content` (on failure), `archive_valid`, `unexpected_artifacts` |
+| `create`   | `gitattributes_file_path`                             |
+| `update`   | `gitattributes_file_path`                             |
+| `init`     | `lpv_file_path`                                       |
+| `refresh`  | `lpv_file_path`                                       |
+| `tree`     | `package`, `tree`                                     |
+
 ### Running tests
 
 ``` bash

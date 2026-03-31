@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\CommonPreset;
 use Stolt\LeanPackage\Presets\Finder;
@@ -14,8 +15,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RefreshCommand extends Command
+final class RefreshCommand extends Command
 {
+    use OutputOptions;
+
     private const DEFAULT_PRESET = 'PHP';
 
     /**
@@ -81,6 +84,9 @@ class RefreshCommand extends Command
             InputOption::VALUE_NONE,
             'Do not write any files. Output the content that would be written'
         ));
+        $this->addAgenticOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        });
     }
 
     /**
@@ -97,6 +103,7 @@ class RefreshCommand extends Command
         $directory = (string) $input->getArgument('directory');
         $chosenPreset = (string) $input->getOption('preset');
         $dryRun = (bool) $input->getOption('dry-run');
+        $isAgenticRun = $this->isAgenticRun($input);
 
         if ($directory !== '' && $directory !== WORKING_DIRECTORY) {
             try {
@@ -104,7 +111,11 @@ class RefreshCommand extends Command
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
                     . "'$directory' does not exist or is not a directory.";
-                $output->writeln('<error>' . $warning . '</error>');
+                if ($isAgenticRun) {
+                    $this->writeAgenticOutput($output, 'refresh', false, $warning);
+                } else {
+                    $output->writeln('<error>' . $warning . '</error>');
+                }
                 $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
 
                 return Command::FAILURE;
@@ -114,15 +125,22 @@ class RefreshCommand extends Command
         $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
 
         if (!\file_exists($defaultLpvFile) && $dryRun !== true) {
-            $output->writeln('<error>Warning: No default .lpv file exists to refresh.</error>');
-
+            $warning = 'Warning: No default .lpv file exists to refresh.';
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'refresh', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
             return Command::FAILURE;
         }
 
         if ($chosenPreset === '' || !\in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()), true)) {
             $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
-            $output->writeln('<error>' . $warning . '</error>');
-
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'refresh', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
             return Command::FAILURE;
         }
 
@@ -162,13 +180,21 @@ class RefreshCommand extends Command
         $bytesWritten = file_put_contents($defaultLpvFile, $refreshedContent);
 
         if ($bytesWritten === false) {
-            $output->writeln('<error>Warning: The refresh of the default .lpv file failed.</error>');
-
+            $warning = 'Warning: The refresh of the default .lpv file failed.';
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'refresh', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
             return Command::FAILURE;
         }
 
-        $output->writeln('Refreshed default \'' . $defaultLpvFile . '\' file.');
-
+        $message = "Refreshed default '$defaultLpvFile' file.";
+        if ($isAgenticRun) {
+            $this->writeAgenticOutput($output, 'refresh', true, $message, ['lpv_file_path' => $defaultLpvFile]);
+        } else {
+            $output->writeln($message);
+        }
         return Command::SUCCESS;
     }
 }

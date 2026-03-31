@@ -109,4 +109,35 @@ class TreeCommandTest extends TestCase
         $this->assertStringContainsString('Package: stolt/lean-package-validator', $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
     }
+
+    #[Test]
+    public function outputsJsonWhenAgenticRunOptionIsSet(): void
+    {
+        $command = $this->application->find('tree');
+        $commandTester = new CommandTester($command);
+
+        $this->createTemporaryFiles(['.gitattributes', 'composer.json'], ['src', 'tests']);
+        file_put_contents(
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . 'composer.json',
+            \json_encode(['name' => 'test/agentic-package'])
+        );
+
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => $this->temporaryDirectory,
+            '--src' => true,
+            '--agentic-run' => true,
+        ]);
+
+        $commandTester->assertCommandIsSuccessful();
+
+        $json = \json_decode(\trim($commandTester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('tree', $json['command']);
+        $this->assertSame('success', $json['status']);
+        $this->assertSame('test/agentic-package', $json['package']);
+        $this->assertIsArray($json['tree']);
+        $this->assertContains('.', $json['tree']);
+    }
 }

@@ -179,4 +179,53 @@ CONTENT);
         );
         $this->assertTrue($tester->getStatusCode() !== Command::SUCCESS);
     }
+
+    #[Test]
+    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    {
+        $this->createTemporaryGlobPatternFile("*.txt\n*.lock\n");
+
+        $command = $this->application->find('refresh');
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--preset' => 'PHP',
+            '--agentic-run' => true,
+        ]);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+
+        $json = \json_decode(\trim($tester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('refresh', $json['command']);
+        $this->assertSame('success', $json['status']);
+        $this->assertArrayHasKey('lpv_file_path', $json);
+        $this->assertStringContainsString('.lpv', $json['lpv_file_path']);
+    }
+
+    #[Test]
+    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    {
+        $command = $this->application->find('refresh');
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--preset' => 'PHP',
+            '--agentic-run' => true,
+        ]);
+
+        $this->assertTrue($exitCode !== Command::SUCCESS);
+
+        $json = \json_decode(\trim($tester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('refresh', $json['command']);
+        $this->assertSame('failure', $json['status']);
+        $this->assertStringContainsString('No default .lpv file exists', $json['message']);
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands;
 
+use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Tree;
 use Symfony\Component\Console\Command\Command;
@@ -14,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class TreeCommand extends Command
 {
+    use OutputOptions;
+
     private Tree $tree;
 
     private const UNKNOWN_PACKAGE_NAME = 'unknown/unknown';
@@ -53,18 +56,24 @@ final class TreeCommand extends Command
 
         $this->addOption('src', null, InputOption::VALUE_NONE, $srcDescription);
         $this->addOption('dist-package', null, InputOption::VALUE_NONE, $distPackageDescription);
+        $this->addAgenticOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        });
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->directoryToOperateOn = (string) $input->getArgument('directory');
+        $isAgenticRun = $this->isAgenticRun($input);
 
         if (!\is_dir($this->directoryToOperateOn)) {
             $warning = "Warning: The provided directory "
                 . "'$this->directoryToOperateOn' does not exist or is not a directory.";
-            $outputContent = '<error>' . $warning . '</error>';
-            $output->writeln($outputContent);
-
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'tree', false, $warning);
+            } else {
+                $output->writeln('<error>' . $warning . '</error>');
+            }
             return Command::FAILURE;
         }
 
@@ -74,9 +83,16 @@ final class TreeCommand extends Command
             $verboseOutput = '+ Showing flat structure of package source.';
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-            $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
-            $output->write($this->tree->getTreeForSrc($this->directoryToOperateOn));
+            $packageName = $this->getPackageName();
+            $treeOutput = $this->tree->getTreeForSrc($this->directoryToOperateOn);
 
+            if ($isAgenticRun) {
+                $treeLines = \array_values(\array_filter(\explode(PHP_EOL, \rtrim($treeOutput)), static fn (string $l): bool => \trim($l) !== ''));
+                $this->writeAgenticOutput($output, 'tree', true, "Package: {$packageName}", ['package' => $packageName, 'tree' => $treeLines]);
+            } else {
+                $output->writeln('Package: <info>' . $packageName . '</info>');
+                $output->write($treeOutput);
+            }
             return Command::SUCCESS;
         }
 
@@ -85,11 +101,22 @@ final class TreeCommand extends Command
 
         try {
             $treeToDisplay = $this->tree->getTreeForDistPackage($this->directoryToOperateOn);
+            $packageName = $this->getPackageName();
 
-            $output->writeln('Package: <info>' . $this->getPackageName() . '</info>');
-            $output->write($treeToDisplay);
+            if ($isAgenticRun) {
+                $treeLines = \array_values(\array_filter(\explode(PHP_EOL, \rtrim($treeToDisplay)), static fn (string $l): bool => \trim($l) !== ''));
+                $this->writeAgenticOutput($output, 'tree', true, "Package: {$packageName}", ['package' => $packageName, 'tree' => $treeLines]);
+            } else {
+                $output->writeln('Package: <info>' . $packageName . '</info>');
+                $output->write($treeToDisplay);
+            }
         } catch (GitHeadNotAvailable $e) {
-            $output->writeln('Directory <info>' . $this->directoryToOperateOn . '</info> has no Git Head.');
+            $message = 'Directory ' . $this->directoryToOperateOn . ' has no Git Head.';
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'tree', false, $message);
+            } else {
+                $output->writeln('Directory <info>' . $this->directoryToOperateOn . '</info> has no Git Head.');
+            }
             return Command::FAILURE;
         }
 

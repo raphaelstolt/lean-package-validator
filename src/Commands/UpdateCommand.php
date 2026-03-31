@@ -6,6 +6,7 @@ namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Commands\Concerns\GeneratesGitattributesOptions;
+use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,6 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class UpdateCommand extends Command
 {
     use GeneratesGitattributesOptions;
+    use OutputOptions;
 
     /**
      * @var string $defaultName
@@ -55,12 +57,16 @@ final class UpdateCommand extends Command
             InputOption::VALUE_NONE,
             'Do not write any files. Output the expected .gitattributes content'
         ));
+        $this->addAgenticOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        });
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
         $this->analyser->setDirectory($directory);
+        $isAgenticRun = $this->isAgenticRun($input);
 
         // Apply options that influence generation
         if (!$this->applyGenerationOptions($input, $output, $this->analyser)) {
@@ -70,16 +76,23 @@ final class UpdateCommand extends Command
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
 
         if (!\file_exists($gitattributesPath) && $input->getOption('dry-run') !== true) {
-            $output->writeln('No .gitattributes file found. Use the <info>create</info> command to create one first.');
-
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'update', false, 'No .gitattributes file found. Use the create command to create one first.');
+            } else {
+                $output->writeln('No .gitattributes file found. Use the <info>create</info> command to create one first.');
+            }
             return self::FAILURE;
         }
 
         $expected = $this->analyser->getExpectedGitattributesContent();
 
         if ($expected === '') {
-            $output->writeln('Unable to determine expected .gitattributes content for the given directory.');
-
+            $message = 'Unable to determine expected .gitattributes content for the given directory.';
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'update', false, $message);
+            } else {
+                $output->writeln($message);
+            }
             return self::FAILURE;
         }
 
@@ -93,14 +106,22 @@ final class UpdateCommand extends Command
         try {
             $this->repository->overwriteGitattributesFile($expected);
         } catch (\Throwable $e) {
-            $output->writeln('Update of .gitattributes file failed.');
-
+            $message = 'Update of .gitattributes file failed.';
+            if ($isAgenticRun) {
+                $this->writeAgenticOutput($output, 'update', false, $message);
+            } else {
+                $output->writeln($message);
+            }
             return self::FAILURE;
         }
 
         $directory = \realpath($directory);
-        $output->writeln("The .gitattributes file in {$directory} has been updated.");
-
+        $message = "The .gitattributes file in {$directory} has been updated.";
+        if ($isAgenticRun) {
+            $this->writeAgenticOutput($output, 'update', true, $message, ['gitattributes_file_path' => $gitattributesPath]);
+        } else {
+            $output->writeln($message);
+        }
         return self::SUCCESS;
     }
 }

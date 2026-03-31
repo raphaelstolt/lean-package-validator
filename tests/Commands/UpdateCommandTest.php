@@ -59,7 +59,7 @@ CONTENT;
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
-            ->assertOutputContains("The .gitattributes file in {$this->temporaryDirectory} has been updated.");
+            ->assertOutputContains('The .gitattributes file in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . ' has been updated.');
 
         $gitattributesPath = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
         $this->assertFileExists($gitattributesPath);
@@ -126,5 +126,67 @@ CONTENT;
         $this->assertStringNotContainsString('has been updated', $output);
 
         $this->assertFileDoesNotExist($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+    }
+
+    #[Test]
+    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new UpdateCommand($analyser, $repository);
+
+        $this->createTemporaryFiles(['.gitignore'], ['tests', '.github']);
+
+        $gitattributesContent = <<<CONTENT
+.gitattributes export-ignore
+.github/ export-ignore
+tests/ export-ignore
+CONTENT;
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('agentic-run')
+            ->execute()
+            ->assertSuccessful();
+
+        $json = \json_decode(\trim($result->output()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('update', $json['command']);
+        $this->assertSame('success', $json['status']);
+        $this->assertStringContainsString($this->temporaryDirectory, $json['message']);
+        $this->assertArrayHasKey('gitattributes_file_path', $json);
+    }
+
+    #[Test]
+    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
+        @\unlink($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new UpdateCommand($analyser, $repository);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('agentic-run')
+            ->execute()
+            ->assertFaulty();
+
+        $json = \json_decode(\trim($result->output()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('update', $json['command']);
+        $this->assertSame('failure', $json['status']);
+        $this->assertStringContainsString('No .gitattributes file found', $json['message']);
     }
 }

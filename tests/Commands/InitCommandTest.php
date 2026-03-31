@@ -259,4 +259,52 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists($expectedDefaultLpvFile);
     }
+
+    #[Test]
+    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    {
+        $command = $this->application->find('init');
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--agentic-run' => true,
+        ]);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+
+        $json = \json_decode(\trim($tester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('init', $json['command']);
+        $this->assertSame('success', $json['status']);
+        $this->assertArrayHasKey('lpv_file_path', $json);
+        $this->assertStringContainsString('.lpv', $json['lpv_file_path']);
+    }
+
+    #[Test]
+    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    {
+        $defaultLpvFile = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.lpv';
+        \touch($defaultLpvFile);
+
+        $command = $this->application->find('init');
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([
+            'command' => $command->getName(),
+            'directory' => WORKING_DIRECTORY,
+            '--agentic-run' => true,
+        ]);
+
+        $this->assertTrue($exitCode !== Command::SUCCESS);
+
+        $json = \json_decode(\trim($tester->getDisplay()), true);
+
+        $this->assertIsArray($json);
+        $this->assertSame('init', $json['command']);
+        $this->assertSame('failure', $json['status']);
+        $this->assertStringContainsString('already exists', $json['message']);
+    }
 }
