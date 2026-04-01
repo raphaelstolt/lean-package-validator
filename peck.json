@@ -34,7 +34,8 @@
             "overwritable",
             "infoed",
             "stdin",
-            "llms"
+            "llms",
+            "agentic"
         ],
         "paths": []
     }
