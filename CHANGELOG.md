@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.5.0] - 2026-04-02
+
+### Added
+- Agentic-friendly output formatting via `--agentic-run` with JSON output for machine consumption. Closes [#64](https://github.com/raphaelstolt/lean-package-validator/issues/64).
+
 ## [v5.4.0] - 2026-03-20
 
 ### Added
@@ -477,7 +482,8 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.4.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.5.0...HEAD
+[v5.5.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.4.0...v5.5.0
 [v5.4.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.3...v5.4.0
 [v5.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.2...v5.3.3
 [v5.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.1...v5.3.2
