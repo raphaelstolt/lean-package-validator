@@ -78,12 +78,9 @@ final class RefreshCommand extends Command
             $presetDescription,
             self::DEFAULT_PRESET
         );
-        $this->getDefinition()->addOption(new InputOption(
-            'dry-run',
-            null,
-            InputOption::VALUE_NONE,
-            'Do not write any files. Output the content that would be written'
-        ));
+        $this->addDryRunOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        }, 'Do not write any files. Output the content that would be written');
         $this->addAgenticOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         });
@@ -102,7 +99,6 @@ final class RefreshCommand extends Command
     {
         $directory = (string) $input->getArgument('directory');
         $chosenPreset = (string) $input->getOption('preset');
-        $dryRun = (bool) $input->getOption('dry-run');
         $isAgenticRun = $this->isAgenticRun($input);
 
         if ($directory !== '' && $directory !== WORKING_DIRECTORY) {
@@ -124,7 +120,7 @@ final class RefreshCommand extends Command
 
         $defaultLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
 
-        if (!\file_exists($defaultLpvFile) && $dryRun !== true) {
+        if (!\file_exists($defaultLpvFile) && $this->isDryRun($input) !== true) {
             $warning = 'Warning: No default .lpv file exists to refresh.';
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, 'refresh', false, $warning);
@@ -171,7 +167,7 @@ final class RefreshCommand extends Command
 
         $refreshedContent = \implode("\n", $mergedLines);
 
-        if ($dryRun === true) {
+        if ($this->isDryRun($input)) {
             $output->writeln($refreshedContent);
 
             return Command::SUCCESS;

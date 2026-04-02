@@ -79,12 +79,9 @@ final class InitCommand extends Command
             $presetDescription,
             self::DEFAULT_PRESET
         );
-        $this->getDefinition()->addOption(new InputOption(
-            'dry-run',
-            null,
-            InputOption::VALUE_NONE,
-            'Do not write any files. Output the content that would be written'
-        ));
+        $this->addDryRunOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        }, 'Do not write any files. Output the content that would be written');
         $this->addAgenticOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         });
@@ -156,7 +153,7 @@ final class InitCommand extends Command
 
         $lpvFileContent = \implode("\n", $defaultGlobPattern);
 
-        if ($input->getOption('dry-run') === true) {
+        if ($this->isDryRun($input)) {
             $output->writeln($lpvFileContent);
 
             return self::SUCCESS;

@@ -15,6 +15,16 @@ trait OutputOptions
         $addOption('agentic-run', null, InputOption::VALUE_NONE, 'Enable agentic-friendly output formatting');
     }
 
+    protected function addDryRunOutputOption(callable $addOption, string $message): void
+    {
+        $addOption('dry-run', null, InputOption::VALUE_NONE, $message);
+    }
+
+    protected function isDryRun(InputInterface $input): bool
+    {
+        return (bool) $input->getOption('dry-run');
+    }
+
     protected function isAgenticRun(InputInterface $input): bool
     {
         return (bool) $input->getOption('agentic-run');

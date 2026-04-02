@@ -51,12 +51,9 @@ final class UpdateCommand extends Command
         });
 
         // Add dry-run option
-        $this->getDefinition()->addOption(new InputOption(
-            'dry-run',
-            null,
-            InputOption::VALUE_NONE,
-            'Do not write any files. Output the expected .gitattributes content'
-        ));
+        $this->addDryRunOutputOption(function (...$args) {
+            $this->getDefinition()->addOption(new InputOption(...$args));
+        }, 'Do not write any files. Output the expected .gitattributes content');
         $this->addAgenticOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         });
@@ -75,7 +72,7 @@ final class UpdateCommand extends Command
 
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
 
-        if (!\file_exists($gitattributesPath) && $input->getOption('dry-run') !== true) {
+        if (!\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, 'update', false, 'No .gitattributes file found. Use the create command to create one first.');
             } else {
@@ -97,7 +94,7 @@ final class UpdateCommand extends Command
         }
 
         // Support dry-run: print expected content and exit successfully without writing.
-        if ($input->getOption('dry-run') === true) {
+        if ($this->isDryRun($input)) {
             $output->writeln($expected);
 
             return self::SUCCESS;
