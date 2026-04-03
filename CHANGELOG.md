@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.6.0] - 2026-04-03
+
+### Removed
+
+- Removed support for PHP `8.1`.
+
+### Changed
+
+- Migrated code style tooling to [Mago](https://mago.carthage.software).
+
 ## [v5.5.0] - 2026-04-02
 
 ### Added
@@ -482,7 +492,8 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.5.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.6.0...HEAD
+[v5.6.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.5.0...v5.6.0
 [v5.5.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.4.0...v5.5.0
 [v5.4.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.3...v5.4.0
 [v5.3.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.3.2...v5.3.3
