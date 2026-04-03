@@ -27,15 +27,17 @@ class Finder
         $availablePresets = [];
 
         foreach ($dir as $fileinfo) {
-            if ($fileinfo->isDot()) { continue; }
+            if ($fileinfo->isDot()) {
+                continue;
+            }
 
-$presetsParts = \explode(self::PRESET_SUFFIX, $fileinfo->getBasename());
-                if (\count($presetsParts) === 2) {
-                    if ($presetsParts[0] === 'Common') {
-                        continue;
-                    }
-                    $availablePresets[] = $presetsParts[0];
+            $presetsParts = \explode(self::PRESET_SUFFIX, $fileinfo->getBasename());
+            if (\count($presetsParts) === 2) {
+                if ($presetsParts[0] === 'Common') {
+                    continue;
                 }
+                $availablePresets[] = $presetsParts[0];
+            }
         }
 
         return $availablePresets;
