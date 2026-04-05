@@ -73,7 +73,7 @@
     "require-dev": {
         "carthage-software/mago": "^1.18.0",
         "mockery/mockery": "^1.0",
-        "peckphp/peck": "^0.1.2",
+        "peckphp/peck": "^0.2.0",
         "phlak/semver": "^4.1 || ^6.0",
         "php-mock/php-mock": "^2.6",
         "php-mock/php-mock-phpunit": "^2.7||^1.1",
