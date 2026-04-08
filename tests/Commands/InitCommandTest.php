@@ -62,7 +62,9 @@ class InitCommandTest extends TestCase
 
         $this->assertFileDoesNotExist($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.lpv');
     }
+
     #[Test]
+    #[RunInSeparateProcess]
     public function createsExpectedDefaultLpvFile(): void
     {
         $command = $this->application->find('init');

@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.6.1] - 2026-04-10
+
+### Added
+- AI agentic runs are autodetected.
+
 ## [v5.6.0] - 2026-04-03
 
 ### Removed
