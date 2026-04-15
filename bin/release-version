@@ -68,7 +68,7 @@ function isWindows() {
  *
  * @return boolean
  */
-function fulfillsPreconditions()
+function fulfills_preconditions()
 {
     echo 'Checking release preconditions' . PHP_EOL;
 
@@ -191,7 +191,7 @@ if ($overwrittenReleaseMessage) {
 
 $releaseMessage = str_replace('{version}', $version, $defaultReleaseMessage);
 
-if (fulfillsPreconditions()) {
+if (fulfills_preconditions()) {
     echo 'Releasing ' . $version . PHP_EOL;
 
     $releaseCommands = [
