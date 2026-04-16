@@ -686,13 +686,15 @@ class Analyser
         }
 
         foreach ($globMatches as $filename) {
-            if (\in_array($filename, $ignoredGlobMatches, strict: true)) { continue; }
+            if (\in_array($filename, $ignoredGlobMatches, strict: true)) {
+                continue;
+            }
 
-if (\is_dir($filename)) {
-                    $expectedExportIgnores[] = $filename . '/';
-                    continue;
-                }
-                $expectedExportIgnores[] = $filename;
+            if (\is_dir($filename)) {
+                $expectedExportIgnores[] = $filename . '/';
+                continue;
+            }
+            $expectedExportIgnores[] = $filename;
         }
 
         \chdir($initialWorkingDirectory);
@@ -754,10 +756,12 @@ if (\is_dir($filename)) {
         $eols = ["\n", "\r", "\n\r", "\r\n"];
 
         foreach ($eols as $eol) {
-            if (($count = \substr_count($content, $eol)) < $maxCount) { continue; }
+            if (($count = \substr_count($content, $eol)) < $maxCount) {
+                continue;
+            }
 
-$maxCount = $count;
-                $preferredEol = $eol;
+            $maxCount = $count;
+            $preferredEol = $eol;
         }
 
         $this->preferredEol = $preferredEol;
@@ -965,9 +969,10 @@ $maxCount = $count;
         if ($this->isStaleExportIgnoresComparisonEnabled()) {
             $unfilteredExportIgnores = $this->getPresentExportIgnores(false);
             foreach ($unfilteredExportIgnores as $unfilteredExportIgnore) {
-                if (false !== \file_exists($unfilteredExportIgnore)) { continue; }
-
-$staleExportIgnores[] = $unfilteredExportIgnore;
+                if (false !== \file_exists($unfilteredExportIgnore)) {
+                    continue;
+                }
+                $staleExportIgnores[] = $unfilteredExportIgnore;
             }
         }
 
