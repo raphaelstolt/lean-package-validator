@@ -22,8 +22,9 @@ if (false === $autoloaded) {
 }
 
 \define('WORKING_DIRECTORY', \getcwd());
-\define('VERSION', '5.6.1');
+\define('VERSION', '5.7.1');
 
+use Stolt\Console\Commands\ListSkillsCommand;
 use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\RefreshCommand;
@@ -60,9 +61,10 @@ $validateCommand = new ValidateCommand(
 $createCommand = new CreateCommand($analyser, new GItattributesFileRepository($analyser));
 $updateCommand = new UpdateCommand($analyser, new GItattributesFileRepository($analyser));
 $treeCommand = new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY,'tree-temp')));
+$listSkillsCommand = new ListSkillsCommand();
 
 $application = new Application('Lean package validator', VERSION);
 $application->addCommands(
-    [$initCommand, $refreshCommand, $validateCommand, $createCommand, $updateCommand, $treeCommand]
+    [$initCommand, $refreshCommand, $validateCommand, $createCommand, $updateCommand, $treeCommand, $listSkillsCommand]
 );
 $application->run();
