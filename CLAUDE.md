@@ -5,13 +5,13 @@ artifacts from release archives.
 
 ## Tech Stack
 
-- **PHP 8.1+** with `declare(strict_types=1)` on all files
+- **PHP 8.2+** with `declare(strict_types=1)` on all files
 - **Symfony Console** for the CLI framework
 - **PHPUnit 11** for testing
 - **PHPStan level 8** for static analysis
-- **PHP-CS-Fixer** (PSR-2/PSR-12) for code style
+- **Mago** (PSR-2/PSR-12) for code style
 
-## Commands
+## Contribution commands
 
 ```bash
 # Run tests
@@ -39,6 +39,14 @@ composer lpv:spell-check
 composer lpv:dependency-analyse
 ```
 
+## Available CLI commands
+create      Create a new .gitattributes file for a project/micro-package repository
+init        Create a default .lpv file in a given project/micro-package repository
+refresh     Refresh a present .lpv file
+tree        Display the source structure of a given project/micro-package repository or it's dist package
+update      Update an existing .gitattributes file for a project/micro-package repository
+validate    Validate the .gitattributes file of a given project/micro-package repository
+
 ## Project Structure
 
 - `bin/lean-package-validator` — CLI entry point
@@ -54,3 +62,4 @@ composer lpv:dependency-analyse
 - PSR-4 autoloading, one class per file
 - Full type hints on all method parameters and return types
 - Tests use `Stolt\LeanPackage\Tests\` namespace
+- Integration tests use `zenstruck/console-test`
