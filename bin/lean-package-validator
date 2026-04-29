@@ -22,7 +22,7 @@ if (false === $autoloaded) {
 }
 
 \define('WORKING_DIRECTORY', \getcwd());
-\define('VERSION', '5.7.0');
+\define('VERSION', '5.7.1');
 
 use Stolt\Console\Commands\ListSkillsCommand;
 use Stolt\LeanPackage\Commands\CreateCommand;
