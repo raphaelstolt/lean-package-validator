@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.7.0] - 2026-04-30
+
+### Added
+- Use [stolt/list-skills-command](https://github.com/raphaelstolt/list-skills-command) to list all available AI skills.
+
 ## [v5.6.1] - 2026-04-10
 
 ### Added
@@ -497,7 +502,8 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.6.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.0...HEAD
+[v5.7.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.6.1...v5.7.0
 [v5.6.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.6.0...v5.6.1
 [v5.6.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.5.0...v5.6.0
 [v5.5.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.4.0...v5.5.0
