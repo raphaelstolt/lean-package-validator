@@ -2301,7 +2301,7 @@ CONTENT;
             $fakeInputReader
         );
 
-        $application->add($analyserCommand);
+        $application->addCommand($analyserCommand);
         $command = $application->find('validate');
 
         $expectedDisplay = <<<CONTENT
@@ -2356,7 +2356,7 @@ CONTENT;
             $fakeInputReader
         );
 
-        $application->add($analyserCommand);
+        $application->addCommand($analyserCommand);
         $command = $application->find('validate');
 
         $expectedDisplay = <<<CONTENT
@@ -2444,7 +2444,7 @@ CONTENT;
             new FakeInputReader()
         );
 
-        $application->add($analyserCommand);
+        $application->addCommand($analyserCommand);
 
         return $application;
     }
@@ -2463,7 +2463,7 @@ CONTENT;
             new FakeInputReader()
         );
 
-        $application->add($analyserCommand);
+        $application->addCommand($analyserCommand);
 
         return $application;
     }
