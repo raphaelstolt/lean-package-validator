@@ -153,7 +153,7 @@ class TestCase extends PHPUnit
     protected function getApplication(Command $command): Application
     {
         $application = new Application();
-        $application->add($command);
+        $application->addCommands([$command]);
 
         return $application;
     }

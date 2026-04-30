@@ -44,7 +44,7 @@ final class ValidateCommandStdinOptionsTest extends TestCase
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader
         );
-        $application->add($command);
+        $application->addCommands([$command]);
 
         return [$application, $command];
     }

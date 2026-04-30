@@ -14,8 +14,8 @@
         "ergebnis/agent-detector": "^1.0",
         "sebastian/diff": "^7.0.0||^6.0.1||^5.0||^4.0.3",
         "stolt/list-skills-command": "^1.0",
-        "symfony/console": "^7.2.1||^v5.4.8",
-        "symfony/finder": "^7.2.1||^v5.4.8"
+        "symfony/console": "^8.0||^7.2.1||^v5.4.8",
+        "symfony/finder": "^8.0||^7.2.1||^v5.4.8"
     },
     "autoload": {
         "psr-4": {
@@ -75,7 +75,7 @@
     "require-dev": {
         "carthage-software/mago": "^1.18.0",
         "mockery/mockery": "^1.0",
-        "peckphp/peck": "^0.2.0",
+        "peckphp/peck": "^0.2.0||^0.3.0",
         "phlak/semver": "^4.1 || ^6.0",
         "php-mock/php-mock": "^2.6",
         "php-mock/php-mock-phpunit": "^2.7||^1.1",
