@@ -6,9 +6,38 @@ namespace Stolt\LeanPackage\Presets;
 
 class CommonPreset
 {
+    private array $aiGlob = [
+        'AGENT.md',
+        'AGENTS.md',
+        'CLAUDE.md',
+        'GEMINI.md',
+        'AI.md',
+        'AIDER.md',
+        'CURSOR.md',
+        'COPILOT.md',
+        'CODEX.md',
+        'QWEN.md',
+        'WINDSURF.md',
+        '.aiassistant',
+        '.aider*',
+        '.cursor',
+        '.cursor/**',
+        '.github/copilot-instructions.md',
+        '.windsurf',
+        '.windsurf/**',
+        '.claude',
+        '.claude/**',
+        '.gemini',
+        '.gemini/**',
+        '.codex',
+        '.codex/**',
+        'llms.txt',
+        'llms-full.txt',
+    ];
+
     protected function getCommonGlob(): array
     {
-        return [
+        return array_merge($this->aiGlob, [
             '.*',
             '*.txt',
             '*.{md,MD}',
@@ -17,7 +46,6 @@ class CommonPreset
             '*.xml',
             '*.yml',
             '*.dist.*',
-            'llms.*',
             '.githooks',
             '*.dist',
             '{B,b}uild*',
@@ -32,7 +60,7 @@ class CommonPreset
             'LICENSE',
             '{M,m}ake',
             '*.{png,gif,jpeg,jpg,webp}',
-        ];
+        ]);
     }
 
     /**

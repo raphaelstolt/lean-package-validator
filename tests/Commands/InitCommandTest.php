@@ -83,6 +83,32 @@ Created default '{$expectedDefaultLpvFile}' file.
 CONTENT;
 
         $expectedDefaultLpvFileContent = <<<CONTENT
+AGENT.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+AI.md
+AIDER.md
+CURSOR.md
+COPILOT.md
+CODEX.md
+QWEN.md
+WINDSURF.md
+.aiassistant
+.aider*
+.cursor
+.cursor/**
+.github/copilot-instructions.md
+.windsurf
+.windsurf/**
+.claude
+.claude/**
+.gemini
+.gemini/**
+.codex
+.codex/**
+llms.txt
+llms-full.txt
 .*
 *.txt
 *.{md,MD}
@@ -91,7 +117,6 @@ CONTENT;
 *.xml
 *.yml
 *.dist.*
-llms.*
 .githooks
 *.dist
 {B,b}uild*

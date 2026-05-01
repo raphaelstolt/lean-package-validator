@@ -7,10 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.7.2] - 2026-05-01
+
+### Added
+- Expanded the common glob preset with AI-related preset patterns.
+
 ## [v5.7.1] - 2026-04-30
 
 ### Fixed
-- Update symfony/* version constraints. Closes [#66](https://github.com/raphaelstolt/lean-package-validator/issues/66).
+- Updated symfony/* version constraints. Closes [#66](https://github.com/raphaelstolt/lean-package-validator/issues/66).
 
 ## [v5.7.0] - 2026-04-30
 
