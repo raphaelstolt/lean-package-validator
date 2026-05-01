@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Commands\InitCommand;
+use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
@@ -63,6 +64,9 @@ class InitCommandTest extends TestCase
         $this->assertFileDoesNotExist($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.lpv');
     }
 
+    /**
+     * @throws PresetNotAvailable
+     */
     #[Test]
     #[RunInSeparateProcess]
     public function createsExpectedDefaultLpvFile(): void
@@ -82,77 +86,10 @@ Created default '{$expectedDefaultLpvFile}' file.
 
 CONTENT;
 
-        $expectedDefaultLpvFileContent = <<<CONTENT
-AGENT.md
-AGENTS.md
-CLAUDE.md
-GEMINI.md
-AI.md
-AIDER.md
-CURSOR.md
-COPILOT.md
-CODEX.md
-QWEN.md
-WINDSURF.md
-.aiassistant
-.aider*
-.cursor
-.cursor/**
-.github/copilot-instructions.md
-.windsurf
-.windsurf/**
-.claude
-.claude/**
-.gemini
-.gemini/**
-.codex
-.codex/**
-llms.txt
-llms-full.txt
-.*
-*.txt
-*.{md,MD}
-*.rst
-*.toml
-*.xml
-*.yml
-*.dist.*
-.githooks
-*.dist
-{B,b}uild*
-{D,d}ist
-{D,d}oc*
-{A,a}rt*
-{A,a}sset*
-{T,t}ool*
-{T,t}est*
-{S,s}pec*
-{E,e}xample*
-LICENSE
-{M,m}ake
-*.{png,gif,jpeg,jpg,webp}
-*.lock
-phpunit*
-appveyor.yml
-box.json
-composer-dependency-analyser*
-collision-detector*
-captainhook.json
-peck.json
-infection*
-phpstan*
-sonar*
-rector*
-phpkg.con*
-package*
-pint.{json,php}
-renovate.json
-*debugbar.json
-phpinsights*
-ecs*
-RMT
-{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file
-CONTENT;
+        $expectedDefaultLpvFileContent = \implode(
+            PHP_EOL,
+            (new Finder(new PhpPreset()))->getPresetGlobByLanguageName('PHP')
+        );
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();

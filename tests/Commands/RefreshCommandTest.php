@@ -7,6 +7,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Commands\RefreshCommand;
+use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\TestCase;
@@ -35,6 +36,9 @@ class RefreshCommandTest extends TestCase
         }
     }
 
+    /**
+     * @throws PresetNotAvailable
+     */
     #[Test]
     public function printsMergedContentWithoutWritingAFile(): void
     {
@@ -56,84 +60,28 @@ CONTENT);
             '--dry-run' => true,
         ]);
 
-        $this->assertSame(0, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('phpunit*', $tester->getDisplay());
         $this->assertFileExists($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.lpv');
 
-        $expectedContent = <<<CONTENT
-.*
-*.txt
-*.lock
-SOME_FILE
-.SOME_DIRECTORY/
-AGENT.md
-AGENTS.md
-CLAUDE.md
-GEMINI.md
-AI.md
-AIDER.md
-CURSOR.md
-COPILOT.md
-CODEX.md
-QWEN.md
-WINDSURF.md
-.aiassistant
-.aider*
-.cursor
-.cursor/**
-.github/copilot-instructions.md
-.windsurf
-.windsurf/**
-.claude
-.claude/**
-.gemini
-.gemini/**
-.codex
-.codex/**
-llms.txt
-llms-full.txt
-*.{md,MD}
-*.rst
-*.toml
-*.xml
-*.yml
-*.dist.*
-.githooks
-*.dist
-{B,b}uild*
-{D,d}ist
-{D,d}oc*
-{A,a}rt*
-{A,a}sset*
-{T,t}ool*
-{T,t}est*
-{S,s}pec*
-{E,e}xample*
-LICENSE
-{M,m}ake
-*.{png,gif,jpeg,jpg,webp}
-phpunit*
-appveyor.yml
-box.json
-composer-dependency-analyser*
-collision-detector*
-captainhook.json
-peck.json
-infection*
-phpstan*
-sonar*
-rector*
-phpkg.con*
-package*
-pint.{json,php}
-renovate.json
-*debugbar.json
-phpinsights*
-ecs*
-RMT
-{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file
+        $existingLines = [
+            '.*',
+            '*.txt',
+            '*.lock',
+            'SOME_FILE',
+            '.SOME_DIRECTORY/',
+        ];
 
-CONTENT;
+        $presetLines = (new Finder(new PhpPreset()))->getPresetGlobByLanguageName('PHP');
+
+        $expectedLines = $existingLines;
+        foreach ($presetLines as $presetLine) {
+            if (\in_array($presetLine, $expectedLines, true)) { continue; }
+
+$expectedLines[] = $presetLine;
+        }
+
+        $expectedContent = \implode(PHP_EOL, $expectedLines) . PHP_EOL;
 
         $this->assertSame($expectedContent, $tester->getDisplay());
     }

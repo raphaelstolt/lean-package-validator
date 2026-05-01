@@ -52,7 +52,7 @@ class Finder
     {
         $preset = $this->getPresetByLanguageName($name);
 
-        return $preset->getPresetGlob();
+        return $this->sortPresetGlob($preset->getPresetGlob());
     }
 
     /**
@@ -81,6 +81,17 @@ class Finder
      */
     public function getDefaultPreset(): array
     {
-        return $this->defaultPreset->getPresetGlob();
+        return $this->sortPresetGlob($this->defaultPreset->getPresetGlob());
+    }
+
+    /**
+     * @param array $presetGlob
+     * @return array
+     */
+    private function sortPresetGlob(array $presetGlob): array
+    {
+        \sort($presetGlob, SORT_STRING | SORT_FLAG_CASE);
+
+        return $presetGlob;
     }
 }

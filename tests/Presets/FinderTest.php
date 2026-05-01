@@ -38,6 +38,31 @@ class FinderTest extends TestCase
     }
 
     #[Test]
+    #[DataProvider('languageProvider')]
+    public function findsAlphabeticallySortedPresetGlobByLanguageNames(string $languageName): void
+    {
+        $finder = new Finder(new PhpPreset());
+
+        $presetGlob = $finder->getPresetGlobByLanguageName($languageName);
+        $sortedPresetGlob = $presetGlob;
+        \sort($sortedPresetGlob, SORT_STRING | SORT_FLAG_CASE);
+
+        $this->assertSame($sortedPresetGlob, $presetGlob);
+    }
+
+    #[Test]
+    public function findsAlphabeticallySortedDefaultPresetGlob(): void
+    {
+        $finder = new Finder(new PhpPreset());
+
+        $presetGlob = $finder->getDefaultPreset();
+        $sortedPresetGlob = $presetGlob;
+        \sort($sortedPresetGlob, SORT_STRING | SORT_FLAG_CASE);
+
+        $this->assertSame($sortedPresetGlob, $presetGlob);
+    }
+
+    #[Test]
     public function forNonAvailableLanguagePresetItThrowsExpectedException(): void
     {
         $this->expectException(PresetNotAvailable::class);

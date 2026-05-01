@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+- The preset glob patterns are sorted alphabetically to improve readability.
+
 ## [v5.7.2] - 2026-05-01
 
 ### Added
