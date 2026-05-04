@@ -1,6 +1,13 @@
 ---
 name: updating-gitattributes-file
-description: Update .gitattributes files for Laravel Boost projects using lean-package-validator; use when adding missing export-ignore entries or refreshing existing content.
+description: Update .gitattributes files for projects using lean-package-validator; use when adding missing export-ignore entries or refreshing existing content.
+version: 1.0.0
+
+tags:
+- git
+- gitattributes
+- lean-package-validator
+- php
 ---
 
 # Update .gitattributes with lean-package-validator

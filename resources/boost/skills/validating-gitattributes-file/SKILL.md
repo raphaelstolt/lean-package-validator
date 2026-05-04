@@ -1,6 +1,13 @@
 ---
 name: validating-gitattributes-file
-description: Validate .gitattributes files in Laravel Boost projects using lean-package-validator; use when checking export-ignore completeness, ordering, or stale entries.
+description: Validate .gitattributes files in projects using lean-package-validator; use when checking export-ignore completeness, ordering, or stale entries.
+version: 1.0.0
+
+tags:
+- git
+- gitattributes
+- lean-package-validator
+- php
 ---
 
 # Validate .gitattributes with lean-package-validator
