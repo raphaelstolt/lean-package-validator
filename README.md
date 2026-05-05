@@ -371,6 +371,12 @@ Each response always includes `command`, `status` (`success` or `failure`), and 
 | `refresh`  | `lpv_file_path`                                       |
 | `tree`     | `package`, `tree`                                     |
 
+### Spreading the word
+You can add the following custom, static [Shields.io](http://shields.io) badge to your repo's `README.md` to mark the package
+as lean and spread the word for this tool.
+
+[![Lean dist package](https://img.shields.io/badge/lean-dist%20package-00ffb6.svg?style=flat)](https://github.com/raphaelstolt/lean-package-validator)
+
 ### Running tests
 
 ``` bash
