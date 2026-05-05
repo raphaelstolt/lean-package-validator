@@ -19,7 +19,7 @@
 
 The lean package validator, or its abbreviation __lpv__, is a utility tool that validates a project/micro-package
 for its `leanness`. A project/micro-package is considered `lean` when its common
-repository artifacts won't be included in release assets.
+repository artefacts won't be included in release assets.
 
 It can also [create](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#create-command) and
 [update](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#update-command) the `leanness`
@@ -75,7 +75,7 @@ brew install lean-package-validator
 
 Run the lean package validator CLI within or against a project/micro-package
 directory, and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in
-a `.gitattributes` file against a set of common repository artifacts. If no
+a `.gitattributes` file against a set of common repository artefacts. If no
 `.gitattributes` file is present it will suggest to create one.
 
 ``` bash
@@ -110,7 +110,7 @@ lean-package-validator validate --overwrite [<directory>]
 > release. Please migrate to the dedicated commands `create` and `update`.
 
 The `--glob-pattern` option allows you to overwrite the default pattern used
-to match common repository artifacts. The amount of pattern in the grouping
+to match common repository artefacts. The amount of pattern in the grouping
 braces is expected to be `>1`. As shown next this utility could thereby also
 be used for projects (i.e. Python) outside the PHP ecosystem.
 
@@ -121,7 +121,7 @@ lean-package-validator validate --glob-pattern '{.*,*.rst,*.py[cod],dist/}' [<di
 The default pattern is defined in the PHP preset [file](./src/Presets/PhpPreset.php).
 
 The `--glob-pattern-file` option allows you to load patterns, which should
-be used to match the common repository artifacts, from a given file. You
+be used to match the common repository artefacts, from a given file. You
 can put a `.lpv` file in the repository which will be used per default and
 overwrite the default pattern. The structure of such a glob pattern file
 can be taken from the [example](example/.lpv) directory or be created
@@ -131,19 +131,19 @@ via `lean-package-validator init`.
 lean-package-validator validate --glob-pattern-file /path/to/glob-pattern-file [<directory>]
 ```
 
-The `--keep-license` option will allow a license file in the release/dist archive file which is per default ommitted.
+The `--keep-license` option will allow a license file in the release/dist archive file which is per default omitted.
 
 ``` bash
 lean-package-validator validate --keep-license [<directory>]
 ```
 
-The `--keep-readme` option will allow a README file in the release/dist archive file which is per default ommitted.
+The `--keep-readme` option will allow a README file in the release/dist archive file which is per default omitted.
 
 ``` bash
 lean-package-validator validate --keep-readme [<directory>]
 ```
 
-The `--keep-glob-pattern` option allows to keep matching files in the release/dist archive file which are per default ommitted.
+The `--keep-glob-pattern` option allows to keep matching files in the release/dist archive file which are per default omitted.
 
 ``` bash
 lean-package-validator validate --keep-glob-pattern '{LICENSE.*,README.*,docs*}' [<directory>]
@@ -168,7 +168,7 @@ no alignment is enforced.
 The `--preset=[<preset>]` option will use a predefined set of glob pattern.
 Available presets are `PHP`, `Python`, `Rust`, `JavaScript`, and `Go`. With `PHP` being the default.
 
-The `--validate-git-archive` option will validate that no common repository artifacts slip
+The `--validate-git-archive` option will validate that no common repository artefacts slip
 into the release/dist archive file. It will do so by creating a `temporary archive` from the
 current Git `HEAD` and inspecting its content. With a set `--keep-license` option a license
 file becomes mandatory and will fail the archive validation if not present.
@@ -200,7 +200,7 @@ Would expect the following .gitattributes file content:
 ```
 
 The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing non-existent
-repository artifacts. In combination with the `--diff` option these will be shown in the output.
+repository artefacts. In combination with the `--diff` option these will be shown in the output.
 
 The `--stdin-input` option allows the validate command to read from `STDIN`, so that the following piped output 
 can be used for validation. It currently only does a strict comparison.
@@ -224,7 +224,7 @@ provides a `--dry-run` option to see what the `.gitattributes` content would loo
 
 #### Init command
 
-The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artifacts.
+The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artefacts.
 
 ``` bash
 lean-package-validator init [<directory>]
