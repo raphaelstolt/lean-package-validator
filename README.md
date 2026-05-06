@@ -222,6 +222,11 @@ The `update` command will update a present `.gitattributes` file in the given di
 option of the `validate` command. Please migrate to the dedicated commands. Like the above-mentioned `create` command it 
 provides a `--dry-run` option to see what the `.gitattributes` content would look like.
 
+#### Reformat command
+
+The `reformat` command will reformat a present `.gitattributes` file in the given directory. This command provides a
+`--dry-run` option to see what the `.gitattributes` content would look like.
+
 #### Init command
 
 The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artefacts.

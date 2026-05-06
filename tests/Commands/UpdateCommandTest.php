@@ -130,7 +130,6 @@ CONTENT;
 
         $this->assertFileDoesNotExist($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
     }
-
     #[Test]
     public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
     {

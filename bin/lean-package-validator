@@ -27,6 +27,7 @@ if (false === $autoloaded) {
 use Stolt\Console\Commands\ListSkillsCommand;
 use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\Commands\InitCommand;
+use Stolt\LeanPackage\Commands\ReformatCommand;
 use Stolt\LeanPackage\Commands\RefreshCommand;
 use Stolt\LeanPackage\Commands\TreeCommand;
 use Stolt\LeanPackage\Commands\UpdateCommand;
@@ -44,6 +45,7 @@ use Symfony\Component\Console\Application;
 $finder = new Finder(new PhpPreset());
 $archive = new Archive(WORKING_DIRECTORY);
 $analyser = new Analyser($finder);
+$gitattributesFileRepository = new GitattributesFileRepository($analyser);
 
 $initCommand = new InitCommand(
     $analyser
@@ -58,13 +60,23 @@ $validateCommand = new ValidateCommand(
     new Validator($archive),
     new PhpInputReader()
 );
-$createCommand = new CreateCommand($analyser, new GItattributesFileRepository($analyser));
-$updateCommand = new UpdateCommand($analyser, new GItattributesFileRepository($analyser));
+$createCommand = new CreateCommand($analyser, $gitattributesFileRepository);
+$updateCommand = new UpdateCommand($analyser, $gitattributesFileRepository);
+$reformatCommand = new ReformatCommand($analyser, $gitattributesFileRepository);
 $treeCommand = new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY,'tree-temp')));
 $listSkillsCommand = new ListSkillsCommand();
 
 $application = new Application('Lean package validator', VERSION);
-$application->addCommands(
-    [$initCommand, $refreshCommand, $validateCommand, $createCommand, $updateCommand, $treeCommand, $listSkillsCommand]
-);
+
+$application->addCommands([
+    $initCommand,
+    $refreshCommand,
+    $validateCommand,
+    $createCommand,
+    $updateCommand,
+    $reformatCommand,
+    $treeCommand,
+    $listSkillsCommand
+]);
+
 $application->run();

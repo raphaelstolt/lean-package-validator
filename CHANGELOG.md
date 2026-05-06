@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.8.0] - 2026-05-07
+
+### Added
+- Added a `reformat` command to do opinionated reformatting of existing .gitattributes files.
+
 ## [v5.7.3] - 2026-05-07
 
 ### Changed

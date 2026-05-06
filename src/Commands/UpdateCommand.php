@@ -43,6 +43,11 @@ final class UpdateCommand extends Command
                 InputArgument::OPTIONAL,
                 'The package directory whose .gitattributes file should be updated',
                 \defined('WORKING_DIRECTORY') ? WORKING_DIRECTORY : \getcwd()
+            )->addOption(
+                'reformat-export-ignores',
+                null,
+                InputOption::VALUE_NONE,
+                'Only reformat the export-ignores directives in the .gitattributes file'
             )->setName(self::$defaultName)->setDescription(self::$defaultDescription);
 
         // Add common generation options
