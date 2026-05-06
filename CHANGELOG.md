@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+- Replaced `ergebnis/agent-detector` with `laravel/agent-detector`.
+
 ### Fixed
 - The preset glob patterns are sorted alphabetically to improve readability.
 

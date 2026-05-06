@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Commands\Concerns;
 
-use Ergebnis\AgentDetector;
+use Laravel\AgentDetector\AgentDetector;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,9 +28,7 @@ trait OutputOptions
 
     protected function isAgenticRun(InputInterface $input): bool
     {
-        $detector = new AgentDetector\Detector();
-
-        return $detector->isAgentPresent(\getenv()) || $input->getOption('agentic-run') === true;
+        return AgentDetector::detect()->isAgent || $input->getOption('agentic-run') === true;
     }
 
     /**
