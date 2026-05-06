@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.7.3] - 2026-05-07
+
 ### Changed
 - Replaced `ergebnis/agent-detector` with `laravel/agent-detector`.
 
@@ -518,8 +520,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.2...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.3...HEAD
 
+[v5.7.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.2...v5.7.3
 [v5.7.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.1...v5.7.2
 [v5.7.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.0...v5.7.1
 [v5.7.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.6.1...v5.7.0
