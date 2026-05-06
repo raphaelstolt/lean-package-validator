@@ -188,7 +188,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 ## [v4.3.5] - 2025-02-18
 
 ### Fixed
-- Fix issue where no package name is set.
+- Fix an issue where no package name is set.
 
 ## [v4.3.4] - 2025-02-14
 
@@ -222,7 +222,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Added
 
-- Option to sort ignored artifacts from directories to files. Closes [#30](https://github.com/raphaelstolt/lean-package-validator/issues/30).
+- Option to sort ignored artefacts from directories to files. Closes [#30](https://github.com/raphaelstolt/lean-package-validator/issues/30).
 - Further PHP preset expansion.
 
 ## [v4.1.1] - 2025-01-14
@@ -292,7 +292,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Fixed
 
-- The header is written on existent .gitattributes file. Closes [#44](https://github.com/raphaelstolt/lean-package-validator/issues/44).
+- The header is written on an existent .gitattributes file. Closes [#44](https://github.com/raphaelstolt/lean-package-validator/issues/44).
 
 ## [v3.3.0] - 2023-11-28
 
@@ -318,13 +318,13 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Added
 
-- Global .gitignore'd files are excluded from validation. Closes [#36](https://github.com/raphaelstolt/lean-package-validator/issues/36).
+- Global .gitignored files are excluded from validation. Closes [#36](https://github.com/raphaelstolt/lean-package-validator/issues/36).
 - Added `--diff` option to show differences between expected and actual .gitattributes content. Closes [#39](https://github.com/raphaelstolt/lean-package-validator/issues/39).
 - Added verbose output. Closes [#37](https://github.com/raphaelstolt/lean-package-validator/issues/37).
 
 ### Fixed
 
-- Empty glob pattern is catched as invalid. Closes [#38](https://github.com/raphaelstolt/lean-package-validator/issues/38).
+- Empty glob pattern is caught as invalid. Closes [#38](https://github.com/raphaelstolt/lean-package-validator/issues/38).
 
 ## [v3.0.1] - 2023-09-26
 
@@ -354,7 +354,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ## [v2.0.2] - 2019-09-04
 
-- Added zend-stdlib glob fallback for alpine based systems.
+- Added zend-stdlib glob fallback for alpine-based systems.
 
 ## [v2.0.1] - 2019-09-04
 
@@ -396,7 +396,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Fixed
 
-- Fix non existent export ignored artifacts are excluded from validation. Fixes [#22](https://github.com/raphaelstolt/lean-package-validator/issues/22).
+- Fix non-existent export ignored artefacts are excluded from validation. Fixes [#22](https://github.com/raphaelstolt/lean-package-validator/issues/22).
 
 ## [v1.7.1] - 2017-05-06
 
@@ -408,7 +408,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Added
 
-- Additional artifacts glob pattern expansion to match AppVeyor configuration files.
+- Additional artefacts glob pattern expansion to match AppVeyor configuration files.
 
 ## [v1.6.0] - 2016-10-08
 
@@ -442,7 +442,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Added
 
-- Additional artifacts glob pattern expansion to match CaptainHook configuration files. Closes [#14](https://github.com/raphaelstolt/lean-package-validator/issues/14).
+- Additional artefacts glob pattern expansion to match CaptainHook configuration files. Closes [#14](https://github.com/raphaelstolt/lean-package-validator/issues/14).
 
 ### Fixed
 
@@ -459,7 +459,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 ### Added
 
 - Leading slashes in export-ignore patterns are considered as a smell and raise a warning. Closes [#4](https://github.com/raphaelstolt/lean-package-validator/issues/4).
-- A missing text auto configuration is considered as a smell and raises a warning. Closes [#12](https://github.com/raphaelstolt/lean-package-validator/issues/12).
+- A missing text autoconfiguration is considered as a smell and raises a warning. Closes [#12](https://github.com/raphaelstolt/lean-package-validator/issues/12).
 
 ## [v1.2.0] - 2016-09-22
 
@@ -471,7 +471,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Added
 
-- Additional artifacts glob pattern expansion to match Phulp files.
+- Additional artefacts glob pattern expansion to match Phulp files.
 - New `--enforce-strict-order` option to enforce a strict order comparison of export-ignores in the .gitattributes file. Closes [#6](https://github.com/raphaelstolt/lean-package-validator/issues/6).
 
 ## [v1.0.6] - 2016-09-11
@@ -490,7 +490,7 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 ### Added
 
-- Additional artifacts glob pattern expansion to match Vagrant and Box files.
+- Additional artefacts glob pattern expansion to match Vagrant and Box files.
 
 ### Fixed
 
