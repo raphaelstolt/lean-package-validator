@@ -227,6 +227,9 @@ provides a `--dry-run` option to see what the `.gitattributes` content would loo
 The `reformat` command will reformat a present `.gitattributes` file in the given directory. This command provides a
 `--dry-run` option to see what the `.gitattributes` content would look like.
 
+It is possible to influence the reformatting by providing the `--sort-alphabetically` and `--sort-from-directories-to-files`
+options.
+
 #### Init command
 
 The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artefacts.

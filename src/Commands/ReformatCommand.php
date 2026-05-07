@@ -42,6 +42,7 @@ final class ReformatCommand extends Command
 
         $directoryDescription = 'The directory of a project/micro-package repository';
         $sortAlphabeticallyDescription = 'Sort the export-ignore directives in the .gitattributes file alphabetically';
+        $sortFromDirectoriesToFilesDescription = 'Sort the export-ignore directives in the .gitattributes file from directories to files';
 
         $this->addArgument(
             'directory',
@@ -55,6 +56,13 @@ final class ReformatCommand extends Command
             null,
             InputOption::VALUE_NONE,
             $sortAlphabeticallyDescription
+        );
+
+        $this->addOption(
+            'sort-from-directories-to-files',
+            null,
+            InputOption::VALUE_NONE,
+            $sortFromDirectoriesToFilesDescription
         );
 
         $this->addDryRunOutputOption(function (...$args) {
@@ -77,11 +85,12 @@ final class ReformatCommand extends Command
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
         $sortAlphabetically = $input->getOption('sort-alphabetically');
+        $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');
 
         $this->analyser->setDirectory($directory);
         $isAgenticRun = $this->isAgenticRun($input);
 
-        return $this->reformatPresentExportIgnores($input, $output, $directory, $isAgenticRun, $sortAlphabetically);
+        return $this->reformatPresentExportIgnores($input, $output, $directory, $isAgenticRun, $sortAlphabetically, $sortFromDirectoriesToFiles);
     }
 
     private function reformatPresentExportIgnores(
@@ -89,7 +98,8 @@ final class ReformatCommand extends Command
         OutputInterface $output,
         string          $directory,
         bool            $isAgenticRun,
-        bool            $sortAlphabetically = false
+        bool            $sortAlphabetically = false,
+        bool            $sortFromDirectoriesToFiles = false,
     ): int
     {
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
@@ -103,7 +113,7 @@ final class ReformatCommand extends Command
             return self::FAILURE;
         }
 
-        $aligned = $this->getPresentGitattributesContentWithAlignedExportIgnores($sortAlphabetically);
+        $aligned = $this->getPresentGitattributesContentWithAlignedExportIgnores($sortAlphabetically, $sortFromDirectoriesToFiles);
 
         if ($aligned === '') {
             $message = 'Unable to determine present .gitattributes content for the given directory.';
@@ -144,7 +154,7 @@ final class ReformatCommand extends Command
         return self::SUCCESS;
     }
 
-    private function getPresentGitattributesContentWithAlignedExportIgnores(bool $sortAlphabetically): string
+    private function getPresentGitattributesContentWithAlignedExportIgnores(bool $sortAlphabetically, bool $sortFromDirectoriesToFiles): string
     {
         $gitattributesContent = $this->analyser->getPresentGitAttributesContent();
 
@@ -201,6 +211,27 @@ final class ReformatCommand extends Command
 
         if ($sortAlphabetically === true) {
             \sort($alignedLines, SORT_STRING);
+        }
+
+        if ($sortFromDirectoriesToFiles === true) {
+            $directories = array_filter($alignedLines, static function ($line) {
+                if (\dirname($line) !== '.') {
+                    return true;
+                }
+            });
+
+            $files = array_filter($alignedLines, static function ($line) {
+                if (\dirname($line) === '.') {
+                    return true;
+                }
+            });
+
+            \sort($directories, SORT_NATURAL);
+            \usort($files, function ($a, $b) {
+                return \strnatcasecmp(basename($a), basename($b));
+            });
+
+            $alignedLines = array_merge($directories, $files);
         }
 
         return \implode($eol, $alignedLines);
