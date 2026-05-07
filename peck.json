@@ -36,7 +36,8 @@
             "stdin",
             "llms",
             "agentic",
-            "mago"
+            "mago",
+            "alignable"
         ],
         "paths": []
     }
