@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.8.1] - 2026-05-07
+
+### Fixed
+- Improved the output of the `reformat` command. Preceding slashes are removed and directories are postfixed with a slash.
+
 ## [v5.8.0] - 2026-05-07
 
 ### Added

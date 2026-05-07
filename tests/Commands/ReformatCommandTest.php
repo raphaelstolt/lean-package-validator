@@ -26,6 +26,55 @@ final class ReformatCommandTest extends TestCase
     }
 
     #[Test]
+    public function addASlashToExportIgnoredDirectories(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new ReformatCommand($analyser, $repository);
+
+        $gitattributesContent = <<<CONTENT
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/ChangeLog export-ignore
+/example export-ignore
+/README.rst export-ignore
+/tests export-ignore
+/.editorconfig export-ignore
+/.github export-ignore
+/contributing.rst export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $this->createTemporaryFiles(['.gitignore'], ['example', 'tests', '.github']);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->execute()
+            ->assertSuccessful();
+
+        $expectedGitattributesContent = <<<CONTENT
+.gitattributes    export-ignore
+.gitignore        export-ignore
+ChangeLog         export-ignore
+example/          export-ignore
+README.rst        export-ignore
+tests/            export-ignore
+.editorconfig     export-ignore
+.github/          export-ignore
+contributing.rst  export-ignore
+CONTENT;
+
+        $this->assertSame(trim($expectedGitattributesContent), trim($result->output()));
+
+        $this->assertStringEqualsFile(
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
+            $gitattributesContent
+        );
+    }
+
+    #[Test]
     public function alignsOnlyExistingExportIgnoresAndRemovesPrecedingSlashes(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);

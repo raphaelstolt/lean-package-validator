@@ -34,7 +34,7 @@ final class ReformatCommand extends Command
      */
     protected function configure(): void
     {
-        $this->analyser->setDirectory(WORKING_DIRECTORY);
+        $this->analyser->setDirectory(\getcwd());
 
         $this
             ->setName('reformat')
@@ -67,15 +67,12 @@ final class ReformatCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = (string)$input->getArgument('directory') ?: WORKING_DIRECTORY;
+        $directory = (string)$input->getArgument('directory') ?: \getcwd();
         $this->analyser->setDirectory($directory);
         $isAgenticRun = $this->isAgenticRun($input);
 
         return $this->reformatPresentExportIgnores($input, $output, $directory, $isAgenticRun);
     }
-
-
-
 
     private function reformatPresentExportIgnores(
         InputInterface  $input,
@@ -174,10 +171,18 @@ final class ReformatCommand extends Command
             }
 
             [$pattern, $suffix] = \explode('export-ignore', $line, 2);
-            $pattern = \rtrim($pattern);
+            $pattern = \trim($pattern);
 
-            if (str_starts_with($pattern, '/') && str_ends_with($pattern, '/') === false) {
-                $pattern = str_replace('/', '', $pattern);
+            if (\str_starts_with($pattern, '/') && \str_ends_with($pattern, '/') === false) {
+                $pattern = \ltrim($pattern, '/');
+            }
+
+            if (\is_dir(\getcwd() . '/' . $pattern) && \str_ends_with($pattern, '/') === false) {
+                $pattern = $pattern . DIRECTORY_SEPARATOR;
+            }
+
+            if (\strlen($pattern) > $longestPattern) {
+                $longestPattern = \strlen($pattern);
             }
 
             return $pattern . \str_repeat(' ', $longestPattern - \strlen($pattern) + 1) . 'export-ignore' . $suffix;
