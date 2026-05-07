@@ -73,7 +73,7 @@ final class CreateCommand extends Command
         if (\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             $message = 'A .gitattributes file already exists. Use the update command to modify it.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'create', false, $message);
+                $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
             }
@@ -85,7 +85,7 @@ final class CreateCommand extends Command
         if ($expected === '') {
             $message = 'Unable to determine expected .gitattributes content for the given directory.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'create', false, $message);
+                $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
             }
@@ -104,7 +104,7 @@ final class CreateCommand extends Command
         } catch (\Throwable $e) {
             $message = 'Creation of .gitattributes file failed.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'create', false, $message);
+                $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
             }
@@ -114,7 +114,7 @@ final class CreateCommand extends Command
         $directory = \realpath($directory);
         $message = "A .gitattributes file has been created in {$directory}.";
         if ($isAgenticRun) {
-            $this->writeAgenticOutput($output, 'create', true, $message, ['gitattributes_file_path' => $gitattributesPath]);
+            $this->writeAgenticOutput($output, $this->getName(), true, $message, ['gitattributes_file_path' => $gitattributesPath]);
         } else {
             $output->writeln($message);
         }

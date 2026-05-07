@@ -249,7 +249,7 @@ final class ValidateCommand extends Command
                 $warning = "Warning: The provided directory "
                     . "'{$directory}' does not exist or is not a directory.";
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'validate', false, $warning);
+                    $this->writeAgenticOutput($output, $this->getName(), false, $warning);
                 } else {
                     $output->writeln('<error>' . $warning . '</error>');
                 }
@@ -268,7 +268,7 @@ final class ValidateCommand extends Command
             if (!\strpos($stdinInputContents, 'export-ignore')) {
                 $warning = "Warning: The provided input stream seems to be no .gitattributes content.";
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'validate', false, $warning);
+                    $this->writeAgenticOutput($output, $this->getName(), false, $warning);
                 } else {
                     $output->writeln('<error>' . $warning . '</error>');
                 }
@@ -285,7 +285,7 @@ final class ValidateCommand extends Command
 
             if ($this->analyser->hasCompleteExportIgnoresFromString($stdinInputContents)) {
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'validate', true, 'The provided .gitattributes content is considered valid.', ['valid' => true]);
+                    $this->writeAgenticOutput($output, $this->getName(), true, 'The provided .gitattributes content is considered valid.', ['valid' => true]);
                 } else {
                     $output->writeln('The provided .gitattributes content is considered <info>valid</info>.');
                 }
@@ -293,7 +293,7 @@ final class ValidateCommand extends Command
             }
 
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'validate', false, 'The provided .gitattributes content is considered invalid.', ['valid' => false]);
+                $this->writeAgenticOutput($output, $this->getName(), false, 'The provided .gitattributes content is considered invalid.', ['valid' => false]);
             } else {
                 $output->writeln('The provided .gitattributes file is considered <error>invalid</error>.');
             }
@@ -496,14 +496,14 @@ final class ValidateCommand extends Command
                         );
                         if ($isAgenticRun) {
                             $gitattributesPath = $this->analyser->getGitattributesFilePath();
-                            $this->writeAgenticOutput($output, 'validate', true, 'Created a .gitattributes file with expected content.', ['gitattributes_file_path' => $gitattributesPath]);
+                            $this->writeAgenticOutput($output, $this->getName(), true, 'Created a .gitattributes file with expected content.', ['gitattributes_file_path' => $gitattributesPath]);
                         } else {
                             $output->writeln($outputContent . $creationOutput);
                         }
                         return Command::SUCCESS;
                     } catch (GitattributesCreationFailed $e) {
                         if ($isAgenticRun) {
-                            $this->writeAgenticOutput($output, 'validate', false, $e->getMessage());
+                            $this->writeAgenticOutput($output, $this->getName(), false, $e->getMessage());
                         } else {
                             $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
                             $output->writeln($outputContent);
@@ -518,7 +518,7 @@ final class ValidateCommand extends Command
 
                     if ($isAgenticRun) {
                         $warningMessage = 'Warning: There is no .gitattributes file present in ' . $this->analyser->getDirectory() . '.';
-                        $this->writeAgenticOutput($output, 'validate', false, $warningMessage, ['valid' => false, 'expected_gitattributes_content' => $expectedGitattributesFileContent]);
+                        $this->writeAgenticOutput($output, $this->getName(), false, $warningMessage, ['valid' => false, 'expected_gitattributes_content' => $expectedGitattributesFileContent]);
                     } else {
                         $outputContent .= $this->getSuggestGitattributesFileCreationOptionOutput(
                             $expectedGitattributesFileContent
@@ -531,7 +531,7 @@ final class ValidateCommand extends Command
             }
 
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'validate', false, 'Unable to resolve expected .gitattributes content.');
+                $this->writeAgenticOutput($output, $this->getName(), false, 'Unable to resolve expected .gitattributes content.');
             } else {
                 $outputContent .= PHP_EOL . PHP_EOL . '<info>Unable to resolve expected .gitattributes '
                     . 'content.</info>';
@@ -546,7 +546,7 @@ final class ValidateCommand extends Command
 
                 if ($this->isValidArchive($keepLicense)) {
                     if ($isAgenticRun) {
-                        $this->writeAgenticOutput($output, 'validate', true, 'The archive file of the current HEAD is considered lean.', ['archive_valid' => true]);
+                        $this->writeAgenticOutput($output, $this->getName(), true, 'The archive file of the current HEAD is considered lean.', ['archive_valid' => true]);
                     } else {
                         $output->writeln('<info>The archive file of the current HEAD is considered lean.</info>');
                     }
@@ -557,7 +557,7 @@ final class ValidateCommand extends Command
                     ->getFoundUnexpectedArchiveArtifacts();
 
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'validate', false, 'The archive file of the current HEAD is not considered lean.', ['archive_valid' => false, 'unexpected_artifacts' => $foundUnexpectedArchiveArtifacts]);
+                    $this->writeAgenticOutput($output, $this->getName(), false, 'The archive file of the current HEAD is not considered lean.', ['archive_valid' => false, 'unexpected_artifacts' => $foundUnexpectedArchiveArtifacts]);
                     return Command::FAILURE;
                 }
 
@@ -573,7 +573,7 @@ final class ValidateCommand extends Command
                 $this->archiveValidator->getArchive()->removeArchive();
 
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'validate', false, $errorMessage);
+                    $this->writeAgenticOutput($output, $this->getName(), false, $errorMessage);
                     return Command::FAILURE;
                 }
 
@@ -608,7 +608,7 @@ final class ValidateCommand extends Command
 
                         if ($isAgenticRun) {
                             $gitattributesPath = $this->analyser->getGitattributesFilePath();
-                            $this->writeAgenticOutput($output, 'validate', true, 'Overwrote .gitattributes file with expected content.', ['gitattributes_file_path' => $gitattributesPath]);
+                            $this->writeAgenticOutput($output, $this->getName(), true, 'Overwrote .gitattributes file with expected content.', ['gitattributes_file_path' => $gitattributesPath]);
                         } else {
                             $outputContent = 'The present .gitattributes file is considered <error>invalid</error>.';
                             $outputContent .= $overwriteOutput;
@@ -617,7 +617,7 @@ final class ValidateCommand extends Command
                         return Command::SUCCESS;
                     } catch (GitattributesCreationFailed $e) {
                         if ($isAgenticRun) {
-                            $this->writeAgenticOutput($output, 'validate', false, $e->getMessage());
+                            $this->writeAgenticOutput($output, $this->getName(), false, $e->getMessage());
                         } else {
                             $outputContent = 'The present .gitattributes file is considered <error>invalid</error>.';
                             $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
@@ -640,7 +640,7 @@ final class ValidateCommand extends Command
                 }
 
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'validate', false, 'The present .gitattributes file is considered invalid.', ['valid' => false, 'expected_gitattributes_content' => $expectedGitattributesFileContent]);
+                    $this->writeAgenticOutput($output, $this->getName(), false, 'The present .gitattributes file is considered invalid.', ['valid' => false, 'expected_gitattributes_content' => $expectedGitattributesFileContent]);
                 } else {
                     $outputContent = 'The present .gitattributes file is considered <error>invalid</error>.';
                     $outputContent .= $this->getExpectedGitattributesFileContentOutput(
@@ -671,7 +671,7 @@ final class ValidateCommand extends Command
                 if ($validationWarnings !== []) {
                     $extra['warnings'] = $validationWarnings;
                 }
-                $this->writeAgenticOutput($output, 'validate', true, 'The present .gitattributes file is considered valid.', $extra);
+                $this->writeAgenticOutput($output, $this->getName(), true, 'The present .gitattributes file is considered valid.', $extra);
             } else {
                 $output->writeln('The present .gitattributes file is considered <info>valid</info>.');
                 foreach ($validationWarnings as $warning) {

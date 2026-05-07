@@ -79,7 +79,7 @@ final class UpdateCommand extends Command
 
         if (!\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'update', false, 'No .gitattributes file found. Use the create command to create one first.');
+                $this->writeAgenticOutput($output, $this->getName(), false, 'No .gitattributes file found. Use the create command to create one first.');
             } else {
                 $output->writeln('No .gitattributes file found. Use the <info>create</info> command to create one first.');
             }
@@ -91,7 +91,7 @@ final class UpdateCommand extends Command
         if ($expected === '') {
             $message = 'Unable to determine expected .gitattributes content for the given directory.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'update', false, $message);
+                $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
             }
@@ -110,7 +110,7 @@ final class UpdateCommand extends Command
         } catch (\Throwable $e) {
             $message = 'Update of .gitattributes file failed.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'update', false, $message);
+                $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
             }
@@ -120,7 +120,7 @@ final class UpdateCommand extends Command
         $directory = \realpath($directory);
         $message = "The .gitattributes file in {$directory} has been updated.";
         if ($isAgenticRun) {
-            $this->writeAgenticOutput($output, 'update', true, $message, ['gitattributes_file_path' => $gitattributesPath]);
+            $this->writeAgenticOutput($output, $this->getName(), true, $message, ['gitattributes_file_path' => $gitattributesPath]);
         } else {
             $output->writeln($message);
         }

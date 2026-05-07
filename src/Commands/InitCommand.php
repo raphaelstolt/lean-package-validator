@@ -111,7 +111,7 @@ final class InitCommand extends Command
                 $warning = "Warning: The provided directory "
                     . "'{$directory}' does not exist or is not a directory.";
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'init', false, $warning);
+                    $this->writeAgenticOutput($output, $this->getName(), false, $warning);
                 } else {
                     $output->writeln('<error>' . $warning . '</error>');
                 }
@@ -129,7 +129,7 @@ final class InitCommand extends Command
         if (\file_exists($defaultLpvFile) && $overwriteDefaultLpvFile === false) {
             $warning = 'Warning: A default .lpv file already exists.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'init', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -144,7 +144,7 @@ final class InitCommand extends Command
         } else {
             $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'init', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -175,7 +175,7 @@ final class InitCommand extends Command
         if ($bytesWritten === false) {
             $warning = 'Warning: The creation of the default .lpv file failed.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'init', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -186,7 +186,7 @@ final class InitCommand extends Command
         $message = "Created default '{$defaultLpvFile}' file.";
 
         if ($isAgenticRun) {
-            $this->writeAgenticOutput($output, 'init', true, $message, ['lpv_file_path' => $defaultLpvFile]);
+            $this->writeAgenticOutput($output, $this->getName(), true, $message, ['lpv_file_path' => $defaultLpvFile]);
         } else {
             $output->writeln("<info>{$message}</info>");
         }

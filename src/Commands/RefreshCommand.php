@@ -108,7 +108,7 @@ final class RefreshCommand extends Command
                 $warning = "Warning: The provided directory "
                     . "'{$directory}' does not exist or is not a directory.";
                 if ($isAgenticRun) {
-                    $this->writeAgenticOutput($output, 'refresh', false, $warning);
+                    $this->writeAgenticOutput($output, $this->getName(), false, $warning);
                 } else {
                     $output->writeln('<error>' . $warning . '</error>');
                 }
@@ -123,7 +123,7 @@ final class RefreshCommand extends Command
         if (!\file_exists($defaultLpvFile) && $this->isDryRun($input) !== true) {
             $warning = 'Warning: No default .lpv file exists to refresh.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'refresh', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -133,7 +133,7 @@ final class RefreshCommand extends Command
         if ($chosenPreset === '' || !\in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()), true)) {
             $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'refresh', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -178,7 +178,7 @@ final class RefreshCommand extends Command
         if ($bytesWritten === false) {
             $warning = 'Warning: The refresh of the default .lpv file failed.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'refresh', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -187,7 +187,7 @@ final class RefreshCommand extends Command
 
         $message = "Refreshed default '{$defaultLpvFile}' file.";
         if ($isAgenticRun) {
-            $this->writeAgenticOutput($output, 'refresh', true, $message, ['lpv_file_path' => $defaultLpvFile]);
+            $this->writeAgenticOutput($output, $this->getName(), true, $message, ['lpv_file_path' => $defaultLpvFile]);
         } else {
             $output->writeln($message);
         }

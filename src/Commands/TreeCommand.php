@@ -70,7 +70,7 @@ final class TreeCommand extends Command
             $warning = "Warning: The provided directory "
                 . "'{$this->directoryToOperateOn}' does not exist or is not a directory.";
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'tree', false, $warning);
+                $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {
                 $output->writeln('<error>' . $warning . '</error>');
             }
@@ -88,7 +88,7 @@ final class TreeCommand extends Command
 
             if ($isAgenticRun) {
                 $treeLines = \array_values(\array_filter(\explode(PHP_EOL, \rtrim($treeOutput)), static fn (string $l): bool => \trim($l) !== ''));
-                $this->writeAgenticOutput($output, 'tree', true, "Package: {$packageName}", ['package' => $packageName, 'tree' => $treeLines]);
+                $this->writeAgenticOutput($output, $this->getName(), true, "Package: {$packageName}", ['package' => $packageName, 'tree' => $treeLines]);
             } else {
                 $output->writeln('Package: <info>' . $packageName . '</info>');
                 $output->write($treeOutput);
@@ -105,7 +105,7 @@ final class TreeCommand extends Command
 
             if ($isAgenticRun) {
                 $treeLines = \array_values(\array_filter(\explode(PHP_EOL, \rtrim($treeToDisplay)), static fn (string $l): bool => \trim($l) !== ''));
-                $this->writeAgenticOutput($output, 'tree', true, "Package: {$packageName}", ['package' => $packageName, 'tree' => $treeLines]);
+                $this->writeAgenticOutput($output, $this->getName(), true, "Package: {$packageName}", ['package' => $packageName, 'tree' => $treeLines]);
             } else {
                 $output->writeln('Package: <info>' . $packageName . '</info>');
                 $output->write($treeToDisplay);
@@ -113,7 +113,7 @@ final class TreeCommand extends Command
         } catch (GitHeadNotAvailable $e) {
             $message = 'Directory ' . $this->directoryToOperateOn . ' has no Git Head.';
             if ($isAgenticRun) {
-                $this->writeAgenticOutput($output, 'tree', false, $message);
+                $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln('Directory <info>' . $this->directoryToOperateOn . '</info> has no Git Head.');
             }
