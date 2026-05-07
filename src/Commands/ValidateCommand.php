@@ -324,7 +324,6 @@ final class ValidateCommand extends Command
         $omitHeader = (bool) $input->getOption('omit-header');
         $showDifference = $input->getOption('diff');
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
-        $agenticOutputEnabled = (bool) $input->getOption('agentic-run');
 
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
         $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');
