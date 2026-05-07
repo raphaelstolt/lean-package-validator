@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- Added an `sort-alphabetically` option to the `reformat` command.
+
 ## [v5.8.1] - 2026-05-07
 
 ### Fixed

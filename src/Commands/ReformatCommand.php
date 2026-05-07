@@ -41,12 +41,20 @@ final class ReformatCommand extends Command
             ->setDescription('Reformat a present .gitattributes file');
 
         $directoryDescription = 'The directory of a project/micro-package repository';
+        $sortAlphabeticallyDescription = 'Sort the export-ignore directives in the .gitattributes file alphabetically';
 
         $this->addArgument(
             'directory',
             InputArgument::OPTIONAL,
             $directoryDescription,
             $this->analyser->getDirectory()
+        );
+
+        $this->addOption(
+            'sort-alphabetically',
+            null,
+            InputOption::VALUE_NONE,
+            $sortAlphabeticallyDescription
         );
 
         $this->addDryRunOutputOption(function (...$args) {
@@ -67,18 +75,21 @@ final class ReformatCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = (string)$input->getArgument('directory') ?: \getcwd();
+        $directory = (string) $input->getArgument('directory') ?: \getcwd();
+        $sortAlphabetically = $input->getOption('sort-alphabetically');
+
         $this->analyser->setDirectory($directory);
         $isAgenticRun = $this->isAgenticRun($input);
 
-        return $this->reformatPresentExportIgnores($input, $output, $directory, $isAgenticRun);
+        return $this->reformatPresentExportIgnores($input, $output, $directory, $isAgenticRun, $sortAlphabetically);
     }
 
     private function reformatPresentExportIgnores(
         InputInterface  $input,
         OutputInterface $output,
         string          $directory,
-        bool            $isAgenticRun
+        bool            $isAgenticRun,
+        bool            $sortAlphabetically = false
     ): int
     {
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
@@ -92,7 +103,7 @@ final class ReformatCommand extends Command
             return self::FAILURE;
         }
 
-        $aligned = $this->getPresentGitattributesContentWithAlignedExportIgnores();
+        $aligned = $this->getPresentGitattributesContentWithAlignedExportIgnores($sortAlphabetically);
 
         if ($aligned === '') {
             $message = 'Unable to determine present .gitattributes content for the given directory.';
@@ -133,7 +144,7 @@ final class ReformatCommand extends Command
         return self::SUCCESS;
     }
 
-    private function getPresentGitattributesContentWithAlignedExportIgnores(): string
+    private function getPresentGitattributesContentWithAlignedExportIgnores(bool $sortAlphabetically): string
     {
         $gitattributesContent = $this->analyser->getPresentGitAttributesContent();
 
@@ -187,6 +198,10 @@ final class ReformatCommand extends Command
 
             return $pattern . \str_repeat(' ', $longestPattern - \strlen($pattern) + 1) . 'export-ignore' . $suffix;
         }, $gitattributesLines);
+
+        if ($sortAlphabetically === true) {
+            \sort($alignedLines, SORT_STRING);
+        }
 
         return \implode($eol, $alignedLines);
     }
