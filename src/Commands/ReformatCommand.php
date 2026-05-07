@@ -84,25 +84,23 @@ final class ReformatCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
-        $sortAlphabetically = $input->getOption('sort-alphabetically');
-        $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');
 
         $this->analyser->setDirectory($directory);
-        $isAgenticRun = $this->isAgenticRun($input);
 
-        return $this->reformatPresentExportIgnores($input, $output, $directory, $isAgenticRun, $sortAlphabetically, $sortFromDirectoriesToFiles);
+        return $this->reformatPresentExportIgnores($input, $output, $directory);
     }
 
     private function reformatPresentExportIgnores(
         InputInterface  $input,
         OutputInterface $output,
-        string          $directory,
-        bool            $isAgenticRun,
-        bool            $sortAlphabetically = false,
-        bool            $sortFromDirectoriesToFiles = false,
+        string          $directory
     ): int
     {
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
+
+        $isAgenticRun = $this->isAgenticRun($input);
+        $sortAlphabetically = $input->getOption('sort-alphabetically');
+        $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');
 
         if (!\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             if ($isAgenticRun) {
@@ -199,7 +197,7 @@ final class ReformatCommand extends Command
             }
 
             if (\is_dir(\getcwd() . '/' . $pattern) && \str_ends_with($pattern, '/') === false) {
-                $pattern = $pattern . DIRECTORY_SEPARATOR;
+                $pattern .= DIRECTORY_SEPARATOR;
             }
 
             if (\strlen($pattern) > $longestPattern) {
@@ -227,7 +225,7 @@ final class ReformatCommand extends Command
             });
 
             \sort($directories, SORT_NATURAL);
-            \usort($files, function ($a, $b) {
+            \usort($files, static function ($a, $b) {
                 return \strnatcasecmp(basename($a), basename($b));
             });
 
