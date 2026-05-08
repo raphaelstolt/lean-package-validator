@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [v5.8.5] - 2026-05-XX
+## [v5.8.5] - 2026-05-11
 
 ### Fixed
 - Fixed a bug where the reformat header is added twice.
@@ -550,8 +550,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.4...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.5...HEAD
 
+[v5.8.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.4...v5.8.5
 [v5.8.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.3...v5.8.4
 [v5.8.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.2...v5.8.3
 [v5.8.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.1...v5.8.2
