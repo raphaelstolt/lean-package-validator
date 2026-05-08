@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.8.3] - 2026-05-08
+
 ### Added
 - Added a header output, to spread the `lpv` visibility, to the `reformat` command.
 
@@ -538,8 +540,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.2...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.3...HEAD
 
+[v5.8.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.2...v5.8.3
 [v5.8.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.1...v5.8.2
 [v5.8.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.0...v5.8.1
 [v5.8.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.7.3...v5.8.0
