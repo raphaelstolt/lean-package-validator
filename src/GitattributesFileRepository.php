@@ -124,6 +124,10 @@ final class GitattributesFileRepository
                 return \str_replace(self::GENERATED_HEADER, self::REFORMATTED_HEADER, $contentToWrite);
             }
 
+            if (\str_contains($contentToWrite, self::REFORMATTED_HEADER)) {
+                return $contentToWrite;
+            }
+
             return self::REFORMATTED_HEADER . PHP_EOL . PHP_EOL . $contentToWrite;
         }
 

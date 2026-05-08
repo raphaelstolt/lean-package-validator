@@ -7,9 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.8.5] - 2026-05-XX
+
+### Fixed
+- Fixed a bug where the reformat header is added twice.
+
 ## [v5.8.4] - 2026-05-08
 
-### Added
+### Fixed
 - Fixed a bug where preceding slashes are not properly removed when reformatting.
 
 ## [v5.8.3] - 2026-05-08
