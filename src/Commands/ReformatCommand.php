@@ -170,11 +170,12 @@ final class ReformatCommand extends Command
         $exportIgnorePatterns = [];
 
         foreach ($gitattributesLines as $line) {
-            if ($this->isAlignableExportIgnoreLine($line) === false) {
+            if ($this->isAlignableExportIgnoreLine($line) === false || $line === '') {
                 continue;
             }
 
             [$pattern] = \explode('export-ignore', $line, 2);
+
             $exportIgnorePatterns[] = \rtrim($pattern);
         }
 
@@ -192,7 +193,7 @@ final class ReformatCommand extends Command
             [$pattern, $suffix] = \explode('export-ignore', $line, 2);
             $pattern = \trim($pattern);
 
-            if (\str_starts_with($pattern, '/') && \str_ends_with($pattern, '/') === false) {
+            if (\str_starts_with($pattern, '/')) {
                 $pattern = \ltrim($pattern, '/');
             }
 
