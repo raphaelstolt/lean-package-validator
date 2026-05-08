@@ -9,8 +9,10 @@ To set up a development environment, please follow the next shown instructions.
 ```bash
 git clone git@github.com:raphaelstolt/lean-package-validator.git
 composer install
+
 // implement your changes
-composer pre-commit-check
+
+composer lpv:pre-commit-check
 ```
 
 Please follow these guidelines:
