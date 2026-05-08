@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- Added a header output, to spread the `lpv` visibility, to the `reformat` command.
+
 ## [v5.8.2] - 2026-05-08
 
 ### Added

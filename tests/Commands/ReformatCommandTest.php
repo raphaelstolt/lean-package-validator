@@ -206,6 +206,8 @@ CONTENT;
             ->assertOutputContains('The export-ignore directives in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . ' have been reformatted.');
 
         $expectedGitattributesContent = <<<CONTENT
+# This file was reformatted by the lean package validator (http://git.io/lean-package-validator).
+
 # Keep this header untouched.
 * text=auto eol=lf
 
