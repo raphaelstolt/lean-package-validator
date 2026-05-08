@@ -74,7 +74,7 @@ brew install lean-package-validator
 Run the lean package validator CLI within or against a project/micro-package
 directory, and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in
 a `.gitattributes` file against a set of common repository artefacts. If no
-`.gitattributes` file is present it will suggest to create one.
+`.gitattributes` file is present it will suggest creating one.
 
 ``` bash
 lean-package-validator validate [<directory>]
@@ -82,9 +82,8 @@ lean-package-validator validate [<directory>]
 
 ### Available options
 
-The `--enforce-strict-order` option will enforce a strict order comparison
-of export-ignores in the `.gitattributes` file and fail validation if the order
-differs. Per __default__ the order comparison is done in a non-strict fashion.
+The `--enforce-strict-order` option will enforce a strict order comparison of export-ignores in the `.gitattributes`
+file and fail validation if the order differs. Per __default__ the order comparison is done in a non-strict fashion.
 
 ``` bash
 lean-package-validator validate --enforce-strict-order [<directory>]
@@ -107,10 +106,9 @@ lean-package-validator validate --overwrite [<directory>]
 > As of release `v5.0` the `--create` and `--overwrite` options are deprecated and will be removed in the next major 
 > release. Please migrate to the dedicated commands `create` and `update`.
 
-The `--glob-pattern` option allows you to overwrite the default pattern used
-to match common repository artefacts. The amount of pattern in the grouping
-braces is expected to be `>1`. As shown next this utility could thereby also
-be used for projects (i.e. Python) outside the PHP ecosystem.
+The `--glob-pattern` option allows you to overwrite the default pattern used to match common repository artefacts. The
+number of patterns in the grouping braces is expected to be `>1`. As shown next, this utility could thereby also be used
+for projects (i.e. Python) outside the PHP ecosystem.
 
 ``` bash
 lean-package-validator validate --glob-pattern '{.*,*.rst,*.py[cod],dist/}' [<directory>]
@@ -141,26 +139,26 @@ The `--keep-readme` option will allow a README file in the release/dist archive 
 lean-package-validator validate --keep-readme [<directory>]
 ```
 
-The `--keep-glob-pattern` option allows to keep matching files in the release/dist archive file which are per default omitted.
+The `--keep-glob-pattern` option allows keeping matching files in the release/dist archive file which are per default omitted.
 
 ``` bash
 lean-package-validator validate --keep-glob-pattern '{LICENSE.*,README.*,docs*}' [<directory>]
 ```
 
-The `--align-export-ignores|-a` option will align the created or overwritten export-ignores for a better readability.
+The `--align-export-ignores|-a` option will align the created or overwritten export-ignores for better readability.
 
 ``` bash
 lean-package-validator validate --align-export-ignores --create [<directory>]
 ```
 
-The `--sort-from-directories-to-files|-s` option will order the export-ignores from directories to files for a better readability.
+The `--sort-from-directories-to-files|-s` option will order the export-ignores from directories to files for better readability.
 
 ``` bash
 lean-package-validator validate --sort-from-directories-to-files --create [<directory>]
 ```
 
 The `--enforce-alignment` option will enforce a strict alignment of export-ignores
-in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__
+in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__,
 no alignment is enforced.
 
 The `--preset=[<preset>]` option will use a predefined set of glob pattern.
@@ -236,7 +234,7 @@ The `init` command will create an initial `.lpv` file with the default patterns 
 lean-package-validator init [<directory>]
 ```
 
-The `--overwrite|-o` option overwrites an existing `.lpv` file. Also see the [refresh](#refresh-command) command.
+The `--overwrite|-o` option overwrites an existing `.lpv` file. Also, see the [refresh](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#refresh-command) command.
 
 The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
 `JavaScript`, and `Go`. With `PHP` being the default.
@@ -317,7 +315,7 @@ Package: stolt/lean-package-validator
 
 ## Utilisation via Composer scripts, cpx, or it's dedicated GitHub Action
 
-To avoid that changes coming from contributions or own modifications slip into release/dist archives it
+To avoid that changes coming from contributions or own modifications slip into release/dist archives, it
 might be helpful to use a guarding [Composer script](https://getcomposer.org/doc/articles/scripts.md), which will be available at everyone's fingertips.
 
 By adding the following to the project/micro-package its `composer.json` the `.gitattributes` file can
@@ -330,13 +328,13 @@ now be easily validated via `composer validate-gitattributes`.
     },
 }
 ```
-Another option to utilise the lean package validator is via [cpx](https://cpx.dev/).
+Another option to use the lean package validator is via [cpx](https://cpx.dev/).
 
 ``` bash
 cpx stolt/lean-package-validator validate
 ```
 
-For utilising a dedicated GitHub Action have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
+For using a dedicated GitHub Action, have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
 
 ### Included AI skills
 
@@ -368,14 +366,14 @@ lean-package-validator validate --agentic-run [<directory>]
 
 Each response always includes `command`, `status` (`success` or `failure`), and `message` fields. Commands also include additional context-specific fields:
 
-| Command    | Additional fields on success                          |
-|------------|-------------------------------------------------------|
+| Command    | Additional fields on success                                                                                         |
+|------------|----------------------------------------------------------------------------------------------------------------------|
 | `validate` | `valid`, `warnings` (if any), `expected_gitattributes_content` (on failure), `archive_valid`, `unexpected_artifacts` |
-| `create`   | `gitattributes_file_path`                             |
-| `update`   | `gitattributes_file_path`                             |
-| `init`     | `lpv_file_path`                                       |
-| `refresh`  | `lpv_file_path`                                       |
-| `tree`     | `package`, `tree`                                     |
+| `create`   | `gitattributes_file_path`                                                                                            |
+| `update`   | `gitattributes_file_path`                                                                                            |
+| `init`     | `lpv_file_path`                                                                                                      |
+| `refresh`  | `lpv_file_path`                                                                                                      |
+| `tree`     | `package`, `tree`                                                                                                    |
 
 ### Spreading the word
 You can add the following custom, static [Shields.io](http://shields.io) badge to your repo's `README.md` to mark the package as lean
