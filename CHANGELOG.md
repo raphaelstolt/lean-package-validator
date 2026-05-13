@@ -555,8 +555,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.5...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.6...HEAD
 
+[v5.8.6]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.5...v5.8.6
 [v5.8.5]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.4...v5.8.5
 [v5.8.4]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.3...v5.8.4
 [v5.8.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.2...v5.8.3
