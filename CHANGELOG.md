@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.8.6] - 2026-05-13
+
+### Fixed
+- Fixed a bug where stale export-ignores are not removed.
+
 ## [v5.8.5] - 2026-05-11
 
 ### Fixed

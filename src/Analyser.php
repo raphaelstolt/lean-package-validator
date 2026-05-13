@@ -653,7 +653,9 @@ class Analyser
                     && !\in_array($pattern, $globPatternMatchingExportIgnores, strict: true)
                     && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores, strict: true)
                 ) {
-                    return $exportIgnoresToPreserve[] = \trim($pattern);
+                    if (\file_exists($this->directory . DIRECTORY_SEPARATOR . $pattern)) {
+                        return $exportIgnoresToPreserve[] = \trim($pattern);
+                    }
                 }
             }
         });

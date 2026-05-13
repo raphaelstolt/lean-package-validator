@@ -194,4 +194,65 @@ CONTENT;
         $this->assertSame('failure', $json['status']);
         $this->assertStringContainsString('No .gitattributes file found', $json['message']);
     }
+
+    #[Test]
+    public function itKeepsNonExportIgnoreContentAndRemovesAllStaleEntries(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new UpdateCommand($analyser, $repository);
+
+        $this->createTemporaryFiles([
+            '.gitignore',
+            '.editorconfig',
+            '.gitattributes',
+            '.gitignore',
+            'phpunit.xml.dist',
+            'pint.json',
+            'README.md',
+            'License.txt'
+        ], ['tests', '.github']);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto
+
+/tests export-ignore
+.editorconfig export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.styleci.yml export-ignore
+.travis.yml export-ignore
+phpunit.xml export-ignore
+README.md export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+$expectedUpdatedGitattributesContent = <<<CONTENT
+# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).
+
+* text=auto
+
+.editorconfig    export-ignore
+.gitattributes   export-ignore
+.github/         export-ignore
+.gitignore       export-ignore
+phpunit.xml.dist export-ignore
+pint.json        export-ignore
+README.md        export-ignore
+tests/           export-ignore
+CONTENT;
+
+        TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('keep-license')
+            ->addOption('align-export-ignores')
+            ->execute()
+            ->assertSuccessful();
+
+        $this->assertStringEqualsFile(
+            $this->temporaryDirectory . '/.gitattributes',
+            $expectedUpdatedGitattributesContent
+        );
+    }
 }
