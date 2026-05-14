@@ -49,6 +49,7 @@ class CommonPreset
             '.githooks',
             '*.dist',
             '{B,b}uild*',
+            '{B,b}enchmark*',
             '{D,d}ist',
             '{D,d}oc*',
             '{A,a}rt*',

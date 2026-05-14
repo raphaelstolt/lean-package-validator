@@ -1585,6 +1585,7 @@ CONTENT;
             'sonar*',
             '{A,a}rt*',
             '{A,a}sset*',
+            '{B,b}enchmark*',
             '{B,b}uild*',
             '{D,d}ist',
             '{D,d}oc*',

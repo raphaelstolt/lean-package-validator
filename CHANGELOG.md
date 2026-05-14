@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- Expanded the common glob preset patterns.
+
 ## [v5.8.6] - 2026-05-13
 
 ### Fixed
