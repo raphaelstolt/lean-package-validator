@@ -89,6 +89,13 @@ class Analyser
     private bool $sortFromDirectoriesToFiles = false;
 
     /**
+     * Whether to sort the export-ignores alphabetically on reformat or not.
+     *
+     * @var boolean
+     */
+    private bool $sortAlphabetically = false;
+
+    /**
      * Whether at least one export-ignore pattern has
      * a preceding slash or not.
      *
@@ -134,6 +141,13 @@ class Analyser
      * @var boolean
      */
     private bool $alignExportIgnores = false;
+
+    /**
+     * Whether to group non export-ignore directives in a separate section.
+     *
+     * @var boolean
+     */
+    private bool $groupNonExportIgnores = false;
 
     private Finder $finder;
 
@@ -333,6 +347,13 @@ class Analyser
         return $this;
     }
 
+    public function sortAlphabetically(): self
+    {
+        $this->sortAlphabetically = true;
+
+        return $this;
+    }
+
     /**
      * Guard for strict order comparison.
      *
@@ -464,6 +485,13 @@ class Analyser
     public function alignExportIgnores(): Analyser
     {
         $this->alignExportIgnores = true;
+
+        return $this;
+    }
+
+    public function setGroupNonExportIgnores(bool $group = true): self
+    {
+        $this->groupNonExportIgnores = $group;
 
         return $this;
     }
@@ -811,6 +839,97 @@ class Analyser
     }
 
     /**
+     * Return the reformatted .gitattributes content with aligned export-ignore
+     * entries, respecting the sort-alphabetically, sort-from-directories-to-files,
+     * and group-non-export-ignores settings.
+     *
+     * @return string
+     */
+    public function getReformattedGitattributesContent(): string
+    {
+        $gitattributesContent = $this->getPresentGitAttributesContent();
+
+        if ($gitattributesContent === '') {
+            return '';
+        }
+
+        $eol = $this->detectEol($gitattributesContent);
+        $gitattributesLines = \preg_split('/\\r\\n|\\r|\\n/', $gitattributesContent);
+
+        if ($gitattributesLines === false) {
+            return $gitattributesContent;
+        }
+
+        $exportIgnorePatterns = [];
+
+        foreach ($gitattributesLines as $line) {
+            if ($this->isAlignableExportIgnoreLine($line) === false || $line === '') {
+                continue;
+            }
+
+            [$pattern] = \explode('export-ignore', $line, 2);
+
+            $exportIgnorePatterns[] = \rtrim($pattern);
+        }
+
+        if ($exportIgnorePatterns === []) {
+            return $gitattributesContent;
+        }
+
+        $longestPattern = \max(\array_map('strlen', $exportIgnorePatterns));
+
+        $alignedLines = \array_map(function (string $line) use ($longestPattern): string {
+            if ($this->isAlignableExportIgnoreLine($line) === false) {
+                return $line;
+            }
+
+            [$pattern, $suffix] = \explode('export-ignore', $line, 2);
+            $pattern = \trim($pattern);
+
+            if (\str_starts_with($pattern, '/')) {
+                $pattern = \ltrim($pattern, '/');
+            }
+
+            if (\is_dir($this->directory . DIRECTORY_SEPARATOR . $pattern) && \str_ends_with($pattern, '/') === false) {
+                $pattern .= DIRECTORY_SEPARATOR;
+            }
+
+            if (\strlen($pattern) > $longestPattern) {
+                $longestPattern = \strlen($pattern);
+            }
+
+            return $pattern . \str_repeat(' ', $longestPattern - \strlen($pattern) + 1) . 'export-ignore' . $suffix;
+        }, $gitattributesLines);
+
+        if ($this->sortAlphabetically === true) {
+            \sort($alignedLines, SORT_STRING);
+        }
+
+        if ($this->sortFromDirectoriesToFiles === true) {
+            $directories = \array_filter($alignedLines, static function (string $line): bool {
+                return \dirname($line) !== '.';
+            });
+
+            $files = \array_filter($alignedLines, static function (string $line): bool {
+                return \dirname($line) === '.';
+            });
+
+            \sort($directories, SORT_NATURAL);
+            \usort($files, static function (string $a, string $b): int {
+                return \strnatcasecmp(\basename($a), \basename($b));
+            });
+
+            $alignedLines = \array_merge($directories, $files);
+        }
+
+        if ($this->groupNonExportIgnores) {
+            return $this->applyGrouping($alignedLines, $eol);
+        }
+
+        return \implode($eol, $alignedLines);
+    }
+
+    /**
      * Get the present non export-ignore entries of
      * the .gitattributes file.
      *
@@ -829,6 +948,26 @@ class Analyser
             '/\\r\\n|\\r|\\n/',
             $gitattributesContent
         );
+
+        if ($this->groupNonExportIgnores) {
+            $nonExportIgnoreLines = [];
+
+            \array_filter($gitattributesLines, static function (string $line) use (
+                &$nonExportIgnoreLines
+            ) {
+                if (\strstr($line, 'export-ignore') === false || \strstr($line, '#')) {
+                    $nonExportIgnoreLines[] = \trim($line);
+                }
+            });
+
+            $collapsed = $this->collapseAndTrimBlankLines($nonExportIgnoreLines);
+
+            if ($collapsed === []) {
+                return self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER;
+            }
+
+            return \implode($eol, $collapsed);
+        }
 
         $nonExportIgnoreLines = [];
         $exportIgnoresPlacementPlaceholderSet = false;
@@ -850,6 +989,106 @@ class Analyser
         });
 
         return \implode($eol, $nonExportIgnoreLines);
+    }
+
+    /**
+     * Collapse consecutive blank lines to a single blank line, and trim
+     * leading and trailing blank lines from the given array of lines.
+     *
+     * @param array<int, string> $lines
+     * @return array<int, string>
+     */
+    private function collapseAndTrimBlankLines(array $lines): array
+    {
+        $collapsed = [];
+        $prevWasBlank = false;
+
+        foreach ($lines as $line) {
+            if ($line === '') {
+                if ($prevWasBlank === false) {
+                    $collapsed[] = $line;
+                }
+                $prevWasBlank = true;
+            } else {
+                $collapsed[] = $line;
+                $prevWasBlank = false;
+            }
+        }
+
+        while ($collapsed !== [] && $collapsed[0] === '') {
+            \array_shift($collapsed);
+        }
+
+        while ($collapsed !== [] && \end($collapsed) === '') {
+            \array_pop($collapsed);
+        }
+
+        return $collapsed;
+    }
+
+    private function isAlignableExportIgnoreLine(string $line): bool
+    {
+        return \str_contains($line, 'export-ignore')
+            && \str_starts_with(\ltrim($line), '#') === false;
+    }
+
+    /**
+     * Reorganise lines into a non-export-ignore section followed by an
+     * export-ignore section.  A comment immediately preceding an export-ignore
+     * line (no blank line between them) is treated as "sticky" and kept in the
+     * export-ignore section alongside the entries it describes.
+     *
+     * @param array<int, string> $lines
+     */
+    private function applyGrouping(array $lines, string $eol): string
+    {
+        $count = \count($lines);
+        $isEiGroup = \array_fill(0, $count, false);
+        $nextIsEi = false;
+
+        for ($i = $count - 1; $i >= 0; $i--) {
+            $line = $lines[$i];
+            if ($this->isAlignableExportIgnoreLine($line)) {
+                $isEiGroup[$i] = true;
+                $nextIsEi = true;
+            } elseif (\trim($line) === '') {
+                $isEiGroup[$i] = false;
+                $nextIsEi = false;
+            } elseif (\str_starts_with(\ltrim($line), '#')) {
+                $isEiGroup[$i] = $nextIsEi;
+            } else {
+                $isEiGroup[$i] = false;
+                $nextIsEi = false;
+            }
+        }
+
+        $nonExportIgnoreLines = [];
+        $exportIgnoreLines = [];
+
+        foreach ($lines as $i => $line) {
+            if ($isEiGroup[$i]) {
+                $exportIgnoreLines[] = $line;
+            } else {
+                $nonExportIgnoreLines[] = $line;
+            }
+        }
+
+        $nonExportIgnoreLines = $this->collapseAndTrimBlankLines($nonExportIgnoreLines);
+        $exportIgnoreLines = $this->collapseAndTrimBlankLines($exportIgnoreLines);
+
+        if ($nonExportIgnoreLines === [] && $exportIgnoreLines === []) {
+            return '';
+        }
+
+        if ($nonExportIgnoreLines === []) {
+            return \implode($eol, $exportIgnoreLines);
+        }
+
+        if ($exportIgnoreLines === []) {
+            return \implode($eol, $nonExportIgnoreLines);
+        }
+
+        return \implode($eol, $nonExportIgnoreLines) . $eol . $eol . \implode($eol, $exportIgnoreLines);
     }
 
     /**

@@ -48,6 +48,11 @@ final class UpdateCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Only reformat the export-ignores directives in the .gitattributes file'
+            )->addOption(
+                'group',
+                null,
+                InputOption::VALUE_NONE,
+                'Group non export-ignore directives in a separate section'
             )->setName(self::$defaultName)->setDescription(self::$defaultDescription);
 
         // Add common generation options
@@ -69,6 +74,10 @@ final class UpdateCommand extends Command
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
         $this->analyser->setDirectory($directory);
         $isAgenticRun = $this->isAgenticRun($input);
+
+        if ((bool) $input->getOption('group')) {
+            $this->analyser->setGroupNonExportIgnores(true);
+        }
 
         // Apply options that influence generation
         if (!$this->applyGenerationOptions($input, $output, $this->analyser)) {

@@ -37,7 +37,8 @@
             "llms",
             "agentic",
             "mago",
-            "alignable"
+            "alignable",
+            "reorganise"
         ],
         "paths": []
     }

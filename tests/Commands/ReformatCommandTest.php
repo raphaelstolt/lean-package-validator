@@ -258,4 +258,171 @@ CONTENT;
             $gitattributesContent
         );
     }
+
+    #[Test]
+    public function groupsNonExportIgnoreDirectivesInSeparateSection(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new ReformatCommand($analyser, $repository);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.editorconfig export-ignore
+composer.lock diff=json
+.gitattributes export-ignore
+CHANGELOG.md merge=union
+.gitignore export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->addOption('group')
+            ->execute()
+            ->assertSuccessful();
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+composer.lock diff=json
+CHANGELOG.md merge=union
+
+.editorconfig  export-ignore
+.gitattributes export-ignore
+.gitignore     export-ignore
+CONTENT;
+
+        $this->assertSame(\trim($expectedGitattributesContent), \trim($result->output()));
+
+        $this->assertStringEqualsFile(
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
+            $gitattributesContent
+        );
+    }
+
+    #[Test]
+    public function groupKeepsStickyCommentsWithExportIgnores(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new ReformatCommand($analyser, $repository);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+# exclude from dist archives
+.editorconfig export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->addOption('group')
+            ->execute()
+            ->assertSuccessful();
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+# exclude from dist archives
+.editorconfig  export-ignore
+.gitattributes export-ignore
+.gitignore     export-ignore
+CONTENT;
+
+        $this->assertSame(\trim($expectedGitattributesContent), \trim($result->output()));
+    }
+
+    #[Test]
+    public function groupMovesUnrelatedCommentsToNonExportIgnoreSection(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new ReformatCommand($analyser, $repository);
+
+        $gitattributesContent = <<<CONTENT
+# text encoding
+* text=auto eol=lf
+
+# blank line separates this comment from the export-ignore entries below
+
+.editorconfig export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->addOption('group')
+            ->execute()
+            ->assertSuccessful();
+
+        $output = $result->output();
+
+        $this->assertStringContainsString('# text encoding', $output);
+        $this->assertStringContainsString('# blank line separates this comment', $output);
+
+        $textEncodingPosition = \strpos($output, '# text encoding');
+        $separatesPosition = \strpos($output, '# blank line separates');
+        $exportIgnorePosition = \strpos($output, 'export-ignore');
+
+        $this->assertLessThan($exportIgnorePosition, $textEncodingPosition);
+        $this->assertLessThan($exportIgnorePosition, $separatesPosition);
+    }
+
+    #[Test]
+    public function groupsNonExportIgnoreDirectivesAndWritesFile(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new ReformatCommand($analyser, $repository);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.editorconfig export-ignore
+composer.lock diff=json
+.gitattributes export-ignore
+CHANGELOG.md merge=union
+.gitignore export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('group')
+            ->execute()
+            ->assertSuccessful()
+            ->assertOutputContains('The export-ignore directives in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . ' have been reformatted and grouped.');
+
+        $expectedGitattributesContent = <<<CONTENT
+# This file was reformatted by the lean package validator (http://git.io/lean-package-validator).
+
+* text=auto eol=lf
+
+composer.lock diff=json
+CHANGELOG.md merge=union
+
+.editorconfig  export-ignore
+.gitattributes export-ignore
+.gitignore     export-ignore
+CONTENT;
+
+        $this->assertStringEqualsFile(
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
+            $expectedGitattributesContent
+        );
+    }
 }

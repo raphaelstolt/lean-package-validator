@@ -196,6 +196,106 @@ CONTENT;
     }
 
     #[Test]
+    public function groupsNonExportIgnoreDirectivesInSeparateSection(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new UpdateCommand($analyser, $repository);
+
+        $this->createTemporaryFiles([
+            '.gitignore',
+            '.editorconfig',
+            '.gitattributes',
+        ]);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+composer.lock diff=json
+.gitignore export-ignore
+CHANGELOG.md merge=union
+.editorconfig export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('group')
+            ->addOption('align-export-ignores')
+            ->addOption('dry-run')
+            ->execute()
+            ->assertSuccessful();
+
+        $output = $result->output();
+
+        $this->assertStringContainsString('* text=auto eol=lf', $output);
+        $this->assertStringContainsString('composer.lock diff=json', $output);
+        $this->assertStringContainsString('CHANGELOG.md merge=union', $output);
+        $this->assertStringContainsString('export-ignore', $output);
+
+        $nonExportIgnoresPosition = \strpos($output, 'composer.lock diff=json');
+        $exportIgnorePosition = \strpos($output, 'export-ignore');
+
+        $this->assertNotFalse($nonExportIgnoresPosition);
+        $this->assertNotFalse($exportIgnorePosition);
+        $this->assertLessThan($exportIgnorePosition, $nonExportIgnoresPosition);
+    }
+
+    #[Test]
+    public function groupsNonExportIgnoreDirectivesAndWritesFile(): void
+    {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new UpdateCommand($analyser, $repository);
+
+        $this->createTemporaryFiles([
+            '.gitignore',
+            '.editorconfig',
+            '.gitattributes',
+        ]);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+composer.lock diff=json
+.gitignore export-ignore
+CHANGELOG.md merge=union
+.editorconfig export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('group')
+            ->addOption('align-export-ignores')
+            ->execute()
+            ->assertSuccessful()
+            ->assertOutputContains('The .gitattributes file in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . ' has been updated.');
+
+        $written = (string) \file_get_contents($this->temporaryDirectory . '/.gitattributes');
+
+        $this->assertStringContainsString('* text=auto eol=lf', $written);
+        $this->assertStringContainsString('composer.lock diff=json', $written);
+        $this->assertStringContainsString('CHANGELOG.md merge=union', $written);
+        $this->assertStringContainsString('export-ignore', $written);
+
+        $nonExportIgnoresPosition = \strpos($written, 'composer.lock diff=json');
+        $exportIgnorePosition = \strpos($written, 'export-ignore');
+
+        $this->assertNotFalse($nonExportIgnoresPosition);
+        $this->assertNotFalse($exportIgnorePosition);
+        $this->assertLessThan($exportIgnorePosition, $nonExportIgnoresPosition);
+    }
+
+    #[Test]
     public function itKeepsNonExportIgnoreContentAndRemovesAllStaleEntries(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);

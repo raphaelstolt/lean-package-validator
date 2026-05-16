@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased]
 
 ### Added
+- Added a new `--group` option to the `reformat` and `update` command. Closes [#69](https://github.com/raphaelstolt/lean-package-validator/issues/69).
 - Expanded the common glob preset patterns.
 
 ## [v5.8.6] - 2026-05-13

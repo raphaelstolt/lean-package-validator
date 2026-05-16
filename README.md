@@ -224,7 +224,8 @@ The `reformat` command will reformat a present `.gitattributes` file in the give
 `--dry-run` option to see what the `.gitattributes` content would look like.
 
 It is possible to influence the reformatting by providing the `--sort-alphabetically` and `--sort-from-directories-to-files`
-options.
+options. Via the `--group` option it is possible to group the export-ignores and non-export-ignores entries of the given
+`.gitattributes` file.
 
 #### Init command
 

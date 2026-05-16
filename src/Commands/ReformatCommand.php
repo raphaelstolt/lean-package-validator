@@ -65,6 +65,13 @@ final class ReformatCommand extends Command
             $sortFromDirectoriesToFilesDescription
         );
 
+        $this->addOption(
+            'group',
+            null,
+            InputOption::VALUE_NONE,
+            'Group non export-ignore directives in a separate section'
+        );
+
         $this->addDryRunOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the content that would be written');
@@ -99,8 +106,6 @@ final class ReformatCommand extends Command
         $gitattributesPath = $this->analyser->getGitattributesFilePath();
 
         $isAgenticRun = $this->isAgenticRun($input);
-        $sortAlphabetically = $input->getOption('sort-alphabetically');
-        $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');
 
         if (!\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             if ($isAgenticRun) {
@@ -111,9 +116,21 @@ final class ReformatCommand extends Command
             return self::FAILURE;
         }
 
-        $aligned = $this->getPresentGitattributesContentWithAlignedExportIgnores($sortAlphabetically, $sortFromDirectoriesToFiles);
+        if ($input->getOption('sort-alphabetically')) {
+            $this->analyser->sortAlphabetically();
+        }
 
-        if ($aligned === '') {
+        if ($input->getOption('sort-from-directories-to-files')) {
+            $this->analyser->sortFromDirectoriesToFiles();
+        }
+
+        if ((bool) $input->getOption('group')) {
+            $this->analyser->setGroupNonExportIgnores(true);
+        }
+
+        $reformatted = $this->analyser->getReformattedGitattributesContent();
+
+        if ($reformatted === '') {
             $message = 'Unable to determine present .gitattributes content for the given directory.';
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $message);
@@ -124,13 +141,13 @@ final class ReformatCommand extends Command
         }
 
         if ($this->isDryRun($input)) {
-            $output->writeln($aligned);
+            $output->writeln($reformatted);
 
             return self::SUCCESS;
         }
 
         try {
-            $this->repository->overwriteGitattributesFileFormatted($aligned);
+            $this->repository->overwriteGitattributesFileFormatted($reformatted);
         } catch (\Throwable $e) {
             $message = 'Update of .gitattributes file failed.';
             if ($isAgenticRun) {
@@ -142,7 +159,8 @@ final class ReformatCommand extends Command
         }
 
         $directory = \realpath($directory);
-        $message = "The export-ignore directives in {$directory} have been reformatted.";
+        $suffix = (bool) $input->getOption('group') ? ' and grouped' : '';
+        $message = "The export-ignore directives in {$directory} have been reformatted{$suffix}.";
         if ($isAgenticRun) {
             $this->writeAgenticOutput($output, $this->getName(), true, $message, ['gitattributes_file_path' => $gitattributesPath]);
         } else {
@@ -150,108 +168,5 @@ final class ReformatCommand extends Command
         }
 
         return self::SUCCESS;
-    }
-
-    private function getPresentGitattributesContentWithAlignedExportIgnores(bool $sortAlphabetically, bool $sortFromDirectoriesToFiles): string
-    {
-        $gitattributesContent = $this->analyser->getPresentGitAttributesContent();
-
-        if ($gitattributesContent === '') {
-            return '';
-        }
-
-        $eol = $this->detectEol($gitattributesContent);
-        $gitattributesLines = \preg_split('/\\r\\n|\\r|\\n/', $gitattributesContent);
-
-        if ($gitattributesLines === false) {
-            return $gitattributesContent;
-        }
-
-        $exportIgnorePatterns = [];
-
-        foreach ($gitattributesLines as $line) {
-            if ($this->isAlignableExportIgnoreLine($line) === false || $line === '') {
-                continue;
-            }
-
-            [$pattern] = \explode('export-ignore', $line, 2);
-
-            $exportIgnorePatterns[] = \rtrim($pattern);
-        }
-
-        if ($exportIgnorePatterns === []) {
-            return $gitattributesContent;
-        }
-
-        $longestPattern = \max(\array_map('strlen', $exportIgnorePatterns));
-
-        $alignedLines = \array_map(function (string $line) use ($longestPattern): string {
-            if ($this->isAlignableExportIgnoreLine($line) === false) {
-                return $line;
-            }
-
-            [$pattern, $suffix] = \explode('export-ignore', $line, 2);
-            $pattern = \trim($pattern);
-
-            if (\str_starts_with($pattern, '/')) {
-                $pattern = \ltrim($pattern, '/');
-            }
-
-            if (\is_dir(\getcwd() . '/' . $pattern) && \str_ends_with($pattern, '/') === false) {
-                $pattern .= DIRECTORY_SEPARATOR;
-            }
-
-            if (\strlen($pattern) > $longestPattern) {
-                $longestPattern = \strlen($pattern);
-            }
-
-            return $pattern . \str_repeat(' ', $longestPattern - \strlen($pattern) + 1) . 'export-ignore' . $suffix;
-        }, $gitattributesLines);
-
-        if ($sortAlphabetically === true) {
-            \sort($alignedLines, SORT_STRING);
-        }
-
-        if ($sortFromDirectoriesToFiles === true) {
-            $directories = array_filter($alignedLines, static function ($line) {
-                if (\dirname($line) !== '.') {
-                    return true;
-                }
-            });
-
-            $files = array_filter($alignedLines, static function ($line) {
-                if (\dirname($line) === '.') {
-                    return true;
-                }
-            });
-
-            \sort($directories, SORT_NATURAL);
-            \usort($files, static function ($a, $b) {
-                return \strnatcasecmp(basename($a), basename($b));
-            });
-
-            $alignedLines = array_merge($directories, $files);
-        }
-
-        return \implode($eol, $alignedLines);
-    }
-
-    private function isAlignableExportIgnoreLine(string $line): bool
-    {
-        return \str_contains($line, 'export-ignore')
-            && \str_starts_with(\ltrim($line), '#') === false;
-    }
-
-    private function detectEol(string $content): string
-    {
-        if (\str_contains($content, "\r\n")) {
-            return "\r\n";
-        }
-
-        if (\str_contains($content, "\r")) {
-            return "\r";
-        }
-
-        return "\n";
     }
 }
