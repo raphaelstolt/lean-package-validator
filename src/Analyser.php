@@ -1076,6 +1076,8 @@ class Analyser
         $nonExportIgnoreLines = $this->collapseAndTrimBlankLines($nonExportIgnoreLines);
         $exportIgnoreLines = $this->collapseAndTrimBlankLines($exportIgnoreLines);
 
+        $nonExportIgnoreLines = $this->subGroupNonExportIgnoreLines($nonExportIgnoreLines);
+
         if ($nonExportIgnoreLines === [] && $exportIgnoreLines === []) {
             return '';
         }
@@ -1089,6 +1091,52 @@ class Analyser
         }
 
         return \implode($eol, $nonExportIgnoreLines) . $eol . $eol . \implode($eol, $exportIgnoreLines);
+    }
+
+    /**
+     * Sub-group non-export-ignore lines: glob/wildcard patterns first,
+     * then specific-file attribute directives, comments before both.
+     *
+     * @param array<int, string> $lines
+     * @return array<int, string>
+     */
+    private function subGroupNonExportIgnoreLines(array $lines): array
+    {
+        $commentLines = [];
+        $globPatternLines = [];
+        $specificFileLines = [];
+
+        foreach ($lines as $line) {
+            if (\str_starts_with(\ltrim($line), '#')) {
+                $commentLines[] = $line;
+            } elseif ($line !== '' && \str_starts_with(\ltrim($line), '*')) {
+                $globPatternLines[] = $line;
+            } elseif ($line !== '') {
+                $specificFileLines[] = $line;
+            }
+        }
+
+        $result = [];
+
+        if ($commentLines !== []) {
+            $result = \array_merge($result, $commentLines);
+            if ($globPatternLines !== [] || $specificFileLines !== []) {
+                $result[] = '';
+            }
+        }
+
+        if ($globPatternLines !== []) {
+            $result = \array_merge($result, $globPatternLines);
+            if ($specificFileLines !== []) {
+                $result[] = '';
+            }
+        }
+
+        if ($specificFileLines !== []) {
+            $result = \array_merge($result, $specificFileLines);
+        }
+
+        return $result;
     }
 
     /**

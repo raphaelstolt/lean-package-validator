@@ -396,6 +396,8 @@ composer.lock diff=json
 .gitattributes export-ignore
 CHANGELOG.md merge=union
 .gitignore export-ignore
+
+*.phar    binary
 CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
@@ -411,6 +413,7 @@ CONTENT;
 # This file was reformatted by the lean package validator (http://git.io/lean-package-validator).
 
 * text=auto eol=lf
+*.phar    binary
 
 composer.lock diff=json
 CHANGELOG.md merge=union

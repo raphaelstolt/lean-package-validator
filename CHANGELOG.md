@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+- Improved the section grouping.
+
 ## [v5.9.0] - 2026-05-16
 
 ### Added
