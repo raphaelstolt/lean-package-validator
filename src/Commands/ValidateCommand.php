@@ -587,6 +587,16 @@ final class ValidateCommand extends Command
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
             if ($this->analyser->hasCompleteExportIgnores() === false) {
+                if ($this->analyser->usesNegatedExportIgnoreStrategy()) {
+                    $message = 'The present .gitattributes file with negated export-ignore directives is considered <error>invalid</error>.';
+                    if ($isAgenticRun) {
+                        $this->writeAgenticOutput($output, $this->getName(), false, \strip_tags($message), ['valid' => false]);
+                    } else {
+                        $output->writeln($message);
+                    }
+                    return Command::FAILURE;
+                }
+
                 $verboseOutput = "+ Gathering expected .gitattribute content.";
                 $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 

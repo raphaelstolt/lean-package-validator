@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v5.10.0] - 2026-05-18
+
+### Added
+- Expanded the `validation` to also validate __negated__ export-ignore directives. Closes [#70](https://github.com/raphaelstolt/lean-package-validator/issues/70).
+
 ## [v5.9.1] - 2026-05-17
 
 ### Changed

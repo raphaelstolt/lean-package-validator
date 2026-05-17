@@ -2558,4 +2558,162 @@ CONTENT;
         $this->assertFalse($json['valid']);
         $this->assertArrayHasKey('expected_gitattributes_content', $json);
     }
+
+    #[Test]
+    public function validatesNegatedExportIgnoreDirectivesAsValid(): void
+    {
+        $this->createTemporaryFiles(['composer.json', 'LICENSE.md'], ['src', 'bin']);
+
+        $gitattributesContent = <<<CONTENT
+# Line-ending normalization for text files.
+* text=auto
+
+# PHP-aware hunk headers in `git diff`.
+*.php diff=php
+
+# Binary files keep their bytes.
+*.gpg binary
+*.phar binary
+
+# Default: nothing is included in the dist archive of the Composer package.
+# Re-include only the files that actually belong to the distributed package below.
+* export-ignore
+
+# Top-level metadata.
+composer.json -export-ignore
+LICENSE.md -export-ignore
+
+# Source code and CLI entry point.
+/src           -export-ignore
+/src**         -export-ignore
+/bin           -export-ignore
+/bin/test-cli  -export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+
+        TestCommand::for($command)
+            ->addArgument(WORKING_DIRECTORY)
+            ->execute()
+            ->assertOutputContains('The present .gitattributes file is considered valid.')
+            ->assertSuccessful();
+    }
+
+    #[Test]
+    public function validatesIncompleteNegatedExportIgnoreDirectivesAsInvalid(): void
+    {
+        $this->createTemporaryFiles(['composer.json'], ['src']);
+
+        $gitattributesContent = <<<CONTENT
+# Default: nothing is included in the dist archive of the Composer package.
+* export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+
+        TestCommand::for($command)
+            ->addArgument(WORKING_DIRECTORY)
+            ->execute()
+            ->assertOutputContains('The present .gitattributes file with negated export-ignore directives is considered invalid.')
+            ->assertFaulty();
+    }
+
+    #[Test]
+    #[RunInSeparateProcess]
+    public function validatesNegatedExportIgnoreDirectivesFromStdinAsValid(): void
+    {
+        $this->createTemporaryFiles(['composer.json', 'LICENSE.md'], ['src']);
+
+        $gitattributesContent = <<<CONTENT
+* export-ignore
+
+/composer.json -export-ignore
+/LICENSE.md    -export-ignore
+/src           -export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $application = new Application();
+        $fakeInputReader = new FakeInputReader();
+        $fakeInputReader->set($gitattributesContent);
+
+        $analyserCommand = new ValidateCommand(
+            new Analyser(new Finder(new PhpPreset())),
+            new Validator(new Archive($this->temporaryDirectory)),
+            $fakeInputReader
+        );
+
+        $application->addCommand($analyserCommand);
+        $command = $application->find('validate');
+
+        TestCommand::for($command)
+            ->addOption('stdin-input')
+            ->execute()
+            ->assertOutputContains('The provided .gitattributes content is considered valid.')
+            ->assertSuccessful();
+    }
+
+    #[Test]
+    public function detectsStaleNegatedExportIgnoreDirectivesAsInvalid(): void
+    {
+        $this->createTemporaryFiles(['composer.json', 'LICENSE.md'], ['src']);
+
+        $gitattributesContent = <<<CONTENT
+* export-ignore
+
+composer.json      -export-ignore
+LICENSE.md         -export-ignore
+NON_EXISTENT.md    -export-ignore
+/src               -export-ignore
+/stale-non-existent-dir -export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+
+        TestCommand::for($command)
+            ->addArgument(WORKING_DIRECTORY)
+            ->addOption('report-stale-export-ignores')
+            ->execute()
+            ->assertOutputContains('The present .gitattributes file with negated export-ignore directives is considered invalid.')
+            ->assertFaulty();
+    }
+
+    #[Test]
+    public function detectsIncompleteNegatedExportIgnoreDirectivesAsInvalid(): void
+    {
+        $this->createTemporaryFiles(['composer.json', 'LICENSE.md'], ['src', 'resources']);
+
+        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'foo');
+        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'bar');
+
+        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'foo');
+        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'bar');
+
+        $gitattributesContent = <<<CONTENT
+* export-ignore
+
+composer.json      -export-ignore
+LICENSE.md         -export-ignore
+NON_EXISTENT.md    -export-ignore
+src/               -export-ignore
+resources/         -export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $command = $this->application->find('validate');
+
+        $testCommand = TestCommand::for($command)
+            ->addArgument(WORKING_DIRECTORY)
+            ->execute()
+            ->assertOutputContains('The present .gitattributes file with negated export-ignore directives is considered invalid.')
+            ->assertFaulty();
+    }
 }

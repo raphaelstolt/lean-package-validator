@@ -668,7 +668,7 @@ class Analyser
             &$globPatternMatchingExportIgnores,
             &$basenamedGlobPatternMatchingExportIgnores
         ) {
-            if (\strstr($line, 'export-ignore') && \strpos($line, '#') === false) {
+            if (\strstr($line, 'export-ignore') && !\str_contains($line, '-export-ignore') && \strpos($line, '#') === false) {
                 list($pattern, $void) = \explode('export-ignore', $line);
                 if (\substr($pattern, 0, 1) === '/') {
                     $pattern = \substr($pattern, 1);
@@ -1164,7 +1164,8 @@ class Analyser
 
         $exportIgnores = [];
         \array_filter($gitattributesLines, function (string $line) use (&$exportIgnores, &$applyGlob) {
-            if (\strstr($line, 'export-ignore', true)) {
+            $before = \strstr($line, 'export-ignore', true);
+            if ($before !== false && $before !== '' && !\str_ends_with(\rtrim((string) $before), '-')) {
                 list($line, $void) = \explode('export-ignore', $line);
                 if ($applyGlob) {
                     if ($this->patternHasMatch(\trim($line))) {
@@ -1231,8 +1232,148 @@ class Analyser
         return \array_merge($directories, $files);
     }
 
+    public function usesNegatedExportIgnoreStrategy(string $gitattributesContent = ''): bool
+    {
+        if ($gitattributesContent === '') {
+            if ($this->hasGitattributesFile() === false) {
+                return false;
+            }
+            $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+        }
+
+        $lines = \preg_split('/\\r\\n|\\r|\\n/', $gitattributesContent) ?: [];
+
+        foreach ($lines as $line) {
+            if (\trim($line) === '* export-ignore') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param bool $applyGlob
+     * @param string $gitattributesContent
+     * @return array<int, string>
+     */
+    public function getPresentNegatedExportIgnores(bool $applyGlob = true, string $gitattributesContent = ''): array
+    {
+        if ($this->hasGitattributesFile() === false && $gitattributesContent === '') {
+            return [];
+        }
+
+        if ($gitattributesContent === '') {
+            $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+        }
+
+        $lines = \preg_split('/\\r\\n|\\r|\\n/', $gitattributesContent) ?: [];
+
+        $negatedIgnores = [];
+
+        foreach ($lines as $line) {
+            if (!\str_contains($line, '-export-ignore') || \str_starts_with(\ltrim($line), '#')) {
+                continue;
+            }
+
+            [$pattern] = \explode('-export-ignore', $line, 2);
+            $pattern = \ltrim(\trim($pattern), '/');
+
+            if ($pattern === '') {
+                continue;
+            }
+
+            if ($applyGlob) {
+                if ($this->patternHasMatch($pattern)) {
+                    $negatedIgnores[] = $pattern;
+                }
+            } else {
+                $negatedIgnores[] = $pattern;
+            }
+        }
+
+        if ($this->isStrictOrderComparisonEnabled() === false) {
+            \sort($negatedIgnores, SORT_STRING | SORT_FLAG_CASE);
+        }
+
+        return \array_unique($negatedIgnores);
+    }
+
+    public function hasCompleteNegatedExportIgnores(): bool
+    {
+        if ($this->hasGitattributesFile() === false) {
+            return false;
+        }
+
+        if ($this->usesNegatedExportIgnoreStrategy() === false) {
+            return false;
+        }
+
+        $content = (string) \file_get_contents($this->gitattributesFile);
+
+        if (\preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $content)) {
+            $this->hasTextAutoConfiguration = true;
+        }
+
+        $presentNegatedExportIgnores = $this->getPresentNegatedExportIgnores(true);
+
+        if ($presentNegatedExportIgnores === []) {
+            return false;
+        }
+
+        if ($this->isStaleExportIgnoresComparisonEnabled()) {
+            $allNegatedIgnores = $this->getPresentNegatedExportIgnores(false);
+            $staleNegatedIgnores = \array_diff($allNegatedIgnores, $presentNegatedExportIgnores);
+            if ($staleNegatedIgnores !== []) {
+                return false;
+            }
+        }
+
+        return $this->hasDoubleStarForDirectories($presentNegatedExportIgnores);
+    }
+
+    public function hasDoubleStarForDirectories(array $negatedEntries): bool
+    {
+        $lookup = \array_flip($negatedEntries);
+
+        foreach ($negatedEntries as $entry) {
+            if (\str_ends_with($entry, '/')) {
+                $directory = \rtrim($entry, '/');
+                $expected = $directory . '/**';
+
+                $hasDirectFileEntry = false;
+
+                foreach ($negatedEntries as $candidate) {
+                    if (
+                        \str_starts_with($candidate, $directory . '/')
+                        && !\str_ends_with($candidate, '/')
+                        && $candidate !== $expected
+                    ) {
+                        $hasDirectFileEntry = true;
+
+                        break;
+                    }
+                }
+
+                if ($hasDirectFileEntry) {
+                    continue;
+                }
+
+                if (!isset($lookup[$expected])) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public function hasCompleteExportIgnoresFromString(string $gitattributesContent): bool
     {
+        if ($this->usesNegatedExportIgnoreStrategy($gitattributesContent)) {
+            return $this->getPresentNegatedExportIgnores(true, $gitattributesContent) !== [];
+        }
+
         $expectedExportIgnores = $this->collectExpectedExportIgnores();
         $presentExportIgnores = $this->getPresentExportIgnores(true, $gitattributesContent);
 
@@ -1245,6 +1386,10 @@ class Analyser
      */
     public function hasCompleteExportIgnores(): bool
     {
+        if ($this->usesNegatedExportIgnoreStrategy()) {
+            return $this->hasCompleteNegatedExportIgnores();
+        }
+
         $expectedExportIgnores = $this->collectExpectedExportIgnores();
 
         if ($expectedExportIgnores === [] || $this->hasGitattributesFile() === false) {

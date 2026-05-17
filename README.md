@@ -73,8 +73,11 @@ brew install lean-package-validator
 
 Run the lean package validator CLI within or against a project/micro-package
 directory, and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in
-a `.gitattributes` file against a set of common repository artefacts. If no
-`.gitattributes` file is present it will suggest creating one.
+a `.gitattributes` file against a set of common repository artefacts.
+
+It can handle __"normal"__ export-ignore directives as well as __negated__ export-ignore directives.
+
+If no `.gitattributes` file is present it will suggest creating one.
 
 ``` bash
 lean-package-validator validate [<directory>]
