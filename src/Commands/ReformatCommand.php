@@ -43,6 +43,7 @@ final class ReformatCommand extends Command
         $directoryDescription = 'The directory of a project/micro-package repository';
         $sortAlphabeticallyDescription = 'Sort the export-ignore directives in the .gitattributes file alphabetically';
         $sortFromDirectoriesToFilesDescription = 'Sort the export-ignore directives in the .gitattributes file from directories to files';
+        $groupDescription = 'Group non export-ignore directives in a separate section';
 
         $this->addArgument(
             'directory',
@@ -69,7 +70,7 @@ final class ReformatCommand extends Command
             'group',
             null,
             InputOption::VALUE_NONE,
-            'Group non export-ignore directives in a separate section'
+            $groupDescription
         );
 
         $this->addDryRunOutputOption(function (...$args) {

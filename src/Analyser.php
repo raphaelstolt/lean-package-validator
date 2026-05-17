@@ -1034,7 +1034,7 @@ class Analyser
 
     /**
      * Reorganise lines into a non-export-ignore section followed by an
-     * export-ignore section.  A comment immediately preceding an export-ignore
+     * export-ignore section. A comment immediately preceding an export-ignore
      * line (no blank line between them) is treated as "sticky" and kept in the
      * export-ignore section alongside the entries it describes.
      *
@@ -1043,22 +1043,22 @@ class Analyser
     private function applyGrouping(array $lines, string $eol): string
     {
         $count = \count($lines);
-        $isEiGroup = \array_fill(0, $count, false);
-        $nextIsEi = false;
+        $isExportIgnoresGroup = \array_fill(0, $count, false);
+        $nextIsAnExportIgnore = false;
 
         for ($i = $count - 1; $i >= 0; $i--) {
             $line = $lines[$i];
             if ($this->isAlignableExportIgnoreLine($line)) {
-                $isEiGroup[$i] = true;
-                $nextIsEi = true;
+                $isExportIgnoresGroup[$i] = true;
+                $nextIsAnExportIgnore = true;
             } elseif (\trim($line) === '') {
-                $isEiGroup[$i] = false;
-                $nextIsEi = false;
+                $isExportIgnoresGroup[$i] = false;
+                $nextIsAnExportIgnore = false;
             } elseif (\str_starts_with(\ltrim($line), '#')) {
-                $isEiGroup[$i] = $nextIsEi;
+                $isExportIgnoresGroup[$i] = $nextIsAnExportIgnore;
             } else {
-                $isEiGroup[$i] = false;
-                $nextIsEi = false;
+                $isExportIgnoresGroup[$i] = false;
+                $nextIsAnExportIgnore = false;
             }
         }
 
@@ -1066,7 +1066,7 @@ class Analyser
         $exportIgnoreLines = [];
 
         foreach ($lines as $i => $line) {
-            if ($isEiGroup[$i]) {
+            if ($isExportIgnoresGroup[$i]) {
                 $exportIgnoreLines[] = $line;
             } else {
                 $nonExportIgnoreLines[] = $line;
