@@ -55,13 +55,31 @@ final class CreateCommand extends Command
         $this->addAgenticOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         });
+
+        $flavourDescription = 'Generate the .gitattributes file with the given flavour';
+
+        $this->addOption(
+            'flavour',
+            'f',
+            InputOption::VALUE_OPTIONAL,
+            $flavourDescription,
+            Analyser::EXPORT_IGNORE_CLASSIC
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
         $this->analyser->setDirectory($directory);
+
         $isAgenticRun = $this->isAgenticRun($input);
+
+        $generationFlavour = $input->getOption('flavour') ?: Analyser::EXPORT_IGNORE_CLASSIC;
+
+        if (!\in_array($generationFlavour, [Analyser::EXPORT_IGNORE_CLASSIC, Analyser::EXPORT_IGNORE_NEGATED], true)) {
+            $output->writeln('<error>Invalid flavour specified. Use <info>classic</info> or <info>negated</info>.</error>');
+            return self::FAILURE;
+        }
 
         // Apply options that influence generation
         if (!$this->applyGenerationOptions($input, $output, $this->analyser)) {
@@ -80,7 +98,7 @@ final class CreateCommand extends Command
             return self::FAILURE;
         }
 
-        $expected = $this->analyser->getExpectedGitattributesContent();
+        $expected = $this->analyser->getExpectedGitattributesContent([], $generationFlavour);
 
         if ($expected === '') {
             $message = 'Unable to determine expected .gitattributes content for the given directory.';

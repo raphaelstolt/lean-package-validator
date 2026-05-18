@@ -10,6 +10,9 @@ use Stolt\LeanPackage\Presets\Finder;
 
 class Analyser
 {
+    const EXPORT_IGNORE_CLASSIC = 'classic';
+    const EXPORT_IGNORE_NEGATED = 'negated';
+
     const EXPORT_IGNORES_PLACEMENT_PLACEHOLDER = '{{ export_ignores_placement }}';
     /**
      * The directory to analyse
@@ -575,16 +578,187 @@ class Analyser
         return $this->getGitignorePatterns($gitignoreFile);
     }
 
+    private function getNegatedGitattributesContent(): string
+    {
+        $exportIgnoresToNegate = $this->buildExportIgnoresToNegate();
+
+        if ($exportIgnoresToNegate === []) {
+            return '';
+        }
+
+        $exportIgnoresToNegate = $this->sortAndFormatExportIgnores(
+            $exportIgnoresToNegate
+        );
+
+        $content = $this->buildExportIgnoreContent($exportIgnoresToNegate);
+
+        if ($this->hasGitattributesFile()) {
+            return $this->mergeWithExistingGitattributes($content);
+        }
+
+        return "* text=auto eol=lf"
+            . \str_repeat($this->preferredEol, 2)
+            . $content;
+    }
+
+    private function buildExportIgnoresToNegate(): array
+    {
+        $entries = $this->collectExpectedNegatedExportIgnores();
+
+        \sort($entries, SORT_STRING | SORT_FLAG_CASE);
+
+        $entries = \array_map(
+            fn (string $entry): string => $this->appendDirectorySeparator($entry),
+            $entries
+        );
+
+        $globedEntries = $this->buildGlobedEntries($entries);
+
+        $entries = \array_unique(\array_merge($entries, $globedEntries));
+
+        $entries = \array_unique(\array_merge(
+            $entries,
+            $this->expandBinaryDirectories($entries)
+        ));
+
+        \sort($entries, SORT_STRING | SORT_FLAG_CASE);
+
+        return $entries;
+    }
+
+    private function appendDirectorySeparator(string $entry): string
+    {
+        if (\is_dir($this->directory . DIRECTORY_SEPARATOR . $entry)) {
+            return $entry . DIRECTORY_SEPARATOR;
+        }
+
+        return $entry;
+    }
+
+    private function buildGlobedEntries(array $entries): array
+    {
+        $directories = \array_filter(
+            $entries,
+            fn (string $entry): bool => $this->shouldBeGlobed($entry)
+        );
+
+        return \array_map(
+            static function (string $entry): string {
+                return $entry . '**';
+            },
+            $directories
+        );
+    }
+
+    private function shouldBeGlobed(string $entry): bool
+    {
+        if (!\str_ends_with($entry, DIRECTORY_SEPARATOR)) {
+            return false;
+        }
+
+        $iterator = new \FilesystemIterator(
+            $this->directory . DIRECTORY_SEPARATOR . $entry
+        );
+
+        return \iterator_count($iterator) >= 2;
+    }
+
+    private function expandBinaryDirectories(array $entries): array
+    {
+        $expanded = [];
+
+        foreach ($entries as $entry) {
+            $expanded[] = $entry;
+
+            if (!str_ends_with($entry, 'bin' . DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+
+            $binaryDirectory = $this->directory . DIRECTORY_SEPARATOR . $entry;
+
+            $iterator = new \FilesystemIterator($binaryDirectory);
+
+            foreach ($iterator as $file) {
+                if ($file instanceof \SplFileInfo && $file->isDir()) {
+                    continue;
+                }
+                if ($file instanceof \SplFileInfo) {
+                    $expanded[] = $entry . $file->getFilename();
+                }
+            }
+        }
+
+        return $expanded;
+    }
+
+    private function sortAndFormatExportIgnores(array $entries): array
+    {
+        if ($this->sortFromDirectoriesToFiles === false &&
+            ($this->isAlignExportIgnoresEnabled() || $this->isStrictAlignmentComparisonEnabled())) {
+            return $this->getAlignedExportIgnoreArtifacts($entries);
+        }
+
+        if ($this->sortFromDirectoriesToFiles) {
+            return $this->getByDirectoriesToFilesExportIgnoreArtifacts($entries);
+        }
+
+        return $entries;
+    }
+
+    private function buildExportIgnoreContent(array $entries): string
+    {
+        return "* export-ignore"
+            . PHP_EOL
+            . PHP_EOL
+            . \implode(
+                " -export-ignore" . $this->preferredEol,
+                $entries
+            )
+            . " -export-ignore"
+            . $this->preferredEol;
+    }
+
+    private function mergeWithExistingGitattributes(string $content): string
+    {
+        $exportIgnoreContent = \rtrim($content);
+
+        $existingContent = $this->getPresentNonExportIgnoresContent();
+
+        if (\str_contains(
+            $existingContent,
+            self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER
+        )) {
+            return \str_replace(
+                self::EXPORT_IGNORES_PLACEMENT_PLACEHOLDER,
+                $exportIgnoreContent,
+                $existingContent
+            );
+        }
+
+        return $existingContent
+            . \str_repeat($this->preferredEol, 2)
+            . $exportIgnoreContent;
+    }
+
     /**
      * Return the expected .gitattributes content.
      *
      * @param array $postfixLessExportIgnores Expected patterns without an export-ignore postfix.
+     * @param string $flavour The flavour of the .gitattributes file content. Possible values are classic and negated.
      * @return string
      */
-    public function getExpectedGitattributesContent(array $postfixLessExportIgnores = []): string
+    public function getExpectedGitattributesContent(array $postfixLessExportIgnores = [], string $flavour = self::EXPORT_IGNORE_CLASSIC): string
     {
-        if ($postfixLessExportIgnores === []) {
+        if ($flavour !== self::EXPORT_IGNORE_CLASSIC && $flavour !== self::EXPORT_IGNORE_NEGATED) {
+            throw new \InvalidArgumentException("Invalid flavour provided. Expected 'classic' or 'negated'.");
+        }
+
+        if ($postfixLessExportIgnores === [] && $flavour === self::EXPORT_IGNORE_CLASSIC) {
             $postfixLessExportIgnores = $this->collectExpectedExportIgnores();
+        }
+
+        if ($flavour === self::EXPORT_IGNORE_NEGATED) {
+            return $this->getNegatedGitattributesContent();
         }
 
         if (!$this->hasGitattributesFile() && \count($postfixLessExportIgnores) > 0) {
@@ -691,6 +865,41 @@ class Analyser
         return $exportIgnoresToPreserve;
     }
 
+    public function collectExpectedNegatedExportIgnores(): array
+    {
+        $expectedNegatedExportIgnores = [];
+
+        \chdir($this->directory);
+
+        $globMatches = Glob::glob($this->globPattern, Glob::GLOB_BRACE);
+
+        if (!\is_array($globMatches)) {
+            return $expectedNegatedExportIgnores;
+        }
+
+        $globMatches = \array_values(
+            \array_filter($globMatches, function (string $fileToIgnore): bool {
+                if ($this->isKeepLicenseEnabled() && \preg_match('/(License.*)/i', $fileToIgnore)) {
+                    return false;
+                }
+
+                if ($this->isKeepReadmeEnabled() && \preg_match('/(Readme.*)/i', $fileToIgnore)) {
+                    return false;
+                }
+
+                return true;
+            })
+        );
+
+        $allFiles = Glob::glob('{*}', Glob::GLOB_BRACE);
+
+        if (!\is_array($allFiles) || count ($allFiles) === 0) {
+            return $expectedNegatedExportIgnores;
+        }
+
+        return array_diff($allFiles, $globMatches);
+    }
+
     /**
      * Collect the expected export-ignored files.
      *
@@ -773,7 +982,7 @@ class Analyser
     }
 
     /**
-     * Detect most frequently used end of line sequence.
+     * Detect the most frequently used end-of-line sequence.
      *
      * @param  string $content The content to detect the eol in.
      *
@@ -930,7 +1139,7 @@ class Analyser
     }
 
     /**
-     * Get the present non export-ignore entries of
+     * Get the present non-export-ignore entries of
      * the .gitattributes file.
      *
      * @return string

@@ -18,7 +18,7 @@ use Stolt\LeanPackage\Presets\PhpPreset;
 class AnalyserTest extends TestCase
 {
     /**
-     * Set up test environment.
+     * Set up the test environment.
      */
     protected function setUp(): void
     {
@@ -26,7 +26,7 @@ class AnalyserTest extends TestCase
     }
 
     /**
-     * Tear down test environment.
+     * Tear down the test environment.
      *
      * @return void
      */
@@ -36,6 +36,121 @@ class AnalyserTest extends TestCase
             $this->removeDirectory($this->temporaryDirectory);
         }
     }
+
+    #[Test]
+    public function throwsExceptionOnNonExpectedFlavour(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "Invalid flavour provided. Expected 'classic' or 'negated'."
+        );
+
+        $analyser->getExpectedGitattributesContent([], 'non-existing-flavour');
+    }
+
+    #[Test]
+    public function returnsExpectedNegatedGitattributesContent(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+
+        $artifactFilenames = [
+            'composer.json',
+            '.travis.yml',
+            'phpspec.yml.dist',
+            'README.md',
+            'peck.json'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['src', 'tests', 'bin', 'resources']
+        );
+
+        \touch($this->temporaryDirectory . '/bin/lpv');
+        \touch($this->temporaryDirectory . '/src/Fake.php');
+        \touch($this->temporaryDirectory . '/src/AnotherFake.php');
+        \touch($this->temporaryDirectory . '/resources/SKILL.md');
+        \touch($this->temporaryDirectory . '/resources/ANOTHER_SKILL.md');
+
+        $negatedGitattributesContent = $analyser->getExpectedGitattributesContent(
+            [],
+            Analyser::EXPORT_IGNORE_NEGATED
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+* export-ignore
+
+bin/ -export-ignore
+bin/lpv -export-ignore
+composer.json -export-ignore
+resources/ -export-ignore
+resources/** -export-ignore
+src/ -export-ignore
+src/** -export-ignore
+CONTENT;
+
+        $this->assertStringContainsStringIgnoringLineEndings(
+            $expectedGitattributesContent,
+            $negatedGitattributesContent
+        );
+    }
+
+    #[Test]
+    public function returnsExpectedNegatedGitattributesContentWithAlignmentAndKeptLicense(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $analyser->alignExportIgnores()->keepLicense();
+
+        $artifactFilenames = [
+            'composer.json',
+            '.travis.yml',
+            'phpspec.yml.dist',
+            'README.md',
+            'peck.json',
+            'LICENSE.md'
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['src', 'tests', 'bin', 'resources']
+        );
+
+        \touch($this->temporaryDirectory . '/bin/lpv');
+        \touch($this->temporaryDirectory . '/src/Fake.php');
+        \touch($this->temporaryDirectory . '/src/AnotherFake.php');
+        \touch($this->temporaryDirectory . '/resources/SKILL.md');
+        \touch($this->temporaryDirectory . '/resources/ANOTHER_SKILL.md');
+
+        $negatedGitattributesContent = $analyser->getExpectedGitattributesContent(
+            [],
+            Analyser::EXPORT_IGNORE_NEGATED
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+* export-ignore
+
+bin/          -export-ignore
+bin/lpv       -export-ignore
+composer.json -export-ignore
+LICENSE.md    -export-ignore
+resources/    -export-ignore
+resources/**  -export-ignore
+src/          -export-ignore
+src/**        -export-ignore
+CONTENT;
+
+        $this->assertStringContainsStringIgnoringLineEndings(
+            $expectedGitattributesContent,
+            $negatedGitattributesContent
+        );
+    }
+
 
     #[Test]
     public function hasCompleteExportIgnoresFailsOnEmptyExportIgnores(): void
