@@ -39,7 +39,8 @@
             "mago",
             "alignable",
             "reorganise",
-            "flavour"
+            "flavour",
+            "reformats"
         ],
         "paths": []
     }

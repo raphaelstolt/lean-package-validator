@@ -1076,7 +1076,12 @@ class Analyser
                 continue;
             }
 
+
             [$pattern] = \explode('export-ignore', $line, 2);
+
+            if ($this->isNegatedExportIgnoreLine($line)) {
+                [$pattern] = \explode('-export-ignore', $line, 2);
+            }
 
             $exportIgnorePatterns[] = \rtrim($pattern);
         }
@@ -1091,8 +1096,14 @@ class Analyser
             if ($this->isAlignableExportIgnoreLine($line) === false) {
                 return $line;
             }
+            $exportIgnorePattern = 'export-ignore';
 
-            [$pattern, $suffix] = \explode('export-ignore', $line, 2);
+            if ($this->isNegatedExportIgnoreLine($line)) {
+                $exportIgnorePattern = '-export-ignore';
+            }
+
+            [$pattern, $suffix] = \explode($exportIgnorePattern, $line, 2);
+
             $pattern = \trim($pattern);
 
             if (\str_starts_with($pattern, '/')) {
@@ -1107,7 +1118,7 @@ class Analyser
                 $longestPattern = \strlen($pattern);
             }
 
-            return $pattern . \str_repeat(' ', $longestPattern - \strlen($pattern) + 1) . 'export-ignore' . $suffix;
+            return $pattern . \str_repeat(' ', $longestPattern - \strlen($pattern) + 1) . $exportIgnorePattern . $suffix;
         }, $gitattributesLines);
 
         if ($this->sortAlphabetically === true) {
@@ -1237,8 +1248,14 @@ class Analyser
 
     private function isAlignableExportIgnoreLine(string $line): bool
     {
-        return \str_contains($line, 'export-ignore')
+        return (\str_contains($line, 'export-ignore') || \str_contains($line, '-export-ignore'))
+            && \str_starts_with(\trim($line), '* export-ignore') === false
             && \str_starts_with(\ltrim($line), '#') === false;
+    }
+
+    private function isNegatedExportIgnoreLine(string $line): bool
+    {
+        return \str_contains($line, '-export-ignore') && \str_starts_with(\ltrim($line), '#') === false;
     }
 
     /**

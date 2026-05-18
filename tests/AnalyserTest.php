@@ -38,6 +38,93 @@ class AnalyserTest extends TestCase
     }
 
     #[Test]
+    public function returnExpectedReformattedGitattributesContentForClassicExportIgnoreDirectives(): void
+    {
+        $mockedAnalyser = Mockery::mock(Analyser::class)->makePartial();
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+bin/ export-ignore
+composer.json export-ignore
+resources/ export-ignore
+src/ export-ignore
+CHANGELOG.md export-ignore
+CONTENT;
+
+        $mockedAnalyser->shouldReceive('getPresentGitAttributesContent')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($gitattributesContent);
+
+        $mockedAnalyser->setDirectory($this->temporaryDirectory);
+
+        $reformattedGitattributesContent = $mockedAnalyser->getReformattedGitattributesContent();
+
+        $expectedReformattedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+bin/          export-ignore
+composer.json export-ignore
+resources/    export-ignore
+src/          export-ignore
+CHANGELOG.md  export-ignore
+CONTENT;
+
+        $this->assertStringContainsStringIgnoringLineEndings(
+            $expectedReformattedGitattributesContent,
+            $reformattedGitattributesContent
+        );
+    }
+
+    #[Test]
+    public function returnExpectedReformattedGitattributesContentForNegatedExportIgnoreDirectives(): void
+    {
+        $mockedAnalyser = Mockery::mock(Analyser::class)->makePartial();
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+# Exclude all per default
+* export-ignore
+
+# re-include required files
+bin/ -export-ignore
+composer.json -export-ignore
+resources/ -export-ignore
+src/ -export-ignore
+CONTENT;
+
+        $mockedAnalyser->shouldReceive('getPresentGitAttributesContent')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($gitattributesContent);
+
+        $mockedAnalyser->setDirectory($this->temporaryDirectory);
+
+        $reformattedGitattributesContent = $mockedAnalyser->getReformattedGitattributesContent();
+
+        $expectedReformattedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+# Exclude all per default
+* export-ignore
+
+# re-include required files
+bin/          -export-ignore
+composer.json -export-ignore
+resources/    -export-ignore
+src/          -export-ignore
+CONTENT;
+
+        $this->assertStringContainsStringIgnoringLineEndings(
+            $expectedReformattedGitattributesContent,
+            $reformattedGitattributesContent
+        );
+    }
+
+
+    #[Test]
     public function throwsExceptionOnNonExpectedFlavour(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);

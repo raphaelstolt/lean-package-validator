@@ -26,6 +26,61 @@ final class ReformatCommandTest extends TestCase
     }
 
     #[Test]
+    public function reformatsNegatedExportIgnores(): void
+    {
+        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $repository = new GitattributesFileRepository($analyser);
+        $command = new ReformatCommand($analyser, $repository);
+
+        $gitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+* export-ignore
+
+composer.json -export-ignore
+bin/                       -export-ignore
+bin/lean-package-validator -export-ignore
+resources/    -export-ignore
+resources/**  -export-ignore
+src/   -export-ignore
+src/**  -export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        $this->createTemporaryFiles(['.gitignore', 'composer.json'], ['example', 'tests', '.github', 'src', 'resources', 'bin']);
+
+        \touch($this->temporaryDirectory . '/bin/lpv');
+
+        $result = TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('dry-run')
+            ->execute()
+            ->assertSuccessful();
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+* export-ignore
+
+composer.json              -export-ignore
+bin/                       -export-ignore
+bin/lean-package-validator -export-ignore
+resources/                 -export-ignore
+resources/**               -export-ignore
+src/                       -export-ignore
+src/**                     -export-ignore
+CONTENT;
+
+        $this->assertSame(trim($expectedGitattributesContent), trim($result->output()));
+
+        $this->assertStringEqualsFile(
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
+            $gitattributesContent
+        );
+    }
+
+    #[Test]
     public function sortsExportIgnoresAlphabetically(): void
     {
         $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
