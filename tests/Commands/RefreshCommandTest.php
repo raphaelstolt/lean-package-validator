@@ -6,6 +6,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\RefreshCommand;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
@@ -25,7 +26,7 @@ class RefreshCommandTest extends TestCase
         }
 
         $this->application = $this->getApplication(
-            new RefreshCommand(new Analyser(new Finder(new PhpPreset())))
+            new RefreshCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
         );
     }
 
@@ -147,7 +148,7 @@ CONTENT);
         ]);
 
         $this->assertSame(
-            'Warning: Chosen preset assembler is not available. Maybe contribute it?.' . PHP_EOL,
+            'Warning: Chosen preset assembler is not available. Maybe contribute it!?' . PHP_EOL,
             $tester->getDisplay()
         );
         $this->assertTrue($tester->getStatusCode() !== Command::SUCCESS);

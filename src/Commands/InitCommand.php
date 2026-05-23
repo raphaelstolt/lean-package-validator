@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\CommonPreset;
@@ -24,9 +25,9 @@ final class InitCommand extends Command
     /**
      * Package analyser.
      *
-     * @var Analyser
+     * @var AbstractExportIgnoreAnalyser
      */
-    protected Analyser $analyser;
+    protected AbstractExportIgnoreAnalyser $analyser;
 
     /**
      * @var Finder
@@ -38,8 +39,8 @@ final class InitCommand extends Command
      */
     public function __construct(Analyser $analyser)
     {
-        $this->analyser = $analyser;
-        $this->finder = $analyser->getFinder();
+        $this->analyser = $analyser->getActualExportIgnoreAnalyser();
+        $this->finder = $this->analyser->getFinder();
 
         parent::__construct();
     }
@@ -142,7 +143,7 @@ final class InitCommand extends Command
             $globPatternFromPreset = true;
             $defaultGlobPattern = $this->finder->getPresetGlobByLanguageName($chosenPreset);
         } else {
-            $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
+            $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it!?';
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {

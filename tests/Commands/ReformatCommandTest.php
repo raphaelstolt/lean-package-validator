@@ -6,6 +6,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\ReformatCommand;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
@@ -15,9 +16,22 @@ use Zenstruck\Console\Test\TestCommand;
 
 final class ReformatCommandTest extends TestCase
 {
+    protected Analyser $analyser;
+
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
+
+        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
+    }
+
+    /**
+     * @return ReformatCommand
+     */
+    private function getCommandInstance(): ReformatCommand
+    {
+        return new ReformatCommand($this->analyser,  new GitattributesFileRepository($this->analyser));
     }
 
     protected function tearDown(): void
@@ -28,10 +42,6 @@ final class ReformatCommandTest extends TestCase
     #[Test]
     public function reformatsNegatedExportIgnores(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
@@ -52,7 +62,7 @@ CONTENT;
 
         \touch($this->temporaryDirectory . '/bin/lpv');
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->execute()
@@ -83,10 +93,6 @@ CONTENT;
     #[Test]
     public function sortsExportIgnoresAlphabetically(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 /.gitattributes export-ignore
 /.gitignore export-ignore
@@ -103,7 +109,7 @@ CONTENT;
 
         $this->createTemporaryFiles(['.gitignore'], ['example', 'tests', '.github']);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->addOption('sort-alphabetically')
@@ -133,10 +139,6 @@ CONTENT;
     #[Test]
     public function sortsExportIgnoresFromDirectoriesToFiles(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 /.gitattributes export-ignore
 /.gitignore export-ignore
@@ -153,7 +155,7 @@ CONTENT;
 
         $this->createTemporaryFiles(['.gitignore'], ['example', 'tests', '.github']);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->addOption('sort-from-directories-to-files')
@@ -183,10 +185,6 @@ CONTENT;
     #[Test]
     public function addASlashToExportIgnoredDirectories(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 /.gitattributes export-ignore
 /.gitignore export-ignore
@@ -203,7 +201,7 @@ CONTENT;
 
         $this->createTemporaryFiles(['.gitignore'], ['example', 'tests', '.github']);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->execute()
@@ -232,10 +230,6 @@ CONTENT;
     #[Test]
     public function alignsOnlyExistingExportIgnoresAndRemovesPrecedingSlashes(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $this->createTemporaryFiles(['not-present-in-gitattributes'], ['not-present-directory']);
 
         $gitattributesContent = <<<CONTENT
@@ -254,7 +248,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
@@ -285,10 +279,6 @@ CONTENT;
     #[Test]
     public function printsAlignedExistingExportIgnoresWithoutWritingAFile(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 short export-ignore
 much-longer export-ignore
@@ -296,7 +286,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->execute()
@@ -317,10 +307,6 @@ CONTENT;
     #[Test]
     public function groupsNonExportIgnoreDirectivesInSeparateSection(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
@@ -333,7 +319,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->addOption('group')
@@ -362,10 +348,6 @@ CONTENT;
     #[Test]
     public function groupKeepsStickyCommentsWithExportIgnores(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
@@ -377,7 +359,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->addOption('group')
@@ -399,10 +381,6 @@ CONTENT;
     #[Test]
     public function groupMovesUnrelatedCommentsToNonExportIgnoreSection(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 # text encoding
 * text=auto eol=lf
@@ -416,7 +394,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->addOption('group')
@@ -439,10 +417,6 @@ CONTENT;
     #[Test]
     public function groupsNonExportIgnoreDirectivesAndWritesFile(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new ReformatCommand($analyser, $repository);
-
         $gitattributesContent = <<<CONTENT
 * text=auto eol=lf
 
@@ -457,7 +431,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('group')
             ->execute()

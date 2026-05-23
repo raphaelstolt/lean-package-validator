@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands\Concerns;
 
 use SplFileInfo;
-use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
+use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,7 +46,7 @@ trait GeneratesGitattributesOptions
     /**
      * Apply generation-related options to the analyser.
      */
-    protected function applyGenerationOptions(InputInterface $input, OutputInterface $output, Analyser $analyser): bool
+    protected function applyGenerationOptions(InputInterface $input, OutputInterface $output, AbstractExportIgnoreAnalyser $analyser): bool
     {
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
@@ -138,8 +139,8 @@ trait GeneratesGitattributesOptions
             try {
                 $output->writeln('+ Using the ' . $chosenPreset . ' language preset.', OutputInterface::VERBOSITY_VERBOSE);
                 $analyser->setGlobPatternFromPreset($chosenPreset);
-            } catch (\Stolt\LeanPackage\Exceptions\PresetNotAvailable $e) {
-                $warning = 'Warning: The chosen language preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
+            } catch (PresetNotAvailable $e) {
+                $warning = 'Warning: The chosen language preset ' . $chosenPreset . ' is not available. Maybe contribute it!?';
                 $output->writeln('<error>' . $warning . '</error>');
 
                 return false;

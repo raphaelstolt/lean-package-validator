@@ -25,6 +25,7 @@ if (false === $autoloaded) {
 \define('VERSION', '5.9.1');
 
 use Stolt\Console\Commands\ListSkillsCommand;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Commands\ReformatCommand;
@@ -44,7 +45,7 @@ use Symfony\Component\Console\Application;
 
 $finder = new Finder(new PhpPreset());
 $archive = new Archive(WORKING_DIRECTORY);
-$analyser = new Analyser($finder);
+$analyser = new Analyser(new ClassicExportIgnoreAnalyser($finder));
 $gitattributesFileRepository = new GitattributesFileRepository($analyser);
 
 $initCommand = new InitCommand(

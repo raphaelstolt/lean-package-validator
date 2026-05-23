@@ -7,6 +7,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
@@ -19,6 +20,8 @@ use Zenstruck\Console\Test\TestCommand;
 
 final class ValidateCommandStdinOptionsTest extends TestCase
 {
+    protected Analyser $analyser;
+
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
@@ -33,14 +36,17 @@ final class ValidateCommandStdinOptionsTest extends TestCase
         $this->removeDirectory($this->temporaryDirectory);
     }
 
-    private function makeAppWithCommand(string $stdinContent): array
+    private function getApplicationWithCommandInstance(string $stdinContent): array
     {
         $application = new Application();
         $fakeInputReader = new FakeInputReader();
         $fakeInputReader->set($stdinContent);
 
+        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
+
         $command = new ValidateCommand(
-            (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory),
+            $this->analyser,
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader
         );
@@ -53,13 +59,11 @@ final class ValidateCommandStdinOptionsTest extends TestCase
     #[RunInSeparateProcess]
     public function stdinHonorsStrictOrderAndReportsInvalidOnShuffledOrder(): void
     {
-        // Arrange repository artifacts so expected export-ignores can be computed
         $this->createTemporaryFiles(
             ['README.md', '.gitignore'],
             ['tests']
         );
 
-        // Shuffled order: README before dotfiles, etc.
         $stdinContent = <<<GITATTR
 
 README.md export-ignore
@@ -69,11 +73,11 @@ tests/ export-ignore
 
 GITATTR;
 
-        [$application, $cmd] = $this->makeAppWithCommand($stdinContent);
+        [$application, $cmd] = $this->getApplicationWithCommandInstance($stdinContent);
         $command = $application->find('validate');
 
-        // Act/Assert: with strict order, shuffled input is invalid
         TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
             ->addOption('stdin-input')
             ->addOption('enforce-strict-order')
             ->execute()
@@ -85,13 +89,11 @@ GITATTR;
     #[RunInSeparateProcess]
     public function stdinHonorsStrictOrderAndReportsValidOnExpectedOrder(): void
     {
-        // Arrange repository artifacts
         $this->createTemporaryFiles(
             ['README.md', '.gitignore'],
             ['tests']
         );
 
-        // Likely expected order: .gitattributes, .gitignore, README.md, tests/
         $stdinContent = <<<GITATTR
 
 .gitattributes export-ignore
@@ -101,11 +103,11 @@ tests/ export-ignore
 
 GITATTR;
 
-        [$application, $cmd] = $this->makeAppWithCommand($stdinContent);
+        [$application, $cmd] = $this->getApplicationWithCommandInstance($stdinContent);
         $command = $application->find('validate');
 
-        // Act/Assert: with strict order, correctly ordered input is valid
-        TestCommand::for($command)
+       TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
             ->addOption('stdin-input')
             ->addOption('enforce-strict-order')
             ->execute()
@@ -117,13 +119,11 @@ GITATTR;
     #[RunInSeparateProcess]
     public function stdinHonorsEnforceAlignmentAndReportsValidOnExpectedOrder(): void
     {
-        // Arrange repository artifacts
         $this->createTemporaryFiles(
             ['README.md', '.gitignore'],
             ['tests']
         );
 
-        // Likely expected order: .gitattributes, .gitignore, README.md, tests/
         $stdinContent = <<<GITATTR
 
 .gitattributes export-ignore
@@ -133,11 +133,11 @@ tests/         export-ignore
 
 GITATTR;
 
-        [$application, $cmd] = $this->makeAppWithCommand($stdinContent);
+        [$application, $cmd] = $this->getApplicationWithCommandInstance($stdinContent);
         $command = $application->find('validate');
 
-        // Act/Assert: with strict order, correctly ordered input is valid
         TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
             ->addOption('stdin-input')
             ->addOption('enforce-alignment')
             ->execute()

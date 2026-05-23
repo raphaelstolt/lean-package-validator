@@ -56,13 +56,13 @@ class TestCase extends PHPUnit
             \RecursiveIteratorIterator::CHILD_FIRST
         );
 
-        /** @var \SplFileInfo $fileinfo */
-        foreach ($files as $fileinfo) {
-            if ($fileinfo->isDir()) {
-                \rmdir($fileinfo->getRealPath());
+        /** @var \SplFileInfo $fileInfo */
+        foreach ($files as $fileInfo) {
+            if ($fileInfo->isDir()) {
+                \rmdir($fileInfo->getRealPath());
                 continue;
             }
-            \unlink($fileinfo->getRealPath());
+            \unlink($fileInfo->getRealPath());
         }
 
         \rmdir($directory);
@@ -77,7 +77,7 @@ class TestCase extends PHPUnit
      *
      * @return void
      */
-    protected function createTemporaryFiles(array $files, array $directories = [])
+    protected function createTemporaryFiles(array $files, array $directories = []): void
     {
         foreach ($files as $file) {
             $artifactFile = $this->temporaryDirectory
@@ -96,14 +96,26 @@ class TestCase extends PHPUnit
         }
     }
 
+    protected function createTemporaryFilesInDirectory(string $directory, array $files): void
+    {
+        if (!\is_dir($directory)) {
+            throw new \InvalidArgumentException(sprintf("Directory '%s' does not exist. Create it first", $directory));
+        }
+
+        foreach ($files as $file) {
+            $artifactFile = $directory . DIRECTORY_SEPARATOR . $file;
+            \touch($artifactFile);
+        }
+    }
+
     /**
-     * Create temporary gitattributes file.
+     * Create a temporary gitattributes file.
      *
-     * @param  string $content Content of file.
+     * @param string $content Content of file.
      *
      * @return boolean
      */
-    protected function createTemporaryGitattributesFile($content): bool
+    protected function createTemporaryGitattributesFile(string $content): bool
     {
         $temporaryGitattributesFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -115,13 +127,13 @@ class TestCase extends PHPUnit
     }
 
     /**
-     * Create temporary gitignore file.
+     * Create a temporary .gitignore file.
      *
-     * @param  string $content Content of file.
+     * @param string $content Content of file.
      *
      * @return boolean
      */
-    protected function createTemporaryGitignoreFile($content)
+    protected function createTemporaryGitignoreFile(string $content): bool
     {
         $temporaryGitignoreFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
@@ -133,11 +145,11 @@ class TestCase extends PHPUnit
     /**
      * Create temporary glob pattern (.lpv) file.
      *
-     * @param  string $content Content of file.
+     * @param string $content Content of file.
      *
      * @return boolean
      */
-    protected function createTemporaryGlobPatternFile($content)
+    protected function createTemporaryGlobPatternFile(string $content): bool
     {
         $temporaryLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR

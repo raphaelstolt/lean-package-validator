@@ -4,6 +4,7 @@ namespace Stolt\LeanPackage\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
@@ -30,7 +31,8 @@ final class GitattributesFileRepositoryTest extends TestCase
     #[Test]
     public function addsExpectedFileHeaders(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
+        $analyser = (new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))));
+        $analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
 
         $repository = new GitattributesFileRepository($analyser);
 

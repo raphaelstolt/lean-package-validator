@@ -7,6 +7,7 @@ namespace Stolt\LeanPackage\Tests\Commands;
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
 
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\UpdateCommand;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
@@ -17,9 +18,23 @@ use Zenstruck\Console\Test\TestCommand;
 
 final class UpdateCommandTest extends TestCase
 {
+    protected Analyser $analyser;
+
+    /**
+     * @return UpdateCommand
+     */
+    private function getCommandInstance(): UpdateCommand
+    {
+        $repository = new GitattributesFileRepository($this->analyser);
+        return new UpdateCommand($this->analyser, $repository);
+    }
+
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
+
+        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
     }
 
     protected function tearDown(): void
@@ -33,10 +48,6 @@ final class UpdateCommandTest extends TestCase
         if ((new OsHelper())->isWindows()) {
             $this->markTestSkipped('Skipping test on Windows systems');
         }
-
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
 
         $artifactFilenames = ['.gitignore'];
 
@@ -55,7 +66,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
@@ -91,11 +102,7 @@ CONTENT;
             \unlink($gitattributesFile);
         }
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertFaulty()
@@ -105,10 +112,6 @@ CONTENT;
     #[Test]
     public function printsExpectedContentWithoutWritingAFile(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
         $artifactFilenames = ['README.md', '.gitignore', 'phpunit.xml.dist'];
 
         $this->createTemporaryFiles(
@@ -116,7 +119,7 @@ CONTENT;
             ['tests']
         );
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->addOption('align-export-ignores')
@@ -137,10 +140,6 @@ CONTENT;
             $this->markTestSkipped('Skipping test on Windows systems');
         }
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
         $this->createTemporaryFiles(['.gitignore'], ['tests', '.github']);
 
         $gitattributesContent = <<<CONTENT
@@ -150,7 +149,7 @@ tests/ export-ignore
 CONTENT;
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('agentic-run')
             ->execute()
@@ -177,11 +176,7 @@ CONTENT;
             \unlink($gitattributesFile);
         }
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('agentic-run')
             ->execute()
@@ -198,10 +193,6 @@ CONTENT;
     #[Test]
     public function groupsNonExportIgnoreDirectivesInSeparateSection(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
         $this->createTemporaryFiles([
             '.gitignore',
             '.editorconfig',
@@ -220,7 +211,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('group')
             ->addOption('align-export-ignores')
@@ -250,10 +241,6 @@ CONTENT;
             $this->markTestSkipped('Skipping test on Windows systems');
         }
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
         $this->createTemporaryFiles([
             '.gitignore',
             '.editorconfig',
@@ -272,7 +259,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('group')
             ->addOption('align-export-ignores')
@@ -298,10 +285,6 @@ CONTENT;
     #[Test]
     public function itKeepsNonExportIgnoreContentAndRemovesAllStaleEntries(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new UpdateCommand($analyser, $repository);
-
         $this->createTemporaryFiles([
             '.gitignore',
             '.editorconfig',
@@ -343,7 +326,7 @@ README.md        export-ignore
 tests/           export-ignore
 CONTENT;
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('keep-license')
             ->addOption('align-export-ignores')

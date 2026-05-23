@@ -15,10 +15,10 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\Ticket;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
-
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\GitattributesFileRepository;
@@ -44,17 +44,14 @@ class ValidateCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
-        if (!\defined('WORKING_DIRECTORY')) {
-            \define('WORKING_DIRECTORY', $this->temporaryDirectory);
-        }
 
-        $analyserCommand = new ValidateCommand(
-            new Analyser(new Finder(new PhpPreset())),
+        $validateCommand = new ValidateCommand(
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive($this->temporaryDirectory)),
             new FakeInputReader()
         );
 
-        $this->application = $this->getApplication($analyserCommand);
+        $this->application = $this->getApplication($validateCommand);
     }
 
     /**
@@ -88,7 +85,7 @@ class ValidateCommandTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -131,7 +128,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--align-export-ignores' => true,
         ]);
 
@@ -183,7 +180,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--diff' => true,
         ]);
 
@@ -202,11 +199,12 @@ CONTENT;
     {
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
 
-        $analyserMock = Mockery::mock(Analyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedClassicExportIgnoreAnalyser = Mockery::mock(ClassicExportIgnoreAnalyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
-        $analyserMock->setGlobPattern($globPattern);
+        $mockedAnalyser->getActualExportIgnoreAnalyser()->setGlobPattern($globPattern);
 
-        $application = $this->getApplicationWithMockedAnalyser($analyserMock);
+        $application = $this->getApplicationWithMockedAnalyser($mockedAnalyser);
 
         $artifactFilenames = [
             '.gitattributes',
@@ -233,7 +231,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--enforce-strict-order' => true,
             '--enforce-alignment' => true,
         ]);
@@ -271,12 +269,14 @@ CONTENT;
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/16')]
     public function gitattributesFileWithNoExportIgnoresContentShowsExpectedContent(): void
     {
-        $analyserMock = Mockery::mock(Analyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedClassicExportIgnoreAnalyser = Mockery::mock(ClassicExportIgnoreAnalyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
-        $analyserMock->setGlobPattern($globPattern);
 
-        $application = $this->getApplicationWithMockedAnalyser($analyserMock);
+        $mockedAnalyser->getActualExportIgnoreAnalyser()->setGlobPattern($globPattern);
+
+        $application = $this->getApplicationWithMockedAnalyser($mockedAnalyser);
 
         $artifactFilenames = [
             '.gitattributes',
@@ -311,7 +311,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--enforce-strict-order' => true,
             '--enforce-alignment' => true,
         ]);
@@ -380,7 +380,7 @@ Use the --create|-c option to create a .gitattributes file with the shown conten
 CONTENT;
 
         TestCommand::for($command)
-            ->addArgument(WORKING_DIRECTORY)
+            ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertOutputContains($expectedDisplay)
             ->assertFaulty();
@@ -405,7 +405,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -447,7 +447,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--keep-license' => true,
         ]);
 
@@ -490,7 +490,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--keep-readme' => true,
         ]);
 
@@ -533,7 +533,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--keep-readme' => true,
             '--keep-license' => true,
         ]);
@@ -577,7 +577,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--keep-glob-pattern' => '{README.*,License.*,docs*}',
         ]);
 
@@ -620,7 +620,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--keep-license' => true,
             '--glob-pattern' => '{.*,*.md,*.dist,LICENSE.md,spec*}*',
         ]);
@@ -674,7 +674,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--keep-license' => true,
         ]);
 
@@ -701,7 +701,7 @@ CONTENT;
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, shouldHaveLicenseFile]',
-            [new Archive(WORKING_DIRECTORY, 'foo')]
+            [new Archive($this->temporaryDirectory, 'foo')]
         );
 
         $mock->shouldReceive('validate')
@@ -726,7 +726,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--validate-git-archive' => true,
             '--keep-license' => true,
         ]);
@@ -747,7 +747,7 @@ CONTENT;
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, shouldHaveLicenseFile]',
-            [new Archive(WORKING_DIRECTORY, 'foo')]
+            [new Archive($this->temporaryDirectory, 'foo')]
         );
 
         $mock->shouldReceive('validate')
@@ -772,7 +772,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--validate-git-archive' => true,
             '--keep-license' => true,
         ]);
@@ -809,7 +809,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--create' => true,
         ]);
 
@@ -841,7 +841,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--create' => true,
             '--omit-header' => true
         ]);
@@ -852,7 +852,7 @@ CONTENT;
         $commandTester->assertCommandIsSuccessful();
 
         $this->assertFileExists(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
     }
 
@@ -870,18 +870,18 @@ CONTENT;
         $commandTester = new CommandTester($command);
 
         $this->assertFileDoesNotExist(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
 
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--create' => true,
         ]);
 
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
     }
 
@@ -903,7 +903,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--create' => true,
             '--align-export-ignores' => true,
         ]);
@@ -931,7 +931,7 @@ CONTENT;
         $this->assertStringContainsString($expectedGitattributesExportIgnores, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
     }
 
@@ -965,7 +965,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -1001,7 +1001,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -1041,7 +1041,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern' => '{.*,*.rst,*.py[cod],testrunner.py,dist}*',
         ]);
 
@@ -1076,7 +1076,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern' => $failingGlobPattern,
         ]);
 
@@ -1099,7 +1099,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern' => $missingGlobPattern,
         ]);
 
@@ -1126,7 +1126,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--overwrite' => true,
         ]);
 
@@ -1149,7 +1149,7 @@ CONTENT;
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
     }
 
@@ -1158,7 +1158,7 @@ CONTENT;
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate]',
-            [new Archive(WORKING_DIRECTORY, 'foo')]
+            [new Archive($this->temporaryDirectory, 'foo')]
         );
         $mock->shouldReceive('validate')
             ->once()
@@ -1177,7 +1177,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--validate-git-archive' => true,
         ]);
 
@@ -1195,7 +1195,7 @@ CONTENT;
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, getFoundUnexpectedArchiveArtifacts]',
-            [new Archive(WORKING_DIRECTORY, 'foo')]
+            [new Archive($this->temporaryDirectory, 'foo')]
         );
         $mock->shouldReceive('validate')
             ->once()
@@ -1219,7 +1219,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--validate-git-archive' => true,
         ]);
 
@@ -1242,7 +1242,7 @@ CONTENT;
     {
         $mock = Mockery::mock(
             'Stolt\LeanPackage\Archive\Validator[validate, getFoundUnexpectedArchiveArtifacts]',
-            [new Archive(WORKING_DIRECTORY, 'foo')]
+            [new Archive($this->temporaryDirectory, 'foo')]
         );
         $mock->shouldReceive('validate')
             ->once()
@@ -1266,7 +1266,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--validate-git-archive' => true,
         ]);
 
@@ -1289,23 +1289,24 @@ CONTENT;
     #[Test]
     public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed(): void
     {
-        $mock = Mockery::mock(Analyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedClassicExportIgnoreAnalyser = Mockery::mock(ClassicExportIgnoreAnalyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
-        $mock->setGlobPattern($globPattern);
+        $mockedClassicExportIgnoreAnalyser->setGlobPattern($globPattern);
 
-        $mock->shouldReceive('getExpectedGitattributesContent')
+        $mockedAnalyser->shouldReceive('getExpectedGitattributesContent')
             ->once()
             ->withAnyArgs()
             ->andReturn('');
 
-        $application = $this->getApplicationWithMockedAnalyser($mock);
+        $application = $this->getApplicationWithMockedAnalyser($mockedAnalyser);
 
         $command = $application->find('validate');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -1322,7 +1323,7 @@ CONTENT;
     #[Test]
     public function invalidDirectoryArgumentReturnsExpectedStatusCode(): void
     {
-        $nonExistentDirectoryOrFile = WORKING_DIRECTORY
+        $nonExistentDirectoryOrFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . 'non-existent-directory-or-file';
 
@@ -1387,7 +1388,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--overwrite' => true,
             '-a' => true,
         ]);
@@ -1444,7 +1445,7 @@ CONTENT;
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringEqualsFile(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes',
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
             $expectedGitattributesContent
         );
     }
@@ -1479,7 +1480,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--diff' => true,
             '--report-stale-export-ignores' => true
         ]);
@@ -1540,7 +1541,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--overwrite' => true
         ]);
 
@@ -1563,7 +1564,7 @@ tests/ export-ignore
 CONTENT;
 
         $this->assertStringEqualsFile(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes',
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
             $expectedGitattributesContent
         );
     }
@@ -1582,18 +1583,18 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--create' => true,
             '--omit-header' => false,
         ]);
 
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
         $this->assertStringContainsString(
             GitattributesFileRepository::GENERATED_HEADER,
-            \file_get_contents(WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes')
+            \file_get_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes')
         );
     }
 
@@ -1625,7 +1626,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             $option => true,
             '--omit-header' => true,
         ]);
@@ -1650,7 +1651,7 @@ CONTENT;
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
         $this->assertFileExists(
-            WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.gitattributes'
+            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
         );
     }
 
@@ -1687,7 +1688,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--create' => true,
         ]);
 
@@ -1737,7 +1738,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -1778,7 +1779,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--enforce-alignment' => true,
         ]);
 
@@ -1828,7 +1829,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--enforce-alignment' => true,
             '--enforce-strict-order' => true,
         ]);
@@ -1880,7 +1881,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--enforce-strict-order' => true,
         ]);
 
@@ -1945,7 +1946,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern' => '{.*,*file,*.dist,specs}*',
         ]);
 
@@ -2003,7 +2004,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern-file' => $temporaryLpvFile,
         ]);
 
@@ -2035,9 +2036,11 @@ CONTENT;
         $gitattributesContent = <<<CONTENT
 * text=auto
 
-example/ export-ignore
+.gitattributes export-ignore
+.lpv export-ignore
 a.txt export-ignore
 b.rst export-ignore
+example/ export-ignore
 Vagrantfile export-ignore
 
 CONTENT;
@@ -2057,7 +2060,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -2089,7 +2092,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern-file' => $temporaryLpvFile,
         ]);
 
@@ -2129,7 +2132,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--glob-pattern-file' => $temporaryLpvFile,
         ]);
 
@@ -2175,7 +2178,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -2218,7 +2221,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -2274,7 +2277,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -2296,7 +2299,7 @@ CONTENT;
         $fakeInputReader->set('Some non .gitattributes content.');
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new Finder(new PhpPreset())),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive(\getcwd())),
             $fakeInputReader
         );
@@ -2317,7 +2320,7 @@ CONTENT;
 
     #[Test]
     #[RunInSeparateProcess]
-    public function detectsValidGitattributeContentInStdinInput(): void
+    public function detectsValidGitattributesContentInStdinInput(): void
     {
         $artifactFilenames = [
             '.buildignore',
@@ -2351,7 +2354,7 @@ CONTENT;
         $fakeInputReader->set($gitattributesContent);
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new Finder(new PhpPreset())),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader
         );
@@ -2364,6 +2367,7 @@ The provided .gitattributes content is considered valid.
 CONTENT;
 
         TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
             ->addOption('stdin-input')
             ->execute()
             ->assertOutputContains($expectedDisplay)
@@ -2407,7 +2411,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--preset' => 'Rust',
         ]);
 
@@ -2458,7 +2462,7 @@ CONTENT;
         $application = new Application();
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new Finder(new PhpPreset())),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             $mockedArchiveValidator,
             new FakeInputReader()
         );
@@ -2489,7 +2493,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--agentic-run' => true,
         ]);
 
@@ -2520,7 +2524,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--agentic-run' => true,
         ]);
 
@@ -2544,7 +2548,7 @@ CONTENT;
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'directory' => WORKING_DIRECTORY,
+            'directory' => $this->temporaryDirectory,
             '--agentic-run' => true,
         ]);
 
@@ -2563,6 +2567,9 @@ CONTENT;
     public function validatesNegatedExportIgnoreDirectivesAsValid(): void
     {
         $this->createTemporaryFiles(['composer.json', 'LICENSE.md'], ['src', 'bin']);
+
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'bin', ['test-cli']);
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src', ['Foo.php', 'Bar.php']);
 
         $gitattributesContent = <<<CONTENT
 # Line-ending normalization for text files.
@@ -2584,10 +2591,10 @@ composer.json -export-ignore
 LICENSE.md -export-ignore
 
 # Source code and CLI entry point.
-/src           -export-ignore
-/src**         -export-ignore
-/bin           -export-ignore
-/bin/test-cli  -export-ignore
+/src -export-ignore
+/src** -export-ignore
+/bin -export-ignore
+/bin/test-cli -export-ignore
 CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
@@ -2595,7 +2602,7 @@ CONTENT;
         $command = $this->application->find('validate');
 
         TestCommand::for($command)
-            ->addArgument(WORKING_DIRECTORY)
+            ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertOutputContains('The present .gitattributes file is considered valid.')
             ->assertSuccessful();
@@ -2616,7 +2623,7 @@ CONTENT;
         $command = $this->application->find('validate');
 
         TestCommand::for($command)
-            ->addArgument(WORKING_DIRECTORY)
+            ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertOutputContains('The present .gitattributes file with negated export-ignore directives is considered invalid.')
             ->assertFaulty();
@@ -2643,7 +2650,7 @@ CONTENT;
         $fakeInputReader->set($gitattributesContent);
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new Finder(new PhpPreset())),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader
         );
@@ -2678,7 +2685,7 @@ CONTENT;
         $command = $this->application->find('validate');
 
         TestCommand::for($command)
-            ->addArgument(WORKING_DIRECTORY)
+            ->addArgument($this->temporaryDirectory)
             ->addOption('report-stale-export-ignores')
             ->execute()
             ->assertOutputContains('The present .gitattributes file with negated export-ignore directives is considered invalid.')
@@ -2690,11 +2697,8 @@ CONTENT;
     {
         $this->createTemporaryFiles(['composer.json', 'LICENSE.md'], ['src', 'resources']);
 
-        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'foo');
-        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'bar');
-
-        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'foo');
-        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'bar');
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src', ['Foo.php', 'Bar.php']);
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'resources', ['foo', 'bar']);
 
         $gitattributesContent = <<<CONTENT
 * export-ignore
@@ -2710,8 +2714,8 @@ CONTENT;
 
         $command = $this->application->find('validate');
 
-        $testCommand = TestCommand::for($command)
-            ->addArgument(WORKING_DIRECTORY)
+        TestCommand::for($command)
+            ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertOutputContains('The present .gitattributes file with negated export-ignore directives is considered invalid.')
             ->assertFaulty();

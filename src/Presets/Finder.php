@@ -65,7 +65,7 @@ class Finder
         $name = \ucfirst(\strtolower($name));
 
         if (!\in_array($name, $this->getAvailablePresets(), strict: true)) {
-            $message = \sprintf('Preset for %s not available. Maybe contribute it?.', $name);
+            $message = \sprintf('Preset for %s not available. Maybe contribute it!?', $name);
             throw new PresetNotAvailable($message);
         }
 

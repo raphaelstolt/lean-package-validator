@@ -66,7 +66,7 @@ class FinderTest extends TestCase
     public function forNonAvailableLanguagePresetItThrowsExpectedException(): void
     {
         $this->expectException(PresetNotAvailable::class);
-        $expectedExceptionMessage ='Preset for Kotlin not available. Maybe contribute it?.';
+        $expectedExceptionMessage ='Preset for Kotlin not available. Maybe contribute it!?';
         $this->expectExceptionMessage($expectedExceptionMessage);
 
         $finder = new Finder(new PhpPreset());

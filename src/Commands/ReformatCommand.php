@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Symfony\Component\Console\Command\Command;
@@ -12,10 +13,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 final class ReformatCommand extends Command
 {
     use OutputOptions;
+
+    protected AbstractExportIgnoreAnalyser $exportIgnoreAnalyser;
 
     /**
      * @param Analyser $analyser
@@ -24,6 +28,8 @@ final class ReformatCommand extends Command
     public function __construct(private readonly Analyser $analyser,
                                 private readonly GitattributesFileRepository $repository)
     {
+        $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
+
         parent::__construct();
     }
 
@@ -34,7 +40,7 @@ final class ReformatCommand extends Command
      */
     protected function configure(): void
     {
-        $this->analyser->setDirectory(\getcwd());
+        $this->exportIgnoreAnalyser->setDirectory(\getcwd());
 
         $this
             ->setName('reformat')
@@ -49,7 +55,7 @@ final class ReformatCommand extends Command
             'directory',
             InputArgument::OPTIONAL,
             $directoryDescription,
-            $this->analyser->getDirectory()
+            $this->exportIgnoreAnalyser->getDirectory()
         );
 
         $this->addOption(
@@ -93,7 +99,7 @@ final class ReformatCommand extends Command
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
 
-        $this->analyser->setDirectory($directory);
+        $this->exportIgnoreAnalyser->setDirectory($directory);
 
         return $this->reformatPresentExportIgnores($input, $output, $directory);
     }
@@ -104,7 +110,7 @@ final class ReformatCommand extends Command
         string          $directory
     ): int
     {
-        $gitattributesPath = $this->analyser->getGitattributesFilePath();
+        $gitattributesPath = $this->exportIgnoreAnalyser->getGitattributesFilePath();
 
         $isAgenticRun = $this->isAgenticRun($input);
 
@@ -118,15 +124,15 @@ final class ReformatCommand extends Command
         }
 
         if ($input->getOption('sort-alphabetically')) {
-            $this->analyser->sortAlphabetically();
+            $this->exportIgnoreAnalyser->sortAlphabetically();
         }
 
         if ($input->getOption('sort-from-directories-to-files')) {
-            $this->analyser->sortFromDirectoriesToFiles();
+            $this->exportIgnoreAnalyser->sortFromDirectoriesToFiles();
         }
 
-        if ((bool) $input->getOption('group')) {
-            $this->analyser->setGroupNonExportIgnores(true);
+        if ($input->getOption('group')) {
+            $this->exportIgnoreAnalyser->setGroupNonExportIgnores(true);
         }
 
         $reformatted = $this->analyser->getReformattedGitattributesContent();
@@ -149,7 +155,7 @@ final class ReformatCommand extends Command
 
         try {
             $this->repository->overwriteGitattributesFileFormatted($reformatted);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $message = 'Update of .gitattributes file failed.';
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $message);
@@ -160,7 +166,7 @@ final class ReformatCommand extends Command
         }
 
         $directory = \realpath($directory);
-        $suffix = (bool) $input->getOption('group') ? ' and grouped' : '';
+        $suffix =  $input->getOption('group') ? ' and grouped' : '';
         $message = "The export-ignore directives in {$directory} have been reformatted{$suffix}.";
         if ($isAgenticRun) {
             $this->writeAgenticOutput($output, $this->getName(), true, $message, ['gitattributes_file_path' => $gitattributesPath]);

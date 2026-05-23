@@ -6,6 +6,8 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
+use Stolt\LeanPackage\Analysers\NegatedExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\CreateCommand;
 use Stolt\LeanPackage\GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
@@ -16,9 +18,22 @@ use Zenstruck\Console\Test\TestCommand;
 
 final class CreateCommandTest extends TestCase
 {
+    protected Analyser $analyser;
+
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
+
+        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), $this->temporaryDirectory));
+        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
+    }
+
+    /**
+     * @return CreateCommand
+     */
+    private function getCommandInstance(): CreateCommand
+    {
+        return new CreateCommand($this->analyser,  new GitattributesFileRepository($this->analyser));
     }
 
     protected function tearDown(): void
@@ -29,11 +44,7 @@ final class CreateCommandTest extends TestCase
     #[Test]
     public function failsForUnknownFlavour(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('flavour', 'unknown')
             ->execute()
@@ -44,10 +55,6 @@ final class CreateCommandTest extends TestCase
     #[Test]
     public function createsAGitattributesFileWithNegatedExportIgnoreDirectives(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
         $artifactFilenames = ['LICENSE.md', '.gitignore', 'composer.json'];
 
         $this->createTemporaryFiles(
@@ -55,13 +62,12 @@ final class CreateCommandTest extends TestCase
             ['tests', 'src', 'bin']
         );
 
-        \touch($this->temporaryDirectory . '/bin/lpv');
-        \touch($this->temporaryDirectory . '/src/Fake.php');
-        \touch($this->temporaryDirectory . '/src/AnotherFake.php');
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR  . 'bin', ['lpv']);
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR  . 'src', ['Fake.php', 'AnotherFake.php']);
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
-            ->addOption('flavour', Analyser::EXPORT_IGNORE_NEGATED)
+            ->addOption('flavour', NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED)
             ->addOption('keep-license')
             ->execute()
             ->assertSuccessful();
@@ -95,10 +101,6 @@ CONTENT;
             $this->markTestSkipped('Skipping test on Windows systems');
         }
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
         $artifactFilenames = ['README.md', '.gitignore'];
 
         $this->createTemporaryFiles(
@@ -106,7 +108,7 @@ CONTENT;
             ['tests']
         );
 
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertSuccessful()
@@ -132,10 +134,6 @@ CONTENT;
     #[Test]
     public function printsExpectedContentWithoutWritingAFile(): void
     {
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
         $artifactFilenames = ['README.md', '.gitignore'];
 
         $this->createTemporaryFiles(
@@ -143,7 +141,7 @@ CONTENT;
             ['tests']
         );
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('dry-run')
             ->execute()
@@ -172,11 +170,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
-        TestCommand::for($command)
+        TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->execute()
             ->assertFaulty()
@@ -190,13 +184,9 @@ CONTENT;
             $this->markTestSkipped('Skipping test on Windows systems');
         }
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
         $this->createTemporaryFiles(['README.md', '.gitignore'], ['tests']);
 
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('agentic-run')
             ->execute()
@@ -221,11 +211,7 @@ specs/ export-ignore
 CONTENT;
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-        $analyser = (new Analyser(new Finder(new PhpPreset())))->setDirectory($this->temporaryDirectory);
-        $repository = new GitattributesFileRepository($analyser);
-        $command = new CreateCommand($analyser, $repository);
-
-        $result = TestCommand::for($command)
+        $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
             ->addOption('agentic-run')
             ->execute()

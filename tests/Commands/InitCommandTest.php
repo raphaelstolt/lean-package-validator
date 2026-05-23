@@ -9,6 +9,7 @@ use phpmock\MockBuilder;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\Finder;
@@ -26,10 +27,12 @@ class InitCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->setUpTemporaryDirectory();
+
         if (!\defined('WORKING_DIRECTORY')) {
             \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
-        $this->application = $this->getApplication(new InitCommand(new Analyser(new Finder(new PhpPreset()))));
+
+        $this->application = $this->getApplication(new InitCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())))));
     }
 
     /**
@@ -47,7 +50,7 @@ class InitCommandTest extends TestCase
     #[Test]
     public function printsContentWithoutWritingAFile(): void
     {
-        $command = new InitCommand(new Analyser(new Finder(new PhpPreset())));
+        $command = new InitCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))));
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([
@@ -155,7 +158,7 @@ CONTENT;
     public function usingANonAvailablePresetShowsWarning(): void
     {
         $expectedDisplay = <<<CONTENT
-Warning: Chosen preset assembler is not available. Maybe contribute it?.
+Warning: Chosen preset assembler is not available. Maybe contribute it!?
 
 CONTENT;
 

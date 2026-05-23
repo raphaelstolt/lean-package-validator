@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Presets\CommonPreset;
@@ -24,8 +25,10 @@ final class RefreshCommand extends Command
     /**
      * Package analyser.
      *
-     * @var Analyser
+     * @var AbstractExportIgnoreAnalyser
      */
+    protected AbstractExportIgnoreAnalyser $exportIgnoreAnalyser;
+
     protected Analyser $analyser;
 
     /**
@@ -39,7 +42,8 @@ final class RefreshCommand extends Command
     public function __construct(Analyser $analyser)
     {
         $this->analyser = $analyser;
-        $this->finder = $analyser->getFinder();
+        $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
+        $this->finder = $this->exportIgnoreAnalyser->getFinder();
 
         parent::__construct();
     }
@@ -51,7 +55,7 @@ final class RefreshCommand extends Command
      */
     protected function configure(): void
     {
-        $this->analyser->setDirectory(WORKING_DIRECTORY);
+        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory(WORKING_DIRECTORY);
 
         $this
             ->setName('refresh')
@@ -68,7 +72,7 @@ final class RefreshCommand extends Command
             'directory',
             InputArgument::OPTIONAL,
             $directoryDescription,
-            $this->analyser->getDirectory()
+            $this->exportIgnoreAnalyser->getDirectory()
         );
 
         $this->addOption(
@@ -131,7 +135,7 @@ final class RefreshCommand extends Command
         }
 
         if ($chosenPreset === '' || !\in_array(\strtolower($chosenPreset), \array_map('strtolower', $this->finder->getAvailablePresets()), true)) {
-            $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it?.';
+            $warning = 'Warning: Chosen preset ' . $chosenPreset . ' is not available. Maybe contribute it!?';
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $warning);
             } else {

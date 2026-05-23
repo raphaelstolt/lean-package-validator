@@ -40,7 +40,7 @@ final class GitattributesFileRepository
         }
 
         $bytesWritten = file_put_contents(
-            $this->analyser->getGitattributesFilePath(),
+            $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath(),
             $content
         );
 
@@ -69,7 +69,7 @@ final class GitattributesFileRepository
         $content = $this->applyOverwriteHeaderPolicy($content);
 
         $bytesWritten = file_put_contents(
-            $this->analyser->getGitattributesFilePath(),
+            $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath(),
             $content
         );
 
@@ -90,7 +90,7 @@ final class GitattributesFileRepository
         $content = $this->applyOverwriteHeaderPolicy($content, self::HEADER_OVERWRITE_MODE_REFORMATTED);
 
         $bytesWritten = file_put_contents(
-            $this->analyser->getGitattributesFilePath(),
+            $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath(),
             $content
         );
 
@@ -109,7 +109,7 @@ final class GitattributesFileRepository
      */
     public function applyOverwriteHeaderPolicy(string $contentToWrite, string $overwriteHeaderMode = self::HEADER_OVERWRITE_MODE_GENERATED): string
     {
-        $gitattributesPath = $this->analyser->getGitattributesFilePath();
+        $gitattributesPath = $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath();
 
         if (!\is_file($gitattributesPath)) {
             return self::GENERATED_HEADER . PHP_EOL . PHP_EOL . $contentToWrite;

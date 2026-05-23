@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use Stolt\LeanPackage\Analyser;
+use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\GeneratesGitattributesOptions;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\GitattributesFileRepository;
@@ -19,6 +20,8 @@ final class UpdateCommand extends Command
     use GeneratesGitattributesOptions;
     use OutputOptions;
 
+    private AbstractExportIgnoreAnalyser $exportIgnoreAnalyser;
+
     /**
      * @var string $defaultName
      */
@@ -32,6 +35,8 @@ final class UpdateCommand extends Command
         private readonly Analyser $analyser,
         private readonly GitattributesFileRepository $repository
     ) {
+        $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
+
         parent::__construct();
     }
 
@@ -72,19 +77,19 @@ final class UpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
-        $this->analyser->setDirectory($directory);
+        $this->exportIgnoreAnalyser->setDirectory($directory);
         $isAgenticRun = $this->isAgenticRun($input);
 
         if ((bool) $input->getOption('group')) {
-            $this->analyser->setGroupNonExportIgnores(true);
+            $this->exportIgnoreAnalyser->setGroupNonExportIgnores(true);
         }
 
         // Apply options that influence generation
-        if (!$this->applyGenerationOptions($input, $output, $this->analyser)) {
+        if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser)) {
             return self::FAILURE;
         }
 
-        $gitattributesPath = $this->analyser->getGitattributesFilePath();
+        $gitattributesPath = $this->exportIgnoreAnalyser->getGitattributesFilePath();
 
         if (!\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             if ($isAgenticRun) {
