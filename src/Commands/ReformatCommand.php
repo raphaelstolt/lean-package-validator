@@ -7,7 +7,7 @@ namespace Stolt\LeanPackage\Commands;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

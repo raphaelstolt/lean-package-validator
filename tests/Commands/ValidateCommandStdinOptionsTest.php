@@ -11,6 +11,7 @@ use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\Helpers\FakeInputReader;
@@ -48,7 +49,8 @@ final class ValidateCommandStdinOptionsTest extends TestCase
         $command = new ValidateCommand(
             $this->analyser,
             new Validator(new Archive($this->temporaryDirectory)),
-            $fakeInputReader
+            $fakeInputReader,
+            new GitattributesFileRepository($this->analyser),
         );
         $application->addCommand($command);
 

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\ReformatCommand;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\TestCase;
@@ -31,7 +31,7 @@ final class ReformatCommandTest extends TestCase
      */
     private function getCommandInstance(): ReformatCommand
     {
-        return new ReformatCommand($this->analyser,  new GitattributesFileRepository($this->analyser));
+        return new ReformatCommand($this->analyser, new GitattributesFileRepository($this->analyser));
     }
 
     protected function tearDown(): void

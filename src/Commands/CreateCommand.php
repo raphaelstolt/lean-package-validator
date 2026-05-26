@@ -8,7 +8,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\GeneratesGitattributesOptions;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Analysers\NegatedExportIgnoreAnalyser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

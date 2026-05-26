@@ -9,7 +9,6 @@ use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 use SplFileInfo;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
-use Stolt\LeanPackage\Analysers\NegatedExportIgnoreAnalyser;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\Concerns\GeneratesGitattributesOptions;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
@@ -22,7 +21,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\InputReaderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -44,38 +43,21 @@ final class ValidateCommand extends Command
 
     protected string $defaultPreset = 'Php';
 
-    protected Analyser $analyser;
-
     protected AbstractExportIgnoreAnalyser $exportIgnoreAnalyser;
-
-    /**
-     * Archive validator.
-     *
-     * @var Validator
-     */
-    protected Validator $archiveValidator;
-
-    protected GitattributesFileRepository $gitattributesFileRepository;
-
-    /**
-     * Input reader.
-     *
-     * @var InputReaderInterface
-     */
-    protected InputReaderInterface $inputReader;
 
     /**
      * @param Analyser $analyser
      * @param Validator $archiveValidator
      * @param InputReaderInterface $inputReader
+     * @param GitattributesFileRepository $gitattributesFileRepository
      */
-    public function __construct(Analyser $analyser, Validator $archiveValidator, InputReaderInterface $inputReader)
+    public function __construct(
+        private readonly Analyser $analyser,
+        private readonly Validator $archiveValidator,
+        private readonly InputReaderInterface $inputReader,
+        private readonly GitattributesFileRepository $gitattributesFileRepository)
     {
-        $this->analyser = $analyser;
         $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
-        $this->archiveValidator = $archiveValidator;
-        $this->gitattributesFileRepository = new GitattributesFileRepository($analyser);
-        $this->inputReader = $inputReader;
         $this->defaultLpvFile = \getcwd() . DIRECTORY_SEPARATOR . '.lpv';
 
         parent::__construct();

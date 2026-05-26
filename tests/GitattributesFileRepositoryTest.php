@@ -5,7 +5,7 @@ namespace Stolt\LeanPackage\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 

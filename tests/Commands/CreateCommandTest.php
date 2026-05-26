@@ -9,7 +9,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Analysers\NegatedExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\CreateCommand;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
@@ -33,7 +33,7 @@ final class CreateCommandTest extends TestCase
      */
     private function getCommandInstance(): CreateCommand
     {
-        return new CreateCommand($this->analyser,  new GitattributesFileRepository($this->analyser));
+        return new CreateCommand($this->analyser, new GitattributesFileRepository($this->analyser));
     }
 
     protected function tearDown(): void

@@ -21,7 +21,7 @@ use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\ValidateCommand;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\NoLicenseFilePresent;
-use Stolt\LeanPackage\GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
@@ -45,10 +45,13 @@ class ValidateCommandTest extends TestCase
     {
         $this->setUpTemporaryDirectory();
 
+        $analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+
         $validateCommand = new ValidateCommand(
-            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
+            $analyser,
             new Validator(new Archive($this->temporaryDirectory)),
-            new FakeInputReader()
+            new FakeInputReader(),
+            new GitattributesFileRepository($analyser),
         );
 
         $this->application = $this->getApplication($validateCommand);
@@ -798,7 +801,7 @@ CONTENT;
         );
 
         $builder = new MockBuilder();
-        $builder->setNamespace('Stolt\LeanPackage')
+        $builder->setNamespace('Stolt\LeanPackage\Gitattributes')
                 ->setName('file_put_contents')
                 ->setFunctionProvider(new FixedValueFunction(false));
 
@@ -1677,7 +1680,7 @@ CONTENT;
         );
 
         $builder = new MockBuilder();
-        $builder->setNamespace('Stolt\LeanPackage')
+        $builder->setNamespace('Stolt\LeanPackage\Gitattributes')
             ->setName('file_put_contents')
             ->setFunctionProvider(new FixedValueFunction(false));
 
@@ -2301,7 +2304,8 @@ CONTENT;
         $analyserCommand = new ValidateCommand(
             new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive(\getcwd())),
-            $fakeInputReader
+            $fakeInputReader,
+            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
         );
 
         $application->addCommand($analyserCommand);
@@ -2356,7 +2360,8 @@ CONTENT;
         $analyserCommand = new ValidateCommand(
             new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive($this->temporaryDirectory)),
-            $fakeInputReader
+            $fakeInputReader,
+            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
         );
 
         $application->addCommand($analyserCommand);
@@ -2445,7 +2450,8 @@ CONTENT;
         $analyserCommand = new ValidateCommand(
             $mockedAnalyser,
             new Validator($archive),
-            new FakeInputReader()
+            new FakeInputReader(),
+            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
         );
 
         $application->addCommand($analyserCommand);
@@ -2464,7 +2470,8 @@ CONTENT;
         $analyserCommand = new ValidateCommand(
             new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             $mockedArchiveValidator,
-            new FakeInputReader()
+            new FakeInputReader(),
+            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
         );
 
         $application->addCommand($analyserCommand);
@@ -2652,7 +2659,8 @@ CONTENT;
         $analyserCommand = new ValidateCommand(
             new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
             new Validator(new Archive($this->temporaryDirectory)),
-            $fakeInputReader
+            $fakeInputReader,
+            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
         );
 
         $application->addCommand($analyserCommand);

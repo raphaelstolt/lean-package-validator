@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stolt\LeanPackage;
+namespace Stolt\LeanPackage\Gitattributes;
 
+use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 
-final class GitattributesFileRepository
+final class FileRepository
 {
     public const HEADER_OVERWRITE_MODE_GENERATED = 'generated';
     public const HEADER_OVERWRITE_MODE_MODIFIED = 'modified';
