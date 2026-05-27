@@ -24,7 +24,11 @@ final class CreateCommandTest extends TestCase
     {
         $this->setUpTemporaryDirectory();
 
-        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), $this->temporaryDirectory));
+        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(
+            new Finder(new PhpPreset()),
+            new GitattributesFileRepository($this->temporaryDirectory),
+            $this->temporaryDirectory
+        ));
         $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
     }
 
@@ -33,7 +37,7 @@ final class CreateCommandTest extends TestCase
      */
     private function getCommandInstance(): CreateCommand
     {
-        return new CreateCommand($this->analyser, new GitattributesFileRepository($this->analyser));
+        return new CreateCommand($this->analyser, new GitattributesFileRepository($this->temporaryDirectory));
     }
 
     protected function tearDown(): void

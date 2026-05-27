@@ -45,13 +45,15 @@ class ValidateCommandTest extends TestCase
     {
         $this->setUpTemporaryDirectory();
 
-        $analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $analyser = new Analyser(
+            new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))
+        );
 
         $validateCommand = new ValidateCommand(
             $analyser,
             new Validator(new Archive($this->temporaryDirectory)),
             new FakeInputReader(),
-            new GitattributesFileRepository($analyser),
+            new GitattributesFileRepository($this->temporaryDirectory),
         );
 
         $this->application = $this->getApplication($validateCommand);
@@ -202,7 +204,9 @@ CONTENT;
     {
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
 
-        $mockedClassicExportIgnoreAnalyser = Mockery::mock(ClassicExportIgnoreAnalyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedClassicExportIgnoreAnalyser = Mockery::mock(
+            ClassicExportIgnoreAnalyser::class,
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory),])->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $mockedAnalyser->getActualExportIgnoreAnalyser()->setGlobPattern($globPattern);
@@ -272,7 +276,9 @@ CONTENT;
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/16')]
     public function gitattributesFileWithNoExportIgnoresContentShowsExpectedContent(): void
     {
-        $mockedClassicExportIgnoreAnalyser = Mockery::mock(ClassicExportIgnoreAnalyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedClassicExportIgnoreAnalyser = Mockery::mock(
+            ClassicExportIgnoreAnalyser::class,
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)])->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
@@ -1292,7 +1298,9 @@ CONTENT;
     #[Test]
     public function impossibilityToResolveExpectedGitattributesFileContentIsInfoed(): void
     {
-        $mockedClassicExportIgnoreAnalyser = Mockery::mock(ClassicExportIgnoreAnalyser::class, [new Finder(new PhpPreset())])->makePartial();
+        $mockedClassicExportIgnoreAnalyser = Mockery::mock(
+            ClassicExportIgnoreAnalyser::class,
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory),])->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
@@ -2302,10 +2310,10 @@ CONTENT;
         $fakeInputReader->set('Some non .gitattributes content.');
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))),
             new Validator(new Archive(\getcwd())),
             $fakeInputReader,
-            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
+            new GitattributesFileRepository($this->temporaryDirectory)
         );
 
         $application->addCommand($analyserCommand);
@@ -2358,10 +2366,10 @@ CONTENT;
         $fakeInputReader->set($gitattributesContent);
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))),
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader,
-            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
+            new GitattributesFileRepository($this->temporaryDirectory)
         );
 
         $application->addCommand($analyserCommand);
@@ -2451,7 +2459,7 @@ CONTENT;
             $mockedAnalyser,
             new Validator($archive),
             new FakeInputReader(),
-            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
+            new GitattributesFileRepository($this->temporaryDirectory)
         );
 
         $application->addCommand($analyserCommand);
@@ -2468,10 +2476,10 @@ CONTENT;
         $application = new Application();
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))),
             $mockedArchiveValidator,
             new FakeInputReader(),
-            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
+            new GitattributesFileRepository($this->temporaryDirectory)
         );
 
         $application->addCommand($analyserCommand);
@@ -2657,10 +2665,10 @@ CONTENT;
         $fakeInputReader->set($gitattributesContent);
 
         $analyserCommand = new ValidateCommand(
-            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))),
+            new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))),
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader,
-            new GitattributesFileRepository(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
+            new GitattributesFileRepository($this->temporaryDirectory)
         );
 
         $application->addCommand($analyserCommand);

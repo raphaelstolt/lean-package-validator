@@ -12,6 +12,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\InitCommand;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\CommandTester;
@@ -21,6 +22,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InitCommandTest extends TestCase
 {
+    private function getCommandInstance(): InitCommand
+    {
+        return new InitCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository())));
+    }
+
     /**
      * Set up a test environment.
      */
@@ -32,7 +38,7 @@ class InitCommandTest extends TestCase
             \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
 
-        $this->application = $this->getApplication(new InitCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())))));
+        $this->application = $this->getApplication($this->getCommandInstance());
     }
 
     /**
@@ -50,7 +56,7 @@ class InitCommandTest extends TestCase
     #[Test]
     public function printsContentWithoutWritingAFile(): void
     {
-        $command = new InitCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))));
+        $command = $this->application->find('init');
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([
@@ -133,10 +139,7 @@ CONTENT;
     #[Test]
     public function existingDefaultLpvFileIsNotOverwritten(): void
     {
-        $defaultLpvFile = $this->temporaryDirectory
-            . DIRECTORY_SEPARATOR
-            . '.lpv';
-        \touch($defaultLpvFile);
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory, ['.lpv']);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -177,17 +180,13 @@ CONTENT;
     #[Test]
     public function verboseOutputIsAvailableWhenDesired(): void
     {
-        $defaultLpvFile = $this->temporaryDirectory
-            . DIRECTORY_SEPARATOR
-            . '.lpv';
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory, ['.lpv']);
 
         $expectedDisplay = <<<CONTENT
 + Checking .lpv file existence in {$this->temporaryDirectory}.
 Warning: A default .lpv file already exists.
 
 CONTENT;
-
-        \touch($defaultLpvFile);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -207,7 +206,8 @@ CONTENT;
         $expectedDefaultLpvFile = $this->temporaryDirectory
             . DIRECTORY_SEPARATOR
             . '.lpv';
-        \touch($expectedDefaultLpvFile);
+
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory, ['.lpv']);
 
         $command = $this->application->find('init');
         $commandTester = new CommandTester($command);
@@ -253,8 +253,7 @@ CONTENT;
     #[Test]
     public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
     {
-        $defaultLpvFile = $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.lpv';
-        \touch($defaultLpvFile);
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory, ['.lpv']);
 
         $command = $this->application->find('init');
         $tester = new CommandTester($command);

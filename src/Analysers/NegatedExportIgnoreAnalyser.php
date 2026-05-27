@@ -13,7 +13,11 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
     {
         $expectedNegatedExportIgnores = [];
 
-        \chdir($this->directory);
+        if (!is_dir($this->getDirectory())) {
+            throw new \RuntimeException("Directory {$this->getDirectory()} doesn't exist.");
+        }
+
+        \chdir($this->getDirectory());
 
         $globMatches = Glob::glob($this->globPattern, Glob::GLOB_BRACE);
 
@@ -142,7 +146,11 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
                 continue;
             }
 
-            $binaryDirectory = $this->directory . DIRECTORY_SEPARATOR . $entry;
+            if (\trim($this->getDirectory()) === '') {
+                continue;
+            }
+
+            $binaryDirectory = $this->getDirectory() . DIRECTORY_SEPARATOR . $entry;
 
             $iterator = new \FilesystemIterator($binaryDirectory);
 
@@ -164,22 +172,23 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         $lookup = \array_flip($negatedEntries);
 
         foreach ($negatedEntries as $entry) {
-            if (\str_ends_with($entry, '/')) {
-                $directory = \rtrim($entry, '/');
+            if (!(\str_ends_with($entry, '/'))) { continue; }
+
+$directory = \rtrim($entry, '/');
                 $expected = $directory . '/**';
 
                 $hasDirectFileEntry = false;
 
                 foreach ($negatedEntries as $candidate) {
                     if (
-                        \str_starts_with($candidate, $directory . '/')
+                        !(\str_starts_with($candidate, $directory . '/')
                         && !\str_ends_with($candidate, '/')
-                        && $candidate !== $expected
-                    ) {
-                        $hasDirectFileEntry = true;
+                        && $candidate !== $expected)
+                    ) { continue; }
+
+$hasDirectFileEntry = true;
 
                         break;
-                    }
                 }
 
                 if ($hasDirectFileEntry) {
@@ -189,7 +198,6 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
                 if (!isset($lookup[$expected])) {
                     return false;
                 }
-            }
         }
 
         return true;
@@ -197,14 +205,40 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
 
     private function buildExportIgnoreContent(array $entries): string
     {
-        return "* export-ignore"
-            . PHP_EOL
-            . PHP_EOL
-            . \implode(
-                " -export-ignore" . $this->preferredEol,
+        $suffix = ' -export-ignore';
+
+        if ($this->isAlignExportIgnoresEnabled()) {
+            $maxLength = \max(
+                \array_map(
+                    static fn (string $entry): int => \strlen($entry),
+                    $entries
+                )
+            );
+
+            $lines = \array_map(
+                static function (string $entry) use ($maxLength, $suffix): string {
+                    return \str_pad(
+                            $entry,
+                            $maxLength,
+                            ' ',
+                            STR_PAD_RIGHT
+                        ) . $suffix;
+                },
                 $entries
-            )
-            . " -export-ignore"
+            );
+        } else {
+            $lines = \array_map(
+                static function (string $entry) use ($suffix): string {
+                    return $entry . $suffix;
+                },
+                $entries
+            );
+        }
+
+        return '* export-ignore'
+            . $this->preferredEol
+            . $this->preferredEol
+            . \implode($this->preferredEol, $lines)
             . $this->preferredEol;
     }
 
@@ -221,7 +255,7 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         }
 
         if ($gitattributesContent === '') {
-            $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+            $gitattributesContent = $this->gitattributesFileRepository->getGitattributesContent();
         }
 
         $lines = \preg_split('/\\r\\n|\\r|\\n/', $gitattributesContent) ?: [];
@@ -262,7 +296,7 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
             return false;
         }
 
-        $content = (string) \file_get_contents($this->gitattributesFile);
+        $content = $this->gitattributesFileRepository->getGitattributesContent();
 
         if (\preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $content)) {
             $this->hasTextAutoconfiguration = true;

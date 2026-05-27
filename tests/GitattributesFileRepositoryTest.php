@@ -31,10 +31,14 @@ final class GitattributesFileRepositoryTest extends TestCase
     #[Test]
     public function addsExpectedFileHeaders(): void
     {
-        $analyser = (new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))));
+        $analyser = new Analyser(new ClassicExportIgnoreAnalyser(
+            new Finder(new PhpPreset()),
+            new GitattributesFileRepository($this->temporaryDirectory)
+        ));
+
         $analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
 
-        $repository = new GitattributesFileRepository($analyser);
+        $repository = new GitattributesFileRepository($this->temporaryDirectory);
 
         $fakeGitattributesContent = <<<CONTENT
 
@@ -57,7 +61,7 @@ specs/ export-ignore
 version-increase-command export-ignore
 CONTENT;
 
-        \touch($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory, ['.gitattributes']);
 
         $contentWithFileHeader = $repository->applyOverwriteHeaderPolicy($fakeGitattributesContent);
 

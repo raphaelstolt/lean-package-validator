@@ -9,6 +9,7 @@ use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\RefreshCommand;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\TestCase;
@@ -26,7 +27,9 @@ class RefreshCommandTest extends TestCase
         }
 
         $this->application = $this->getApplication(
-            new RefreshCommand(new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()))))
+            new RefreshCommand(
+                new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)))
+            )
         );
     }
 

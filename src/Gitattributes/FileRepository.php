@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Gitattributes;
 
-use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 
 final class FileRepository
@@ -17,11 +16,40 @@ final class FileRepository
     public const MODIFIED_HEADER  = '# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).';
     public const REFORMATTED_HEADER  = '# This file was reformatted by the lean package validator (http://git.io/lean-package-validator).';
 
-    private Analyser $analyser;
+    private string $workingDirectory;
 
-    public function __construct(Analyser $analyser)
+    public function __construct(string $workingDirectory = '')
     {
-        $this->analyser = $analyser;
+        if ($workingDirectory === '' && \defined('WORKING_DIRECTORY')) {
+            $workingDirectory = WORKING_DIRECTORY;
+        }
+
+        if ($workingDirectory === '' && !\defined('WORKING_DIRECTORY')) {
+            $workingDirectory = \getcwd();
+        }
+
+        $this->workingDirectory = $workingDirectory;
+    }
+
+    public function setWorkingDirectory(string $workingDirectory): self
+    {
+        $this->workingDirectory = $workingDirectory;
+        return $this;
+    }
+
+    public function getWorkingDirectory(): string
+    {
+        return $this->workingDirectory;
+    }
+
+    private function getFilePath(): string
+    {
+        return $this->workingDirectory . DIRECTORY_SEPARATOR . '.gitattributes';
+    }
+
+    public function getGitattributesContent(): string
+    {
+        return (string) \file_get_contents($this->getFilePath());
     }
 
     /**
@@ -40,10 +68,7 @@ final class FileRepository
             $content = $this->applyOverwriteHeaderPolicy($content);
         }
 
-        $bytesWritten = file_put_contents(
-            $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath(),
-            $content
-        );
+        $bytesWritten = file_put_contents($this->getFilePath(), $content);
 
         if ($bytesWritten) {
             $content = 'Created a .gitattributes file with the shown content:'
@@ -69,10 +94,7 @@ final class FileRepository
         // Apply header policy before writing (generated → partly modified).
         $content = $this->applyOverwriteHeaderPolicy($content);
 
-        $bytesWritten = file_put_contents(
-            $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath(),
-            $content
-        );
+        $bytesWritten = file_put_contents($this->getFilePath(), $content);
 
         if ($bytesWritten) {
             $content = 'Overwrote it with the shown content:'
@@ -90,10 +112,7 @@ final class FileRepository
         // Apply header policy before writing (generated → partly modified → reformatted).
         $content = $this->applyOverwriteHeaderPolicy($content, self::HEADER_OVERWRITE_MODE_REFORMATTED);
 
-        $bytesWritten = file_put_contents(
-            $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath(),
-            $content
-        );
+        $bytesWritten = file_put_contents($this->getFilePath(), $content);
 
         if ($bytesWritten !== false) {
             return '';
@@ -110,7 +129,7 @@ final class FileRepository
      */
     public function applyOverwriteHeaderPolicy(string $contentToWrite, string $overwriteHeaderMode = self::HEADER_OVERWRITE_MODE_GENERATED): string
     {
-        $gitattributesPath = $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath();
+        $gitattributesPath = $this->getFilePath();
 
         if (!\is_file($gitattributesPath)) {
             return self::GENERATED_HEADER . PHP_EOL . PHP_EOL . $contentToWrite;

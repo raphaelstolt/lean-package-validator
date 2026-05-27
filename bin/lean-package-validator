@@ -45,8 +45,8 @@ use Symfony\Component\Console\Application;
 
 $finder = new Finder(new PhpPreset());
 $archive = new Archive(WORKING_DIRECTORY);
-$analyser = new Analyser(new ClassicExportIgnoreAnalyser($finder));
-$gitattributesFileRepository = new GitattributesFileRepository($analyser);
+$gitattributesFileRepository = new GitattributesFileRepository(WORKING_DIRECTORY);
+$analyser = new Analyser(new ClassicExportIgnoreAnalyser($finder, $gitattributesFileRepository));
 
 $initCommand = new InitCommand(
     $analyser

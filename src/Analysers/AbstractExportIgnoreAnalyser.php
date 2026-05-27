@@ -9,6 +9,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Glob;
 use Stolt\LeanPackage\Helpers\Str;
 use Stolt\LeanPackage\Presets\Finder;
@@ -150,14 +151,15 @@ abstract class AbstractExportIgnoreAnalyser
 
     public bool $groupNonExportIgnores = false;
 
-    private Finder $finder;
-
     /**
      * Initialize.
      */
-    public function __construct(Finder $finder, string $directory = '', ?ExportIgnoreConfiguration $configuration = null)
+    public function __construct(
+        protected readonly Finder $finder,
+        protected readonly GitattributesFileRepository $gitattributesFileRepository,
+        string $directory = '',
+        ?ExportIgnoreConfiguration $configuration = null)
     {
-        $this->finder = $finder;
         $this->defaultGlobPattern = $finder->getDefaultPreset();
 
         $configuration ??= new ExportIgnoreConfiguration(
@@ -168,6 +170,11 @@ abstract class AbstractExportIgnoreAnalyser
         $this->configuration = $configuration;
 
         $this->directory = $configuration->directory;
+
+        if (!is_dir($this->directory) && defined('WORKING_DIRECTORY')) {
+            $this->directory = WORKING_DIRECTORY;
+        }
+
         $this->gitattributesFile = $this->directory . DIRECTORY_SEPARATOR . '.gitattributes';
 
         $this->globPattern = $configuration->globPattern;
@@ -200,7 +207,6 @@ abstract class AbstractExportIgnoreAnalyser
      *
      * @param string $directory The directory to analyse.
      * @return AbstractExportIgnoreAnalyser
-     * @return Analyser
      *
      * @throws RuntimeException
      */
@@ -210,10 +216,13 @@ abstract class AbstractExportIgnoreAnalyser
             $message = "Directory {$directory} doesn't exist.";
             throw new \RuntimeException($message);
         }
+
         $this->directory = $directory;
         $this->gitattributesFile = $directory
             . DIRECTORY_SEPARATOR
             . '.gitattributes';
+
+        $this->gitattributesFileRepository->setWorkingDirectory($directory);
 
         return $this;
     }
@@ -507,7 +516,7 @@ abstract class AbstractExportIgnoreAnalyser
             return '';
         }
 
-        return (string) \file_get_contents($this->gitattributesFile);
+        return $this->gitattributesFileRepository->getGitattributesContent();
     }
 
     /**
@@ -518,6 +527,11 @@ abstract class AbstractExportIgnoreAnalyser
     public function getFinder(): Finder
     {
         return $this->finder;
+    }
+
+    public function getGitattributesFileRepository(): GitattributesFileRepository
+    {
+        return $this->gitattributesFileRepository;
     }
 
     /**
@@ -567,11 +581,10 @@ abstract class AbstractExportIgnoreAnalyser
      * @param string $pattern The glob pattern to use to detect expected export-ignores files.
      *
      * @return AbstractExportIgnoreAnalyser
-     * @return Analyser
      *
      * @throws InvalidGlobPattern
      */
-    public function setGlobPattern($pattern): AbstractExportIgnoreAnalyser
+    public function setGlobPattern(string $pattern): AbstractExportIgnoreAnalyser
     {
         $this->globPattern = \trim($pattern);
         $this->guardGlobPattern($this->globPattern);
@@ -684,6 +697,61 @@ abstract class AbstractExportIgnoreAnalyser
         return \is_array($matches) && \count($matches) > 0;
     }
 
+    /**
+     * Return export ignores in a .gitattributes file to preserve.
+     *
+     * @param  array $globPatternMatchingExportIgnores Export ignores matching glob pattern.
+     *
+     * @return array
+     */
+    public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores): array
+    {
+        $gitattributesContent = $this->gitattributesFileRepository->getGitattributesContent();
+
+        if (\preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $gitattributesContent)) {
+            $this->textAutoconfiguration();
+        }
+
+        $gitattributesLines = \preg_split(
+            '/\\r\\n|\\r|\\n/',
+            $gitattributesContent
+        );
+
+        $basenamedGlobPatternMatchingExportIgnores = \array_map(
+            'basename',
+            $globPatternMatchingExportIgnores
+        );
+
+        $exportIgnoresToPreserve = [];
+
+        \array_filter($gitattributesLines, function ($line) use (
+            &$exportIgnoresToPreserve,
+            &$globPatternMatchingExportIgnores,
+            &$basenamedGlobPatternMatchingExportIgnores
+        ) {
+            if (\strstr($line, 'export-ignore') && !\str_contains($line, '-export-ignore') && \strpos($line, '#') === false) {
+                list($pattern, $void) = \explode('export-ignore', $line);
+                if (\substr($pattern, 0, 1) === '/') {
+                    $pattern = \substr($pattern, 1);
+                    $this->hasPrecedingSlashesInExportIgnorePattern = true;
+                }
+                $patternMatches = $this->patternHasMatch($pattern);
+                $pattern = \trim($pattern);
+
+                if ($patternMatches
+                    && !\in_array($pattern, $globPatternMatchingExportIgnores, strict: true)
+                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores, strict: true)
+                ) {
+                    if (\file_exists($this->directory . DIRECTORY_SEPARATOR . $pattern)) {
+                        return $exportIgnoresToPreserve[] = \trim($pattern);
+                    }
+                }
+            }
+        });
+
+        return $exportIgnoresToPreserve;
+    }
+
     protected function mergeWithExistingGitattributes(string $content): string
     {
         $exportIgnoreContent = \rtrim($content);
@@ -717,7 +785,7 @@ abstract class AbstractExportIgnoreAnalyser
             return '';
         }
 
-        $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+        $gitattributesContent = $this->gitattributesFileRepository->getGitattributesContent();
         $eol = Str::detectEol($gitattributesContent);
         $this->preferredEol = $eol;
 
@@ -786,9 +854,9 @@ abstract class AbstractExportIgnoreAnalyser
         return \array_map(static function (string $artifact) use (&$longestArtifact) {
             if (\strlen($artifact) < $longestArtifact) {
                 return $artifact . \str_repeat(
-                        ' ',
-                        $longestArtifact - \strlen($artifact)
-                    );
+                ' ',
+                $longestArtifact - \strlen($artifact)
+                );
             }
             return $artifact;
         }, $artifacts);

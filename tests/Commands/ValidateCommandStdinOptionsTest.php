@@ -43,14 +43,16 @@ final class ValidateCommandStdinOptionsTest extends TestCase
         $fakeInputReader = new FakeInputReader();
         $fakeInputReader->set($stdinContent);
 
-        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $this->analyser = new Analyser(
+            new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))
+        );
         $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
 
         $command = new ValidateCommand(
             $this->analyser,
             new Validator(new Archive($this->temporaryDirectory)),
             $fakeInputReader,
-            new GitattributesFileRepository($this->analyser),
+            new GitattributesFileRepository($this->temporaryDirectory),
         );
         $application->addCommand($command);
 

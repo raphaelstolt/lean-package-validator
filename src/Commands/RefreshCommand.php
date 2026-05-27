@@ -107,7 +107,7 @@ final class RefreshCommand extends Command
 
         if ($directory !== '' && $directory !== WORKING_DIRECTORY) {
             try {
-                $this->analyser->setDirectory($directory);
+                $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($directory);
             } catch (\RuntimeException $e) {
                 $warning = "Warning: The provided directory "
                     . "'{$directory}' does not exist or is not a directory.";

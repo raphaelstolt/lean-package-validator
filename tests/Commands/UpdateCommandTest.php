@@ -25,7 +25,7 @@ final class UpdateCommandTest extends TestCase
      */
     private function getCommandInstance(): UpdateCommand
     {
-        $repository = new GitattributesFileRepository($this->analyser);
+        $repository = new GitattributesFileRepository($this->temporaryDirectory);
         return new UpdateCommand($this->analyser, $repository);
     }
 
@@ -33,7 +33,9 @@ final class UpdateCommandTest extends TestCase
     {
         $this->setUpTemporaryDirectory();
 
-        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $this->analyser = new Analyser(
+            new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))
+        );
         $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
     }
 

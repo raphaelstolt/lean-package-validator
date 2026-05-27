@@ -26,6 +26,7 @@ final class TreeCommand extends Command
     public function __construct(Tree $tree)
     {
         $this->tree = $tree;
+
         parent::__construct();
     }
 

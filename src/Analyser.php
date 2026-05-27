@@ -5,13 +5,15 @@ namespace Stolt\LeanPackage;
 use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
 use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Analysers\NegatedExportIgnoreAnalyser;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\Str;
 
 class Analyser
 {
     private AbstractExportIgnoreAnalyser $exportIgnoreAnalyser;
 
-    public function __construct(AbstractExportIgnoreAnalyser $actualExportIgnoreAnalyser) {
+    public function __construct(
+        AbstractExportIgnoreAnalyser $actualExportIgnoreAnalyser) {
         $this->exportIgnoreAnalyser = $actualExportIgnoreAnalyser;
     }
 
@@ -51,6 +53,7 @@ class Analyser
                 $formerExportIgnoreAnalyserConfiguration = $this->exportIgnoreAnalyser->getConfiguration();
                 $this->exportIgnoreAnalyser = new NegatedExportIgnoreAnalyser(
                     $this->exportIgnoreAnalyser->getFinder(),
+                    $this->exportIgnoreAnalyser->getGitattributesFileRepository(),
                     $this->exportIgnoreAnalyser->getDirectory(),
                     $formerExportIgnoreAnalyserConfiguration
                 );
@@ -309,12 +312,12 @@ class Analyser
         \sort($expectedExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if ($this->getActualExportIgnoreAnalyser()->getConfiguration()->enforceStrictOrderComparison === true) {
-            return \array_values($expectedExportIgnores) === \array_values($presentExportIgnores);
+            return $expectedExportIgnores === $presentExportIgnores;
         }
 
         \sort($presentExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
-        return \array_values($expectedExportIgnores) === \array_values($presentExportIgnores);
+        return $expectedExportIgnores === $presentExportIgnores;
     }
 
     /**
@@ -339,6 +342,7 @@ class Analyser
 
         $analyser = new NegatedExportIgnoreAnalyser(
             $this->exportIgnoreAnalyser->getFinder(),
+            new GitattributesFileRepository($this->exportIgnoreAnalyser->getDirectory()),
             $directory,
             $this->exportIgnoreAnalyser->getConfiguration(),
         );

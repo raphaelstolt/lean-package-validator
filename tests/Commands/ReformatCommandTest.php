@@ -22,7 +22,9 @@ final class ReformatCommandTest extends TestCase
     {
         $this->setUpTemporaryDirectory();
 
-        $this->analyser = new Analyser(new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset())));
+        $this->analyser = new Analyser(
+            new ClassicExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory))
+        );
         $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
     }
 
@@ -31,7 +33,7 @@ final class ReformatCommandTest extends TestCase
      */
     private function getCommandInstance(): ReformatCommand
     {
-        return new ReformatCommand($this->analyser, new GitattributesFileRepository($this->analyser));
+        return new ReformatCommand($this->analyser, new GitattributesFileRepository($this->temporaryDirectory));
     }
 
     protected function tearDown(): void
@@ -60,7 +62,7 @@ CONTENT;
 
         $this->createTemporaryFiles(['.gitignore', 'composer.json'], ['example', 'tests', '.github', 'src', 'resources', 'bin']);
 
-        \touch($this->temporaryDirectory . '/bin/lpv');
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'bin', ['lpv']);
 
         $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)

@@ -94,61 +94,6 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         return \array_unique($expectedExportIgnores);
     }
 
-    /**
-     * Return export ignores in a .gitattributes file to preserve.
-     *
-     * @param  array $globPatternMatchingExportIgnores Export ignores matching glob pattern.
-     *
-     * @return array
-     */
-    public function getPresentExportIgnoresToPreserve(array $globPatternMatchingExportIgnores): array
-    {
-        $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
-
-        if (\preg_match("/(\*\h*)(text\h*)(=\h*auto)/", $gitattributesContent)) {
-            $this->textAutoconfiguration();
-        }
-
-        $gitattributesLines = \preg_split(
-            '/\\r\\n|\\r|\\n/',
-            $gitattributesContent
-        );
-
-        $basenamedGlobPatternMatchingExportIgnores = \array_map(
-            'basename',
-            $globPatternMatchingExportIgnores
-        );
-
-        $exportIgnoresToPreserve = [];
-
-        \array_filter($gitattributesLines, function ($line) use (
-            &$exportIgnoresToPreserve,
-            &$globPatternMatchingExportIgnores,
-            &$basenamedGlobPatternMatchingExportIgnores
-        ) {
-            if (\strstr($line, 'export-ignore') && !\str_contains($line, '-export-ignore') && \strpos($line, '#') === false) {
-                list($pattern, $void) = \explode('export-ignore', $line);
-                if (\substr($pattern, 0, 1) === '/') {
-                    $pattern = \substr($pattern, 1);
-                    $this->hasPrecedingSlashesInExportIgnorePattern = true;
-                }
-                $patternMatches = $this->patternHasMatch($pattern);
-                $pattern = \trim($pattern);
-
-                if ($patternMatches
-                    && !\in_array($pattern, $globPatternMatchingExportIgnores, strict: true)
-                    && !\in_array($pattern, $basenamedGlobPatternMatchingExportIgnores, strict: true)
-                ) {
-                    if (\file_exists($this->directory . DIRECTORY_SEPARATOR . $pattern)) {
-                        return $exportIgnoresToPreserve[] = \trim($pattern);
-                    }
-                }
-            }
-        });
-
-        return $exportIgnoresToPreserve;
-    }
-
     public function hasCompleteExportIgnores(): bool
     {
         $expectedExportIgnores = $this->collectExpectedExportIgnores();
@@ -199,7 +144,7 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         }
 
         if ($gitattributesContent === '') {
-            $gitattributesContent = (string) \file_get_contents($this->gitattributesFile);
+            $gitattributesContent = $this->gitattributesFileRepository->getGitattributesContent();
         }
 
         $gitattributesLines = \preg_split(
