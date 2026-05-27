@@ -2,6 +2,7 @@
 
 namespace Stolt\LeanPackage\Analysers;
 
+use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
 use Stolt\LeanPackage\Glob;
 
 final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
@@ -43,12 +44,12 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         return array_diff($allFiles, $globMatches);
     }
 
-    public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): string
+    public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): GitattributesValueObject
     {
         $exportIgnoresToNegate = $this->buildExportIgnoresToNegate();
 
         if ($exportIgnoresToNegate === []) {
-            return '';
+            return GitattributesValueObject::fromString('');
         }
 
         $exportIgnoresToNegate = $this->sortAndFormatExportIgnores(
@@ -58,12 +59,14 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         $content = $this->buildExportIgnoreContent($exportIgnoresToNegate);
 
         if ($this->hasGitattributesFile()) {
-            return $this->mergeWithExistingGitattributes($content);
+            return GitattributesValueObject::fromString($this->mergeWithExistingGitattributes($content));
         }
 
-        return "* text=auto eol=lf"
+        $contentToBe = "* text=auto eol=lf"
             . \str_repeat($this->preferredEol, 2)
             . $content;
+
+        return GitattributesValueObject::fromString($contentToBe);
     }
 
     private function buildExportIgnoresToNegate(): array

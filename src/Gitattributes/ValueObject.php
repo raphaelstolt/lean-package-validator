@@ -7,9 +7,7 @@ namespace Stolt\LeanPackage\Gitattributes;
 final class ValueObject
 {
     private string $content;
-
     private bool $usesNegatedExportIgnores = false;
-
     private bool $usesClassicExportIgnores = false;
 
     public function __construct(string $content)

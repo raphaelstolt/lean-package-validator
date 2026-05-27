@@ -8,6 +8,7 @@ use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
+use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
 use Stolt\LeanPackage\Glob;
 use Stolt\LeanPackage\Helpers\Str;
 use Stolt\LeanPackage\Presets\Finder;
@@ -831,6 +832,6 @@ abstract class AbstractExportIgnoreAnalyser
 
     abstract public function getPresentExportIgnores(bool $applyGlob = true, string $gitattributesContent = '', bool $strictOrderComparisonEnabled = false): array;
     abstract public function collectExpectedExportIgnores(): array;
-    abstract public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): string;
+    abstract public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): GitattributesValueObject;
     abstract public function hasCompleteExportIgnores(): bool;
 }

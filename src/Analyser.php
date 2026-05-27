@@ -55,12 +55,12 @@ class Analyser
                     $formerExportIgnoreAnalyserConfiguration
                 );
 
-                return $this->exportIgnoreAnalyser->getGitattributesContentToBe();
+                return $this->exportIgnoreAnalyser->getGitattributesContentToBe()->getContent();
             }
-            return $this->exportIgnoreAnalyser->getGitattributesContentToBe($postfixLessExportIgnores);
+            return $this->exportIgnoreAnalyser->getGitattributesContentToBe($postfixLessExportIgnores)->getContent();
         }
 
-        return $this->exportIgnoreAnalyser->getGitattributesContentToBe($postfixLessExportIgnores);
+        return $this->exportIgnoreAnalyser->getGitattributesContentToBe($postfixLessExportIgnores)->getContent();
     }
 
     /**

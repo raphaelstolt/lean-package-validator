@@ -4,6 +4,8 @@ namespace Stolt\LeanPackage\Analysers;
 
 use Stolt\LeanPackage\Glob;
 
+use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
+
 final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
 {
     public const EXPORT_IGNORE_CLASSIC = 'classic';
@@ -239,7 +241,7 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         return \array_unique($exportIgnores);
     }
 
-    public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): string
+    public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): GitattributesValueObject
     {
         $collectExpectedExportIgnores = $this->collectExpectedExportIgnores();
 
@@ -317,9 +319,9 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
                 $content = "* text=auto eol=lf" . \str_repeat($this->preferredEol, 2) . $content;
             }
 
-            return $content;
+            return GitattributesValueObject::fromString($content);
         }
 
-        return '';
+        return GitattributesValueObject::fromString('');
     }
 }
