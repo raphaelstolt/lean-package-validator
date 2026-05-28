@@ -14,7 +14,8 @@ final readonly class ExportIgnoreConfiguration
         public string $keepGlobPattern = '',
         public bool $alignExportIgnores = false,
         public bool $enforceStrictOrderComparison = false,
-    ) {}
+    ) {
+    }
 
     public function withDirectory(string $directory): self
     {

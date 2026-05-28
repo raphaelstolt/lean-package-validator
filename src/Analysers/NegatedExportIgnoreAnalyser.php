@@ -13,7 +13,7 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
     {
         $expectedNegatedExportIgnores = [];
 
-        if (!is_dir($this->getDirectory())) {
+        if (!\is_dir($this->getDirectory())) {
             throw new \RuntimeException("Directory {$this->getDirectory()} doesn't exist.");
         }
 
@@ -41,11 +41,11 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
 
         $allFiles = Glob::glob('{*}', Glob::GLOB_BRACE);
 
-        if (!\is_array($allFiles) || count ($allFiles) === 0) {
+        if (!\is_array($allFiles) || \count($allFiles) === 0) {
             return $expectedNegatedExportIgnores;
         }
 
-        return array_diff($allFiles, $globMatches);
+        return \array_diff($allFiles, $globMatches);
     }
 
     public function getGitattributesContentToBe(array $postfixLessExportIgnores = []): GitattributesValueObject
@@ -142,7 +142,7 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         foreach ($entries as $entry) {
             $expanded[] = $entry;
 
-            if (!str_ends_with($entry, 'bin' . DIRECTORY_SEPARATOR)) {
+            if (!\str_ends_with($entry, 'bin' . DIRECTORY_SEPARATOR)) {
                 continue;
             }
 
@@ -172,32 +172,36 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
         $lookup = \array_flip($negatedEntries);
 
         foreach ($negatedEntries as $entry) {
-            if (!(\str_ends_with($entry, '/'))) { continue; }
+            if (!(\str_ends_with($entry, '/'))) {
+                continue;
+            }
 
-$directory = \rtrim($entry, '/');
-                $expected = $directory . '/**';
+            $directory = \rtrim($entry, '/');
+            $expected = $directory . '/**';
 
-                $hasDirectFileEntry = false;
+            $hasDirectFileEntry = false;
 
-                foreach ($negatedEntries as $candidate) {
-                    if (
-                        !(\str_starts_with($candidate, $directory . '/')
-                        && !\str_ends_with($candidate, '/')
-                        && $candidate !== $expected)
-                    ) { continue; }
-
-$hasDirectFileEntry = true;
-
-                        break;
-                }
-
-                if ($hasDirectFileEntry) {
+            foreach ($negatedEntries as $candidate) {
+                if (
+                    !(\str_starts_with($candidate, $directory . '/')
+                    && !\str_ends_with($candidate, '/')
+                    && $candidate !== $expected)
+                ) {
                     continue;
                 }
 
-                if (!isset($lookup[$expected])) {
-                    return false;
-                }
+                $hasDirectFileEntry = true;
+
+                break;
+            }
+
+            if ($hasDirectFileEntry) {
+                continue;
+            }
+
+            if (!isset($lookup[$expected])) {
+                return false;
+            }
         }
 
         return true;
@@ -218,11 +222,11 @@ $hasDirectFileEntry = true;
             $lines = \array_map(
                 static function (string $entry) use ($maxLength, $suffix): string {
                     return \str_pad(
-                            $entry,
-                            $maxLength,
-                            ' ',
-                            STR_PAD_RIGHT
-                        ) . $suffix;
+                        $entry,
+                        $maxLength,
+                        ' ',
+                        STR_PAD_RIGHT
+                    ) . $suffix;
                 },
                 $entries
             );
@@ -311,6 +315,7 @@ $hasDirectFileEntry = true;
         if ($this->isStaleExportIgnoresComparisonEnabled()) {
             $allNegatedIgnores = $this->getPresentExportIgnores(false);
             $staleNegatedIgnores = \array_diff($allNegatedIgnores, $presentNegatedExportIgnores);
+
             if ($staleNegatedIgnores !== []) {
                 return false;
             }

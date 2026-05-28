@@ -55,8 +55,8 @@ final class ValidateCommand extends Command
         private readonly Analyser $analyser,
         private readonly Validator $archiveValidator,
         private readonly InputReaderInterface $inputReader,
-        private readonly GitattributesFileRepository $gitattributesFileRepository)
-    {
+        private readonly GitattributesFileRepository $gitattributesFileRepository
+    ) {
         $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
         $this->defaultLpvFile = \getcwd() . DIRECTORY_SEPARATOR . '.lpv';
 

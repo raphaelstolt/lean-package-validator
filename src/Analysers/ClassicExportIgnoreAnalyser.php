@@ -2,9 +2,9 @@
 
 namespace Stolt\LeanPackage\Analysers;
 
-use Stolt\LeanPackage\Glob;
-
 use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
+
+use Stolt\LeanPackage\Glob;
 
 final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
 {
@@ -159,7 +159,7 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
                 list($line, $void) = \explode('export-ignore', $line);
                 if ($applyGlob) {
                     if ($this->patternHasMatch(\trim($line))) {
-                        if (str_starts_with($line, '/')) {
+                        if (\str_starts_with($line, '/')) {
                             $line = \substr($line, 1);
                         }
 
@@ -167,7 +167,7 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
                     }
                 } else {
                     if ($this->patternHasMatch(\trim($line))) {
-                        if (str_starts_with($line, '/')) {
+                        if (\str_starts_with($line, '/')) {
                             $line = \substr($line, 1);
                         }
 
@@ -190,11 +190,11 @@ final class ClassicExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
     {
         $collectExpectedExportIgnores = $this->collectExpectedExportIgnores();
 
-        if (count($postfixLessExportIgnores) === 1 && $postfixLessExportIgnores[0] === '.gitattributes' && count($collectExpectedExportIgnores) === 0) {
+        if (\count($postfixLessExportIgnores) === 1 && $postfixLessExportIgnores[0] === '.gitattributes' && \count($collectExpectedExportIgnores) === 0) {
             $postfixLessExportIgnores = [];
         }
 
-        $postfixLessExportIgnores = array_unique(array_merge($collectExpectedExportIgnores, $postfixLessExportIgnores));
+        $postfixLessExportIgnores = \array_unique(\array_merge($collectExpectedExportIgnores, $postfixLessExportIgnores));
 
         \sort($postfixLessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 

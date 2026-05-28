@@ -80,9 +80,11 @@ CONTENT);
 
         $expectedLines = $existingLines;
         foreach ($presetLines as $presetLine) {
-            if (\in_array($presetLine, $expectedLines, true)) { continue; }
+            if (\in_array($presetLine, $expectedLines, true)) {
+                continue;
+            }
 
-$expectedLines[] = $presetLine;
+            $expectedLines[] = $presetLine;
         }
 
         $expectedContent = \implode(PHP_EOL, $expectedLines) . PHP_EOL;

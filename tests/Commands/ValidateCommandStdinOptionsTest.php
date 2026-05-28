@@ -110,13 +110,13 @@ GITATTR;
         [$application, $cmd] = $this->getApplicationWithCommandInstance($stdinContent);
         $command = $application->find('validate');
 
-       TestCommand::for($command)
-            ->addArgument($this->temporaryDirectory)
-            ->addOption('stdin-input')
-            ->addOption('enforce-strict-order')
-            ->execute()
-            ->assertOutputContains('The provided .gitattributes content is considered valid.')
-            ->assertSuccessful();
+        TestCommand::for($command)
+             ->addArgument($this->temporaryDirectory)
+             ->addOption('stdin-input')
+             ->addOption('enforce-strict-order')
+             ->execute()
+             ->assertOutputContains('The provided .gitattributes content is considered valid.')
+             ->assertSuccessful();
     }
 
     #[Test]

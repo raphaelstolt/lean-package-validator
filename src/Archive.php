@@ -166,26 +166,28 @@ class Archive
         $hasLicenseFile = false;
 
         foreach ($archive as $archiveFile) {
-            if (!($archiveFile instanceof \SplFileInfo)) { continue; }
+            if (!($archiveFile instanceof \SplFileInfo)) {
+                continue;
+            }
 
-if ($archiveFile->isDir()) {
-                    $file = $archiveFile->getFilename() . '/';
-                    if (\in_array($file, $unexpectedArtifacts, strict: true)) {
-                        $foundUnexpectedArtifacts[] = $file;
-                    }
-                    continue;
-                }
-
-                $file = $archiveFile->getFilename();
-                if ($this->validateLicenseFilePresence()) {
-                    if (\preg_match('/(License.*)/i', $file)) {
-                        $hasLicenseFile = true;
-                    }
-                }
-
+            if ($archiveFile->isDir()) {
+                $file = $archiveFile->getFilename() . '/';
                 if (\in_array($file, $unexpectedArtifacts, strict: true)) {
                     $foundUnexpectedArtifacts[] = $file;
                 }
+                continue;
+            }
+
+            $file = $archiveFile->getFilename();
+            if ($this->validateLicenseFilePresence()) {
+                if (\preg_match('/(License.*)/i', $file)) {
+                    $hasLicenseFile = true;
+                }
+            }
+
+            if (\in_array($file, $unexpectedArtifacts, strict: true)) {
+                $foundUnexpectedArtifacts[] = $file;
+            }
         }
 
         if ($this->validateLicenseFilePresence() && $hasLicenseFile === false) {

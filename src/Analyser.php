@@ -13,7 +13,8 @@ class Analyser
     private AbstractExportIgnoreAnalyser $exportIgnoreAnalyser;
 
     public function __construct(
-        AbstractExportIgnoreAnalyser $actualExportIgnoreAnalyser) {
+        AbstractExportIgnoreAnalyser $actualExportIgnoreAnalyser
+    ) {
         $this->exportIgnoreAnalyser = $actualExportIgnoreAnalyser;
     }
 

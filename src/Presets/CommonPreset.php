@@ -37,7 +37,7 @@ class CommonPreset
 
     protected function getCommonGlob(): array
     {
-        return array_merge($this->aiGlob, [
+        return \array_merge($this->aiGlob, [
             '.*',
             '*.txt',
             '*.{md,MD}',

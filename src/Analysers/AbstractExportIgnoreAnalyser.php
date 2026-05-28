@@ -3,13 +3,12 @@
 namespace Stolt\LeanPackage\Analysers;
 
 use RuntimeException;
-use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
-use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
 use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
+use Stolt\LeanPackage\Gitattributes\ValueObject as GitattributesValueObject;
 use Stolt\LeanPackage\Glob;
 use Stolt\LeanPackage\Helpers\Str;
 use Stolt\LeanPackage\Presets\Finder;
@@ -158,20 +157,20 @@ abstract class AbstractExportIgnoreAnalyser
         protected readonly Finder $finder,
         protected readonly GitattributesFileRepository $gitattributesFileRepository,
         string $directory = '',
-        ?ExportIgnoreConfiguration $configuration = null)
-    {
+        ?ExportIgnoreConfiguration $configuration = null
+    ) {
         $this->defaultGlobPattern = $finder->getDefaultPreset();
 
         $configuration ??= new ExportIgnoreConfiguration(
             directory: $directory,
-            globPattern: '{' . implode(',', $this->defaultGlobPattern) . '}*',
+            globPattern: '{' . \implode(',', $this->defaultGlobPattern) . '}*',
         );
 
         $this->configuration = $configuration;
 
         $this->directory = $configuration->directory;
 
-        if (!is_dir($this->directory) && defined('WORKING_DIRECTORY')) {
+        if (!\is_dir($this->directory) && \defined('WORKING_DIRECTORY')) {
             $this->directory = WORKING_DIRECTORY;
         }
 
@@ -206,9 +205,9 @@ abstract class AbstractExportIgnoreAnalyser
      * Set the directory to analyse.
      *
      * @param string $directory The directory to analyse.
-     * @return AbstractExportIgnoreAnalyser
      *
      * @throws RuntimeException
+     * @return AbstractExportIgnoreAnalyser
      */
     public function setDirectory(string $directory = __DIR__): AbstractExportIgnoreAnalyser
     {
@@ -358,8 +357,8 @@ abstract class AbstractExportIgnoreAnalyser
      * Sets the glob pattern for not export-ignoring license files.
      *
      * @param string $globPattern
-     * @return AbstractExportIgnoreAnalyser
      * @throws InvalidGlobPattern
+     * @return AbstractExportIgnoreAnalyser
      */
     public function setKeepGlobPattern(string $globPattern): AbstractExportIgnoreAnalyser
     {
@@ -538,9 +537,9 @@ abstract class AbstractExportIgnoreAnalyser
      * Set the glob pattern file.
      *
      * @param string $file
-     * @return AbstractExportIgnoreAnalyser
      * @throws InvalidGlobPatternFile
      * @throws NonExistentGlobPatternFile
+     * @return AbstractExportIgnoreAnalyser
      */
     public function setGlobPatternFromFile(string $file): AbstractExportIgnoreAnalyser
     {
@@ -580,9 +579,9 @@ abstract class AbstractExportIgnoreAnalyser
      *
      * @param string $pattern The glob pattern to use to detect expected export-ignores files.
      *
-     * @return AbstractExportIgnoreAnalyser
      *
      * @throws InvalidGlobPattern
+     * @return AbstractExportIgnoreAnalyser
      */
     public function setGlobPattern(string $pattern): AbstractExportIgnoreAnalyser
     {
@@ -604,7 +603,7 @@ abstract class AbstractExportIgnoreAnalyser
         $invalidGlobPattern = false;
 
         if (\substr($pattern, 0) !== '{'
-            && (!str_ends_with($pattern, '}') && !str_ends_with($pattern, '}*'))) {
+            && (!\str_ends_with($pattern, '}') && !\str_ends_with($pattern, '}*'))) {
             $invalidGlobPattern = true;
         }
 
@@ -645,11 +644,11 @@ abstract class AbstractExportIgnoreAnalyser
 
         \array_filter($gitignoreLines, static function ($line) use (&$gitignoredPatterns) {
             $line = \trim($line);
-            if ($line !== '' && !str_contains($line, '#')) {
-                if (str_starts_with($line, "/")) {
+            if ($line !== '' && !\str_contains($line, '#')) {
+                if (\str_starts_with($line, "/")) {
                     $gitignoredPatterns[] = \substr($line, 1);
                 }
-                if (str_ends_with($line, "/")) {
+                if (\str_ends_with($line, "/")) {
                     $gitignoredPatterns[] = \substr($line, 0, -1);
                 }
                 $gitignoredPatterns[] = $line;
@@ -679,9 +678,9 @@ abstract class AbstractExportIgnoreAnalyser
      */
     protected function patternHasMatch(string $globPattern): bool
     {
-        if (str_starts_with(\trim($globPattern), '/')) {
+        if (\str_starts_with(\trim($globPattern), '/')) {
             $globPattern = \trim(\substr($globPattern, 1));
-        } elseif (str_ends_with(\trim($globPattern), '/')) {
+        } elseif (\str_ends_with(\trim($globPattern), '/')) {
             $globPattern = \trim(\substr($globPattern, 0, -1));
         } else {
             $globPattern = '{' . \trim($globPattern) . '}*';
@@ -800,7 +799,7 @@ abstract class AbstractExportIgnoreAnalyser
             \array_filter($gitattributesLines, static function (string $line) use (
                 &$nonExportIgnoreLines
             ) {
-                if (!str_contains($line, 'export-ignore') || \strstr($line, '#')) {
+                if (!\str_contains($line, 'export-ignore') || \strstr($line, '#')) {
                     $nonExportIgnoreLines[] = \trim($line);
                 }
             });
@@ -823,7 +822,7 @@ abstract class AbstractExportIgnoreAnalyser
             &$exportIgnoresPlacementPlaceholderSet,
             &$exportIgnoresPlacementPlaceholder
         ) {
-            if (!str_contains($line, 'export-ignore') || \strstr($line, '#')) {
+            if (!\str_contains($line, 'export-ignore') || \strstr($line, '#')) {
                 return $nonExportIgnoreLines[] = \trim($line);
             } else {
                 if ($exportIgnoresPlacementPlaceholderSet === false) {
@@ -854,8 +853,8 @@ abstract class AbstractExportIgnoreAnalyser
         return \array_map(static function (string $artifact) use (&$longestArtifact) {
             if (\strlen($artifact) < $longestArtifact) {
                 return $artifact . \str_repeat(
-                ' ',
-                $longestArtifact - \strlen($artifact)
+                    ' ',
+                    $longestArtifact - \strlen($artifact)
                 );
             }
             return $artifact;
@@ -871,7 +870,7 @@ abstract class AbstractExportIgnoreAnalyser
         });
 
         $files = \array_filter($artifacts, static function (string $artifact) {
-            if (!str_contains($artifact, '/')) {
+            if (!\str_contains($artifact, '/')) {
                 return $artifact;
             }
         });

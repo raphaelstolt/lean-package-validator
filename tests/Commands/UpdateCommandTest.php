@@ -313,7 +313,7 @@ CONTENT;
 
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
-$expectedUpdatedGitattributesContent = <<<CONTENT
+        $expectedUpdatedGitattributesContent = <<<CONTENT
 # This file was partly modified by the lean package validator (http://git.io/lean-package-validator).
 
 * text=auto

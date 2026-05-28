@@ -84,7 +84,7 @@ src/                       -export-ignore
 src/**                     -export-ignore
 CONTENT;
 
-        $this->assertSame(trim($expectedGitattributesContent), trim($result->output()));
+        $this->assertSame(\trim($expectedGitattributesContent), \trim($result->output()));
 
         $this->assertStringEqualsFile(
             $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
@@ -130,7 +130,7 @@ example/          export-ignore
 tests/            export-ignore
 CONTENT;
 
-        $this->assertSame(trim($expectedGitattributesContent), trim($result->output()));
+        $this->assertSame(\trim($expectedGitattributesContent), \trim($result->output()));
 
         $this->assertStringEqualsFile(
             $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
@@ -221,7 +221,7 @@ tests/            export-ignore
 contributing.rst  export-ignore
 CONTENT;
 
-        $this->assertSame(trim($expectedGitattributesContent), trim($result->output()));
+        $this->assertSame(\trim($expectedGitattributesContent), \trim($result->output()));
 
         $this->assertStringEqualsFile(
             $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',

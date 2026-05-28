@@ -27,8 +27,8 @@ class AnalyserTest extends TestCase
     {
         $this->setUpTemporaryDirectory();
 
-        if (!defined('WORKING_DIRECTORY')) {
-            define('WORKING_DIRECTORY', $this->temporaryDirectory);
+        if (!\defined('WORKING_DIRECTORY')) {
+            \define('WORKING_DIRECTORY', $this->temporaryDirectory);
         }
     }
 
@@ -97,7 +97,8 @@ CONTENT;
     {
         $mockedNegatedExportIgnoreAnalyser = Mockery::mock(
             NegatedExportIgnoreAnalyser::class,
-            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)])->makePartial();
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)]
+        )->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedNegatedExportIgnoreAnalyser])->makePartial();
         $mockedAnalyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
 
@@ -178,7 +179,8 @@ CONTENT;
         $this->createTemporaryFilesInDirectory($this->temporaryDirectory . '/resources', ['SKILL.md', 'ANOTHER_SKILL.md']);
 
         $negatedGitattributesContent = $analyser->getExpectedGitattributesContent(
-            [],NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED
+            [],
+            NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED
         );
 
         $expectedGitattributesContent = <<<CONTENT
@@ -226,7 +228,8 @@ CONTENT;
         $this->createTemporaryFilesInDirectory($this->temporaryDirectory . '/resources', ['SKILL.md', 'ANOTHER_SKILL.md']);
 
         $negatedGitattributesContent = $analyser->getExpectedGitattributesContent(
-            [], NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED
+            [],
+            NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED
         );
 
         $expectedGitattributesContent = <<<CONTENT
@@ -267,7 +270,8 @@ CONTENT;
     {
         $mockedClassicExportIgnoreAnalyser = Mockery::mock(
             ClassicExportIgnoreAnalyser::class,
-            [new Finder(new PhpPreset()), new GitattributesFileRepository()])->makePartial();
+            [new Finder(new PhpPreset()), new GitattributesFileRepository()]
+        )->makePartial();
 
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 

@@ -12,7 +12,6 @@ use Stolt\LeanPackage\Tests\CommandTester;
 use Stolt\LeanPackage\Tests\TestCase;
 use Stolt\LeanPackage\Tree;
 
-
 class TreeCommandTest extends TestCase
 {
     /**

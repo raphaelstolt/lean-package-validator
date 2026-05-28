@@ -25,9 +25,10 @@ final class ReformatCommand extends Command
      * @param Analyser $analyser
      * @param GitattributesFileRepository $repository
      */
-    public function __construct(private readonly Analyser $analyser,
-                                private readonly GitattributesFileRepository $repository)
-    {
+    public function __construct(
+        private readonly Analyser $analyser,
+        private readonly GitattributesFileRepository $repository
+    ) {
         $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
 
         parent::__construct();
@@ -108,8 +109,7 @@ final class ReformatCommand extends Command
         InputInterface  $input,
         OutputInterface $output,
         string          $directory
-    ): int
-    {
+    ): int {
         $gitattributesPath = $this->exportIgnoreAnalyser->getGitattributesFilePath();
 
         $isAgenticRun = $this->isAgenticRun($input);

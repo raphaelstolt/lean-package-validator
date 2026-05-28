@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Helpers;
 
-
-
 class PhpInputReader implements InputReaderInterface
 {
     public function get(): string|false

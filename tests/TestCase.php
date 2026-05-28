@@ -99,7 +99,7 @@ class TestCase extends PHPUnit
     protected function createTemporaryFilesInDirectory(string $directory, array $files): void
     {
         if (!\is_dir($directory)) {
-            throw new \InvalidArgumentException(sprintf("Directory '%s' does not exist. Create it first", $directory));
+            throw new \InvalidArgumentException(\sprintf("Directory '%s' does not exist. Create it first", $directory));
         }
 
         foreach ($files as $file) {

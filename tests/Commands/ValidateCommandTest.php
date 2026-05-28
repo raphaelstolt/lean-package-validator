@@ -206,7 +206,8 @@ CONTENT;
 
         $mockedClassicExportIgnoreAnalyser = Mockery::mock(
             ClassicExportIgnoreAnalyser::class,
-            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory),])->makePartial();
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory),]
+        )->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $mockedAnalyser->getActualExportIgnoreAnalyser()->setGlobPattern($globPattern);
@@ -278,7 +279,8 @@ CONTENT;
     {
         $mockedClassicExportIgnoreAnalyser = Mockery::mock(
             ClassicExportIgnoreAnalyser::class,
-            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)])->makePartial();
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)]
+        )->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
@@ -1300,7 +1302,8 @@ CONTENT;
     {
         $mockedClassicExportIgnoreAnalyser = Mockery::mock(
             ClassicExportIgnoreAnalyser::class,
-            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory),])->makePartial();
+            [new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory),]
+        )->makePartial();
         $mockedAnalyser = Mockery::mock(Analyser::class, [$mockedClassicExportIgnoreAnalyser])->makePartial();
 
         $globPattern = '{' . \implode(',', (new PhpPreset())->getPresetGlob()) . '}*';
