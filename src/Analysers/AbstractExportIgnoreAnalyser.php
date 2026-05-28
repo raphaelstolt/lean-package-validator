@@ -446,6 +446,10 @@ abstract class AbstractExportIgnoreAnalyser
      */
     public function hasTextAutoconfiguration(): bool
     {
+        if (\str_contains($this->gitattributesFileRepository->getGitattributesContent(), 'text=auto eol=lf')) {
+            $this->hasTextAutoconfiguration = true;
+        }
+
         return $this->hasTextAutoconfiguration;
     }
 
