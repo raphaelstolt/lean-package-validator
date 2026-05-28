@@ -282,7 +282,7 @@ final class ValidateCommand extends Command
             return Command::FAILURE;
         }
 
-        $verboseOutput = '+ Scanning directory ' . $directory . '.';
+        $verboseOutput = '+ Scanning directory ' . \realpath($directory) . '.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
         // Print deprecation notices for legacy options but do NOT change the exit code.
@@ -436,10 +436,6 @@ final class ValidateCommand extends Command
             }
         } elseif ($chosenPreset) {
             try {
-
-                $verboseOutput = '+ Using the ' . $chosenPreset . ' language preset.';
-                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-
                 $this->exportIgnoreAnalyser->setGlobPatternFromPreset($chosenPreset);
             } catch (PresetNotAvailable $e) {
                 $warning = 'Warning: The chosen language preset ' . $chosenPreset . ' is not available. Maybe contribute it!?';
@@ -450,7 +446,7 @@ final class ValidateCommand extends Command
             }
         }
 
-        $verboseOutput = '+ Checking .gitattributes file existence in ' . $directory . '.';
+        $verboseOutput = '+ Checking .gitattributes file existence in ' . \realpath($directory) . '.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
         $outputContent = '';
 
