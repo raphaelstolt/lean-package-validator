@@ -739,9 +739,9 @@ abstract class AbstractExportIgnoreAnalyser
             &$globPatternMatchingExportIgnores,
             &$basenamedGlobPatternMatchingExportIgnores
         ) {
-            if (\strstr($line, 'export-ignore') && !\str_contains($line, '-export-ignore') && \strpos($line, '#') === false) {
+            if (\strstr($line, 'export-ignore') && !\str_contains($line, '-export-ignore') && !\str_contains($line, '#')) {
                 list($pattern, $void) = \explode('export-ignore', $line);
-                if (\substr($pattern, 0, 1) === '/') {
+                if (\str_starts_with($pattern, '/')) {
                     $pattern = \substr($pattern, 1);
                     $this->hasPrecedingSlashesInExportIgnorePattern = true;
                 }
