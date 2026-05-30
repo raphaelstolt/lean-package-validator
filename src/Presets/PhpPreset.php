@@ -31,7 +31,8 @@ final class PhpPreset extends CommonPreset implements Preset
             'phpinsights*',
             'ecs*',
             'RMT',
-            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file'
+            '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
+            'vendor*',
         ]));
     }
 }

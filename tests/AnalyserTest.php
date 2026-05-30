@@ -1867,6 +1867,7 @@ CONTENT;
             'rector*',
             'renovate.json',
             'sonar*',
+            'vendor*',
             '{A,a}rt*',
             '{A,a}sset*',
             '{B,b}enchmark*',

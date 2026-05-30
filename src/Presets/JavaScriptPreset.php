@@ -27,6 +27,7 @@ final class JavaScriptPreset extends CommonPreset implements Preset
             'webpack.config.*',
             'rollup.config.*',
             'jest.config.*',
+            'node_modules',
         ]));
     }
 }

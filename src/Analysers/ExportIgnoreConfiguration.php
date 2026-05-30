@@ -47,6 +47,51 @@ final readonly class ExportIgnoreConfiguration
         );
     }
 
+    public function sortFromDirectoriesToFiles(bool $enabled = true): self
+    {
+        return new self(
+            directory: $this->directory,
+            globPattern: $this->globPattern,
+            sortFromDirectoriesToFiles: $enabled,
+            sortAlphabetically: $this->sortAlphabetically,
+            keepLicense: $this->keepLicense,
+            keepReadme: $this->keepReadme,
+            keepGlobPattern: $this->keepGlobPattern,
+            alignExportIgnores: $this->alignExportIgnores,
+            enforceStrictOrderComparison: $this->enforceStrictOrderComparison,
+        );
+    }
+
+    public function sortAlphabetically(bool $enabled = true): self
+    {
+        return new self(
+            directory: $this->directory,
+            globPattern: $this->globPattern,
+            sortFromDirectoriesToFiles: $this->sortFromDirectoriesToFiles,
+            sortAlphabetically: $enabled,
+            keepLicense: $this->keepLicense,
+            keepReadme: $this->keepReadme,
+            keepGlobPattern: $this->keepGlobPattern,
+            alignExportIgnores: $this->alignExportIgnores,
+            enforceStrictOrderComparison: $this->enforceStrictOrderComparison,
+        );
+    }
+
+    public function keepGlobPattern(string $keepGlobPattern): self
+    {
+        return new self(
+            directory: $this->directory,
+            globPattern: $this->globPattern,
+            sortFromDirectoriesToFiles: $this->sortFromDirectoriesToFiles,
+            sortAlphabetically: $this->sortAlphabetically,
+            keepLicense: $this->keepLicense,
+            keepReadme: $this->keepReadme,
+            keepGlobPattern: $keepGlobPattern,
+            alignExportIgnores: $this->alignExportIgnores,
+            enforceStrictOrderComparison: $this->enforceStrictOrderComparison,
+        );
+    }
+
     public function keepLicense(bool $enabled = true): self
     {
         return new self(

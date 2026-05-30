@@ -222,6 +222,7 @@ abstract class AbstractExportIgnoreAnalyser
             . '.gitattributes';
 
         $this->gitattributesFileRepository->setWorkingDirectory($directory);
+        $this->configuration = $this->configuration->withDirectory($directory);
 
         return $this;
     }
@@ -242,6 +243,7 @@ abstract class AbstractExportIgnoreAnalyser
     public function sortFromDirectoriesToFiles(): self
     {
         $this->sortFromDirectoriesToFiles = true;
+        $this->configuration = $this->configuration->sortFromDirectoriesToFiles(true);
 
         return $this;
     }
@@ -249,6 +251,7 @@ abstract class AbstractExportIgnoreAnalyser
     public function sortAlphabetically(): self
     {
         $this->sortAlphabetically = true;
+        $this->configuration = $this->configuration->sortAlphabetically(true);
 
         return $this;
     }
@@ -364,6 +367,7 @@ abstract class AbstractExportIgnoreAnalyser
     {
         $this->guardGlobPattern($globPattern);
         $this->keepGlobPattern = $globPattern;
+        $this->configuration = $this->configuration->keepGlobPattern($globPattern);
 
         return $this;
     }
@@ -425,6 +429,7 @@ abstract class AbstractExportIgnoreAnalyser
     public function alignExportIgnores(): self
     {
         $this->alignExportIgnores = true;
+        $this->configuration = $this->configuration->alignExportIgnores(true);
 
         return $this;
     }
@@ -473,6 +478,7 @@ abstract class AbstractExportIgnoreAnalyser
     public function setGlobPatternFromPreset(string $preset): void
     {
         $this->globPattern = '{' . \implode(',', $this->finder->getPresetGlobByLanguageName($preset)) . '}*';
+        $this->configuration = $this->configuration->withGlobPattern($this->globPattern);
     }
 
     /**
@@ -591,6 +597,7 @@ abstract class AbstractExportIgnoreAnalyser
     {
         $this->globPattern = \trim($pattern);
         $this->guardGlobPattern($this->globPattern);
+        $this->configuration = $this->configuration->withGlobPattern($this->globPattern);
 
         return $this;
     }
