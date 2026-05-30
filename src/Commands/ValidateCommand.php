@@ -202,9 +202,6 @@ final class ValidateCommand extends Command
             InputOption::VALUE_NONE,
             $reportStaleExportIgnoresDescription
         );
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
     }
 
     /**
@@ -222,7 +219,7 @@ final class ValidateCommand extends Command
     {
         $directory = (string) $input->getArgument('directory');
         $chosenPreset = (string) $input->getOption('preset');
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         if ($directory !== \getcwd()) {
             try {

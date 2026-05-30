@@ -7,12 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [v5.10.0] - 2026-05-18
+## [v6.0.0] - 2026-06-XX
 
 ### Added
 - Expanded the `validation` to also validate __negated__ export-ignore directives. Closes [#70](https://github.com/raphaelstolt/lean-package-validator/issues/70).
 - New `--flavour` option for the `create` command which influences the `.gitattributes` file generation. Closes [#71](https://github.com/raphaelstolt/lean-package-validator/issues/71).
 - Expanded the `reformatting` to also reformat __negated__ export-ignore directives. Closes [#72](https://github.com/raphaelstolt/lean-package-validator/issues/72).
+
+### Removed
+- Removed the explicit `--agentic-run` option as agent detection is now done automatically per default.
 
 ## [v5.9.1] - 2026-05-17
 
@@ -573,8 +576,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.0...HEAD
 
+[v6.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.1...v6.0.0
 [v5.9.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.0...v5.9.1
 [v5.9.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.6...v5.9.0
 [v5.8.6]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.5...v5.8.6

@@ -57,15 +57,12 @@ final class TreeCommand extends Command
 
         $this->addOption('src', null, InputOption::VALUE_NONE, $srcDescription);
         $this->addOption('dist-package', null, InputOption::VALUE_NONE, $distPackageDescription);
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->directoryToOperateOn = (string) $input->getArgument('directory');
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         if (!\is_dir($this->directoryToOperateOn)) {
             $warning = "Warning: The provided directory "

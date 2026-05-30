@@ -43,6 +43,7 @@ final class CreateCommandTest extends TestCase
     protected function tearDown(): void
     {
         $this->removeDirectory($this->temporaryDirectory);
+        $this->clearAgenticEnvironment();
     }
 
     #[Test]
@@ -270,7 +271,7 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnSuccessInAnAgenticRun(): void
     {
         if ((new OsHelper())->isWindows()) {
             $this->markTestSkipped('Skipping test on Windows systems');
@@ -278,9 +279,10 @@ CONTENT;
 
         $this->createTemporaryFiles(['README.md', '.gitignore'], ['tests']);
 
+        \putenv('COPILOT_MODEL=1');
+
         $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
-            ->addOption('agentic-run')
             ->execute()
             ->assertSuccessful();
 
@@ -294,7 +296,7 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnFailureInAnAgenticRun(): void
     {
         $gitattributesContent = <<<CONTENT
 
@@ -303,9 +305,10 @@ specs/ export-ignore
 CONTENT;
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
+        \putenv('COPILOT_MODEL=1');
+
         $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
-            ->addOption('agentic-run')
             ->execute()
             ->assertFaulty();
 

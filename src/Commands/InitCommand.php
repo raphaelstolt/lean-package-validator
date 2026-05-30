@@ -83,9 +83,6 @@ final class InitCommand extends Command
         $this->addDryRunOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the content that would be written');
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
     }
 
     /**
@@ -103,7 +100,7 @@ final class InitCommand extends Command
         $overwriteDefaultLpvFile = $input->getOption('overwrite');
         $chosenPreset = (string) $input->getOption('preset');
         $globPatternFromPreset = false;
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         if ($directory !== WORKING_DIRECTORY) {
             try {

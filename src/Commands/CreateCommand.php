@@ -49,9 +49,6 @@ final class CreateCommand extends Command
         $this->addDryRunOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the expected .gitattributes content');
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
 
         $flavourDescription = 'Generate the .gitattributes file with the given flavour';
 
@@ -70,7 +67,7 @@ final class CreateCommand extends Command
 
         $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($directory);
 
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         $generationFlavour = $input->getOption('flavour') ?: ClassicExportIgnoreAnalyser::EXPORT_IGNORE_CLASSIC;
 

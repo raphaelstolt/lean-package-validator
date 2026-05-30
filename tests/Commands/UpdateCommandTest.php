@@ -42,6 +42,7 @@ final class UpdateCommandTest extends TestCase
     protected function tearDown(): void
     {
         $this->removeDirectory($this->temporaryDirectory);
+        $this->clearAgenticEnvironment();
     }
 
     #[Test]
@@ -136,7 +137,7 @@ CONTENT;
         $this->assertFileDoesNotExist($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
     }
     #[Test]
-    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnSuccessInAnAgenticRun(): void
     {
         if ((new OsHelper())->isWindows()) {
             $this->markTestSkipped('Skipping test on Windows systems');
@@ -151,9 +152,10 @@ tests/ export-ignore
 CONTENT;
         $this->createTemporaryGitattributesFile($gitattributesContent);
 
+        \putenv('COPILOT_MODEL=1');
+
         $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
-            ->addOption('agentic-run')
             ->execute()
             ->assertSuccessful();
 
@@ -167,7 +169,7 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnFailureInAnAgenticRun(): void
     {
         if ((new OsHelper())->isWindows()) {
             $this->markTestSkipped('Skipping test on Windows systems');
@@ -178,9 +180,10 @@ CONTENT;
             \unlink($gitattributesFile);
         }
 
+        \putenv('COPILOT_MODEL=1');
+
         $result = TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
-            ->addOption('agentic-run')
             ->execute()
             ->assertFaulty();
 

@@ -11,11 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 trait OutputOptions
 {
-    protected function addAgenticOutputOption(callable $addOption): void
-    {
-        $addOption('agentic-run', null, InputOption::VALUE_NONE, 'Enable agentic-friendly output formatting');
-    }
-
     protected function addDryRunOutputOption(callable $addOption, string $message): void
     {
         $addOption('dry-run', null, InputOption::VALUE_NONE, $message);
@@ -26,9 +21,9 @@ trait OutputOptions
         return (bool) $input->getOption('dry-run');
     }
 
-    protected function isAgenticRun(InputInterface $input): bool
+    protected function isAgenticRun(): bool
     {
-        return AgentDetector::detect()->isAgent || $input->getOption('agentic-run') === true;
+        return AgentDetector::detect()->isAgent === true;
     }
 
     /**

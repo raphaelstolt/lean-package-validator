@@ -51,6 +51,7 @@ class InitCommandTest extends TestCase
         if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
+        $this->clearAgenticEnvironment();
     }
 
     #[Test]
@@ -228,15 +229,16 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnSuccessInAnAgenticRun(): void
     {
         $command = $this->application->find('init');
         $tester = new CommandTester($command);
 
+        \putenv('COPILOT_MODEL=1');
+
         $exitCode = $tester->execute([
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
-            '--agentic-run' => true,
         ]);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
@@ -251,17 +253,18 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnFailureInAnAgenticRun(): void
     {
         $this->createTemporaryFilesInDirectory($this->temporaryDirectory, ['.lpv']);
 
         $command = $this->application->find('init');
         $tester = new CommandTester($command);
 
+        \putenv('COPILOT_MODEL=1');
+
         $exitCode = $tester->execute([
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
-            '--agentic-run' => true,
         ]);
 
         $this->assertTrue($exitCode !== Command::SUCCESS);

@@ -37,6 +37,7 @@ class TreeCommandTest extends TestCase
         if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
+        $this->clearAgenticEnvironment();
     }
     #[Test]
     public function displaysExpectedSrcTree(): void
@@ -110,7 +111,7 @@ class TreeCommandTest extends TestCase
     }
 
     #[Test]
-    public function outputsJsonWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonInAnAgenticRun(): void
     {
         $command = $this->application->find('tree');
         $commandTester = new CommandTester($command);
@@ -121,11 +122,12 @@ class TreeCommandTest extends TestCase
             \json_encode(['name' => 'test/agentic-package'])
         );
 
+        \putenv('COPILOT_MODEL=1');
+
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => $this->temporaryDirectory,
             '--src' => true,
-            '--agentic-run' => true,
         ]);
 
         $commandTester->assertCommandIsSuccessful();

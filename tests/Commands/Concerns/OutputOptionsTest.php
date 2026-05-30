@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
-use Symfony\Component\Console\Input\InputInterface;
 
 class OutputOptionsTest extends TestCase
 {
@@ -16,6 +15,7 @@ class OutputOptionsTest extends TestCase
 
     protected function tearDown(): void
     {
+        \putenv('COPILOT_MODEL');
         unset($_ENV['COPILOT_MODEL']);
     }
 
@@ -23,11 +23,8 @@ class OutputOptionsTest extends TestCase
     #[RunInSeparateProcess]
     public function itAutoDetectsAnAiAgent(): void
     {
-        $mockedInput = $this->createMock(InputInterface::class);
-        $mockedInput->method('getOption')->with('agentic-run')->willReturn(false);
-
         \putenv('COPILOT_MODEL=1');
 
-        $this->assertTrue($this->isAgenticRun($mockedInput));
+        $this->assertTrue($this->isAgenticRun());
     }
 }

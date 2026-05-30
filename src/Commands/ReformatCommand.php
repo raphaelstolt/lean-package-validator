@@ -83,9 +83,6 @@ final class ReformatCommand extends Command
         $this->addDryRunOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the content that would be written');
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
     }
 
     /**
@@ -112,7 +109,7 @@ final class ReformatCommand extends Command
     ): int {
         $gitattributesPath = $this->exportIgnoreAnalyser->getGitattributesFilePath();
 
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         if (!\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
             if ($isAgenticRun) {

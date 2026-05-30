@@ -38,6 +38,7 @@ class RefreshCommandTest extends TestCase
         if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
+        $this->clearAgenticEnvironment();
     }
 
     /**
@@ -160,18 +161,19 @@ CONTENT);
     }
 
     #[Test]
-    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnSuccessInAnAgenticRun(): void
     {
         $this->createTemporaryGlobPatternFile("*.txt\n*.lock\n");
 
         $command = $this->application->find('refresh');
         $tester = new CommandTester($command);
 
+        \putenv('COPILOT_MODEL=1');
+
         $exitCode = $tester->execute([
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
             '--preset' => 'PHP',
-            '--agentic-run' => true,
         ]);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
@@ -191,11 +193,12 @@ CONTENT);
         $command = $this->application->find('refresh');
         $tester = new CommandTester($command);
 
+        \putenv('COPILOT_MODEL=1');
+
         $exitCode = $tester->execute([
             'command' => $command->getName(),
             'directory' => WORKING_DIRECTORY,
             '--preset' => 'PHP',
-            '--agentic-run' => true,
         ]);
 
         $this->assertTrue($exitCode !== Command::SUCCESS);

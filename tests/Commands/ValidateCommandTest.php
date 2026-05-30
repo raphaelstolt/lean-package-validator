@@ -69,6 +69,7 @@ class ValidateCommandTest extends TestCase
         if (\is_dir($this->temporaryDirectory)) {
             $this->removeDirectory($this->temporaryDirectory);
         }
+        $this->clearAgenticEnvironment();
     }
 
     #[Test]
@@ -2491,7 +2492,7 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnSuccessWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnSuccessInAnAgenticRun(): void
     {
         $artifactFilenames = ['.buildignore', 'phpspec.yml.dist', 'foo.txt'];
         $this->createTemporaryFiles($artifactFilenames, ['specs']);
@@ -2509,10 +2510,12 @@ CONTENT;
 
         $command = $this->application->find('validate');
         $commandTester = new CommandTester($command);
+
+        \putenv('COPILOT_MODEL=1');
+
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => $this->temporaryDirectory,
-            '--agentic-run' => true,
         ]);
 
         $commandTester->assertCommandIsSuccessful();
@@ -2526,7 +2529,7 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnFailureWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnFailureInAnAgenticRun(): void
     {
         $artifactFilenames = ['.buildignore', 'phpspec.yml.dist'];
         $this->createTemporaryFiles($artifactFilenames, ['specs']);
@@ -2540,10 +2543,12 @@ CONTENT;
 
         $command = $this->application->find('validate');
         $commandTester = new CommandTester($command);
+
+        \putenv('COPILOT_MODEL=1');
+
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => $this->temporaryDirectory,
-            '--agentic-run' => true,
         ]);
 
         $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);
@@ -2558,16 +2563,18 @@ CONTENT;
     }
 
     #[Test]
-    public function outputsJsonOnMissingGitattributesFileWhenAgenticRunOptionIsSet(): void
+    public function outputsJsonOnMissingGitattributesFileInAnAgenticRun(): void
     {
         $this->createTemporaryFiles(['.buildignore', 'phpspec.yml.dist'], ['specs']);
 
         $command = $this->application->find('validate');
         $commandTester = new CommandTester($command);
+
+        \putenv('COPILOT_MODEL=1');
+
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => $this->temporaryDirectory,
-            '--agentic-run' => true,
         ]);
 
         $this->assertTrue($commandTester->getStatusCode() !== Command::SUCCESS);

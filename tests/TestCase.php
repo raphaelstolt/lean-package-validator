@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Stolt\LeanPackage\Tests;
 
+use Laravel\AgentDetector\AgentDetector;
 use PHPUnit\Framework\TestCase as PHPUnit;
 
 
@@ -22,6 +23,16 @@ class TestCase extends PHPUnit
 
     protected string $temporaryDirectory;
 
+    protected function clearAgenticEnvironment(): void
+    {
+        $environmentVariables = ['AI_AGENT', ...\array_keys(AgentDetector::AGENT_ENV_VARS)];
+
+        foreach ($environmentVariables as $environmentVariable) {
+            \putenv($environmentVariable);
+            unset($_ENV[$environmentVariable]);
+        }
+    }
+
     /**
      * Set up a temporary directory.
      *
@@ -29,6 +40,8 @@ class TestCase extends PHPUnit
      */
     protected function setUpTemporaryDirectory(): void
     {
+        $this->clearAgenticEnvironment();
+
         $this->temporaryDirectory = \sys_get_temp_dir()
             . DIRECTORY_SEPARATOR
             . 'lpv';

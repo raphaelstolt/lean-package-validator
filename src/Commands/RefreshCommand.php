@@ -85,9 +85,6 @@ final class RefreshCommand extends Command
         $this->addDryRunOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the content that would be written');
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
     }
 
     /**
@@ -103,7 +100,7 @@ final class RefreshCommand extends Command
     {
         $directory = (string) $input->getArgument('directory');
         $chosenPreset = (string) $input->getOption('preset');
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         if ($directory !== '' && $directory !== WORKING_DIRECTORY) {
             try {

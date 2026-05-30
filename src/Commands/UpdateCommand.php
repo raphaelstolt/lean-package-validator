@@ -69,16 +69,13 @@ final class UpdateCommand extends Command
         $this->addDryRunOutputOption(function (...$args) {
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the expected .gitattributes content');
-        $this->addAgenticOutputOption(function (...$args) {
-            $this->getDefinition()->addOption(new InputOption(...$args));
-        });
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
         $this->exportIgnoreAnalyser->setDirectory($directory);
-        $isAgenticRun = $this->isAgenticRun($input);
+        $isAgenticRun = $this->isAgenticRun();
 
         if ((bool) $input->getOption('group')) {
             $this->exportIgnoreAnalyser->setGroupNonExportIgnores(true);

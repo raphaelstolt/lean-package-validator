@@ -349,14 +349,12 @@ This project [includes](./resources/boost/skills) three AI skills focused on man
 
 ### Agentic-friendly output
 
-All commands support the `--agentic-run` option, which switches the output from human-readable text to a structured JSON object.
+All commands auto-detect agentic runs, which switches the output from human-readable text to a structured JSON object.
 This is useful when integrating the tool into AI workflows or automation pipelines where machine-readable output is preferred.
 
-> [!NOTE]
-> As of release `v5.6.1` agentic runs are auto-detected and enabled by default.
-
 ``` bash
-lean-package-validator validate --agentic-run [<directory>]
+export COPILOT_MODEL=1
+lean-package-validator validate [<directory>]
 ```
 
 ``` json
