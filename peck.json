@@ -40,7 +40,10 @@
             "alignable",
             "reorganise",
             "flavour",
-            "reformats"
+            "reformats",
+            "artefacts",
+            "analysers",
+            "reformatter"
         ],
         "paths": []
     }
