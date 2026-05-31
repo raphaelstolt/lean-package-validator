@@ -271,6 +271,44 @@ CONTENT;
     }
 
     #[Test]
+    public function createsANewGitattributesFileIfForceOptionIsSet(): void
+    {
+        if ((new OsHelper())->isWindows()) {
+            $this->markTestSkipped('Skipping test on Windows systems');
+        }
+
+        $this->createTemporaryFiles(
+            ['README.md', '.gitignore'],
+            ['tests']
+        );
+
+        $gitattributesContent = <<<CONTENT
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+CONTENT;
+
+        $this->createTemporaryGitattributesFile($gitattributesContent);
+
+        TestCommand::for($this->getCommandInstance())
+            ->addArgument($this->temporaryDirectory)
+            ->addOption('force', true)
+            ->execute()
+            ->assertSuccessful()
+            ->assertOutputContains('A .gitattributes file has been created in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . '.');
+
+        $content = (string) \file_get_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes');
+
+        $this->assertStringContainsString(
+            '# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).',
+            $content
+        );
+        $this->assertStringContainsString('README.md', $content);
+        $this->assertStringContainsString('.gitignore', $content);
+        $this->assertStringContainsString('tests/', $content);
+        $this->assertStringContainsString('export-ignore', $content);
+    }
+
+    #[Test]
     public function outputsJsonOnSuccessInAnAgenticRun(): void
     {
         if ((new OsHelper())->isWindows()) {

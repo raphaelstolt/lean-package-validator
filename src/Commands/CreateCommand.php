@@ -50,6 +50,14 @@ final class CreateCommand extends Command
             $this->getDefinition()->addOption(new InputOption(...$args));
         }, 'Do not write any files. Output the expected .gitattributes content');
 
+        $this->addOption(
+            'force',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Force the creation of the .gitattributes file even if one already exists',
+            false
+        );
+
         $flavourDescription = 'Generate the .gitattributes file with the given flavour';
 
         $this->addOption(
@@ -64,6 +72,7 @@ final class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string) $input->getArgument('directory') ?: \getcwd();
+        $forceCreation = (bool) $input->getOption('force');
 
         $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($directory);
 
@@ -83,7 +92,7 @@ final class CreateCommand extends Command
 
         $gitattributesPath = $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath();
 
-        if (\file_exists($gitattributesPath) && $this->isDryRun($input) !== true) {
+        if (\file_exists($gitattributesPath) && $forceCreation === false && $this->isDryRun($input) !== true) {
             $message = 'A .gitattributes file already exists. Use the update command to modify it.';
             if ($isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $message);

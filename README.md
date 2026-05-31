@@ -189,7 +189,8 @@ cat .gitattributes | lean-package-validator validate --stdin-input
 
 #### Create command
 
-The `create` command will create a `.gitattributes` file in the given directory.
+The `create` command will create a `.gitattributes` file in the given directory. Via the `--force` option it is possible
+to overwrite an existing `.gitattributes` file.
 
 #### Update command
 
