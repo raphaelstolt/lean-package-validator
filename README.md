@@ -21,7 +21,8 @@ The lean package validator, or its abbreviation __lpv__, is a utility tool that 
 `leanness`. A project/micro-package is considered `lean` when its common repository artefacts won't be included in release
 assets.
 
-It can also [create](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#create-command), [update](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#update-command), and [reformat](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#reformat-command) the `leanness` enforcing export-ignore entries of a `.gitattributes` file.
+It can also [create](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#create-command), [update](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#update-command), and [reformat](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#reformat-command) the `leanness` enforcing export-ignore entries of a `.gitattributes` 
+file.
 
 ## Installation
 
@@ -71,17 +72,49 @@ brew install lean-package-validator
 
 ## Usage
 
-Run the lean package validator CLI within or against a project/micro-package
-directory, and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in
-a `.gitattributes` file against a set of common repository artefacts.
+Run the lean package validator CLI within or against a project/micro-package directory, and it will validate the
+[export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) directives present in a `.gitattributes` file against a set of common repository artefacts.
 
-It can handle _classic_ export-ignore directives as well as _negated_ export-ignore directives.
+It can handle __classic__ export-ignore directives as well as __negated__ export-ignore directives.
 
-If no `.gitattributes` file is present it will suggest creating one.
+Classic export-ignore directives are defined as follows:
+```txt
+.aiassistant/               export-ignore
+.editorconfig               export-ignore
+
+...
+
+LICENSE.md                  export-ignore
+llms.txt                    export-ignore
+mago.toml                   export-ignore
+peck.json                   export-ignore
+phpstan.neon.dist           export-ignore
+phpunit.xml.dist            export-ignore
+README.md                   export-ignore
+tests/                      export-ignore
+```
+
+While negated export-ignore directives are defined as follows:
+
+```txt
+* export-ignore
+
+composer.json              -export-ignore
+bin/                       -export-ignore
+bin/lean-package-validator -export-ignore
+resources/                 -export-ignore
+resources/**               -export-ignore
+src/                       -export-ignore
+src/**                     -export-ignore
+```
+
+Run the following command to validate a project/micro-package.
 
 ``` bash
 lean-package-validator validate [<directory>]
 ```
+
+If no `.gitattributes` file is present it will suggest [creating](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#create-command) one.
 
 ### Available options
 
@@ -190,7 +223,10 @@ cat .gitattributes | lean-package-validator validate --stdin-input
 #### Create command
 
 The `create` command will create a `.gitattributes` file in the given directory. Via the `--force` option it is possible
-to overwrite an existing `.gitattributes` file.
+to overwrite an existing `.gitattributes` file. 
+
+To define the flavour of the export-ignore directives to use in the creation process, the `--flavour` option can be used, with
+the default being `classic`.
 
 #### Update command
 
@@ -206,7 +242,7 @@ It is possible to influence the reformatting by providing the `--sort-alphabetic
 options. Via the `--group` option it is possible to group the export-ignores and non-export-ignores entries of the given
 `.gitattributes` file.
 
-#### Init command
+#### Configuration init command
 
 The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artefacts.
 
@@ -214,14 +250,14 @@ The `init` command will create an initial `.lpv` file with the default patterns 
 lean-package-validator init [<directory>]
 ```
 
-The `--overwrite|-o` option overwrites an existing `.lpv` file. Also, see the [refresh](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#refresh-command) command.
+The `--overwrite|-o` option overwrites an existing `.lpv` file. Also, see the [refresh](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#configuration-refresh-command) command.
 
 The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
 `JavaScript`, and `Go`. With `PHP` being the default.
 
 The `--dry-run` option will show the content of the `.lpv` file that would be created.
 
-#### Refresh command
+#### Configuration refresh command
 
 The `refresh` command updates an existing `.lpv` file by adding missing preset patterns while keeping any manual
 modifications already present in the file.
