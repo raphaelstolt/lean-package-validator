@@ -82,7 +82,7 @@ final class UpdateCommand extends Command
         }
 
         // Apply options that influence generation
-        if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser)) {
+        if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser, $this->getName())) {
             return self::FAILURE;
         }
 

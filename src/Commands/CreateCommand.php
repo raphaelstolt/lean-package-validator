@@ -77,7 +77,7 @@ final class CreateCommand extends Command
         }
 
         // Apply options that influence generation
-        if (!$this->applyGenerationOptions($input, $output, $this->analyser->getActualExportIgnoreAnalyser())) {
+        if (!$this->applyGenerationOptions($input, $output, $this->analyser->getActualExportIgnoreAnalyser(), $this->getName())) {
             return self::FAILURE;
         }
 

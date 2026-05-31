@@ -10,12 +10,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [v6.0.0] - 2026-06-XX
 
 ### Added
-- Expanded the `validation` to also validate __negated__ export-ignore directives. Closes [#70](https://github.com/raphaelstolt/lean-package-validator/issues/70).
+- Expanded the `validation` to also validate _negated_ export-ignore directives. Closes [#70](https://github.com/raphaelstolt/lean-package-validator/issues/70).
 - New `--flavour` option for the `create` command which influences the `.gitattributes` file generation. Closes [#71](https://github.com/raphaelstolt/lean-package-validator/issues/71).
-- Expanded the `reformatting` to also reformat __negated__ export-ignore directives. Closes [#72](https://github.com/raphaelstolt/lean-package-validator/issues/72).
+- Expanded the `reformatting` to also reformat _negated_ export-ignore directives. Closes [#72](https://github.com/raphaelstolt/lean-package-validator/issues/72).
 
 ### Removed
 - Removed the explicit `--agentic-run` option as agent detection is now done automatically per default.
+- Removed the `--create` and `--overwrite` options of the validate command. Closes [#68](https://github.com/raphaelstolt/lean-package-validator/issues/68).
 
 ## [v5.9.1] - 2026-05-17
 

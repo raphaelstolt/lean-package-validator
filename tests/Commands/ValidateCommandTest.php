@@ -107,7 +107,7 @@ CONDUCT.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -116,7 +116,7 @@ CONTENT;
     }
 
     #[Test]
-    public function validateOnNonExistentGitattributesFilesSuggestsCreationWithAlignment(): void
+    public function validateOnNonExistentGitattributesFilesSuggestsCreateCommand(): void
     {
         $artifactFilenames = [
             'CONDUCT.md',
@@ -135,7 +135,7 @@ CONTENT;
         $commandTester->execute([
             'command' => $command->getName(),
             'directory' => $this->temporaryDirectory,
-            '--align-export-ignores' => true,
+            '--enforce-alignment' => true,
         ]);
 
         $expectedDisplay = <<<CONTENT
@@ -151,7 +151,7 @@ CONDUCT.md       export-ignore
 phpspec.yml.dist export-ignore
 specs/           export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -387,7 +387,7 @@ CONDUCT.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -432,7 +432,7 @@ License.rst export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -474,7 +474,7 @@ CONDUCT.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -518,7 +518,7 @@ License.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -562,7 +562,7 @@ docs/ export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -604,7 +604,7 @@ CONDUCT.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -648,7 +648,7 @@ CONDUCT.md export-ignore
 phpspec.yml.dist export-ignore
 specs/ export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -799,155 +799,6 @@ CONTENT;
     }
 
     #[Test]
-    #[RunInSeparateProcess]
-    public function failingGitattributesFilesCreationReturnsExpectedStatusCode(): void
-    {
-        $artifactFilenames = ['CONDUCT.md'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $builder = new MockBuilder();
-        $builder->setNamespace('Stolt\LeanPackage\Gitattributes')
-                ->setName('file_put_contents')
-                ->setFunctionProvider(new FixedValueFunction(false));
-
-        $mock = $builder->build();
-        $mock->enable();
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--create' => true,
-        ]);
-
-        $expectedDisplay = <<<CONTENT
-The --create option is deprecated. Please use the dedicated create command.
-
-
-Creation of .gitattributes file failed.
-
-CONTENT;
-
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
-
-        $mock->disable();
-    }
-
-    #[Test]
-    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithoutHeader(): void
-    {
-        $artifactFilenames = ['CONDUCT.md'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--create' => true,
-            '--omit-header' => true
-        ]);
-
-        $this->assertStringNotContainsString(GitattributesFileRepository::GENERATED_HEADER, $commandTester->getDisplay());
-        $this->assertStringNotContainsString(GitattributesFileRepository::MODIFIED_HEADER, $commandTester->getDisplay());
-
-        $commandTester->assertCommandIsSuccessful();
-
-        $this->assertFileExists(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
-    }
-
-    #[Test]
-    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOne(): void
-    {
-        $artifactFilenames = ['CONDUCT.md'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-
-        $this->assertFileDoesNotExist(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
-
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--create' => true,
-        ]);
-
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertFileExists(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
-    }
-
-    #[Test]
-    public function validateOnNonExistentGitattributesFilesWithCreationOptionCreatesOneWithAlignment(): void
-    {
-        if ((new OsHelper())->isWindows()) {
-            $this->markTestSkipped('Skipping test on Windows systems');
-        }
-
-        $artifactFilenames = ['CONDUCT.md'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--create' => true,
-            '--align-export-ignores' => true,
-        ]);
-
-        $expectedDisplay = <<<CONTENT
-The --create option is deprecated. Please use the dedicated create command.
-
-Created a .gitattributes file with the shown content:
-# This file was generated by the lean package validator (http://git.io/lean-package-validator).
-
-* text=auto eol=lf
-
-.gitattributes export-ignore
-CONDUCT.md     export-ignore
-specs/         export-ignore
-
-CONTENT;
-
-        $expectedGitattributesExportIgnores = <<<CONTENT
-.gitattributes export-ignore
-CONDUCT.md     export-ignore
-specs/         export-ignore
-CONTENT;
-
-        $this->assertStringContainsString($expectedGitattributesExportIgnores, $commandTester->getDisplay());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertFileExists(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
-    }
-
-    #[Test]
     public function validGitattributesReturnsExpectedStatusCode(): void
     {
         $artifactFilenames = [
@@ -1071,7 +922,7 @@ dist/ export-ignore
 mock.pyc export-ignore
 testrunner.py export-ignore
 
-Use the --create|-c option to create a .gitattributes file with the shown content.
+Use the create command to create a .gitattributes file with the shown content.
 
 CONTENT;
 
@@ -1122,47 +973,6 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
-    }
-
-    #[Test]
-    public function overwriteOptionOnNonExistentGitattributesFileImplicatesCreate(): void
-    {
-        $artifactFilenames = ['CONDUCT.md'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--overwrite' => true,
-        ]);
-
-        $expectedDisplay = <<<CONTENT
-The --overwrite option is deprecated. Please use the dedicated update command.
-Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
-
-Created a .gitattributes file with the shown content:
-# This file was generated by the lean package validator (http://git.io/lean-package-validator).
-
-* text=auto eol=lf
-
-.gitattributes export-ignore
-CONDUCT.md export-ignore
-specs/ export-ignore
-
-
-CONTENT;
-
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertFileExists(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
     }
 
     #[Test]
@@ -1359,113 +1169,6 @@ CONTENT;
     }
 
     #[Test]
-    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/44')]
-    public function incompleteGitattributesFileIsOverwrittenWithAlignment(): void
-    {
-        if ((new OsHelper())->isWindows()) {
-            $this->markTestSkipped('Skipping test on Windows systems');
-        }
-
-        $gitattributesContent = <<<CONTENT
-
-# These files are always considered text and should use LF.
-# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
-
-*.php text eol=lf
-
-# Ignore all non production artifacts with an "export-ignore".
-/.gitattributes     export-ignore
-/.gitignore         export-ignore
-/.styleci.yml       export-ignore
-/.travis.yml        export-ignore
-/.appveyor.yml      export-ignore
-/phpunit.xml.dist export-ignore
-/tests/ export-ignore
-
-CONTENT;
-
-        $this->createTemporaryGitattributesFile($gitattributesContent);
-
-        $artifactFilenames = [
-            '.gitignore',
-            '.travis.yml',
-            '.appveyor.yml',
-            'phpunit.xml.dist',
-            '.styleci.yml',
-        ];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['tests', 'docs', 'example']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--overwrite' => true,
-            '-a' => true,
-        ]);
-
-        $expectedDisplay = <<<CONTENT
-The --overwrite option is deprecated. Please use the dedicated update command.
-The present .gitattributes file is considered invalid.
-
-Overwrote it with the shown content:
-# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).
-
-
-# These files are always considered text and should use LF.
-# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
-
-*.php text eol=lf
-
-# Ignore all non production artifacts with an "export-ignore".
-.appveyor.yml    export-ignore
-.gitattributes   export-ignore
-.gitignore       export-ignore
-.styleci.yml     export-ignore
-.travis.yml      export-ignore
-docs/            export-ignore
-example/         export-ignore
-phpunit.xml.dist export-ignore
-tests/           export-ignore
-
-
-CONTENT;
-
-        $expectedGitattributesContent = <<<CONTENT
-# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).
-
-
-# These files are always considered text and should use LF.
-# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
-
-*.php text eol=lf
-
-# Ignore all non production artifacts with an "export-ignore".
-.appveyor.yml    export-ignore
-.gitattributes   export-ignore
-.gitignore       export-ignore
-.styleci.yml     export-ignore
-.travis.yml      export-ignore
-docs/            export-ignore
-example/         export-ignore
-phpunit.xml.dist export-ignore
-tests/           export-ignore
-
-CONTENT;
-
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringEqualsFile(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
-            $expectedGitattributesContent
-        );
-    }
-
-    #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/41')]
     public function staleExportIgnoresAreConsideredAsInvalid(): void
     {
@@ -1517,208 +1220,6 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
-    }
-
-    #[Test]
-    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/54')]
-    public function createdHeaderIsReplacedByModifiedHeader(): void
-    {
-        if ((new OsHelper())->isWindows()) {
-            $this->markTestSkipped('Skipping test on Windows systems');
-        }
-
-        $gitattributesContent = <<<CONTENT
-# This file was generated by the lean package validator (http://git.io/lean-package-validator).
-
-# These files are always considered text and should use LF.
-# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
-
-*.php text eol=lf
-
-# Ignore all non production artifacts with an "export-ignore".
-.gitattributes export-ignore
-.github/ export-ignore
-.gitignore export-ignore
-phpunit.xml.dist export-ignore
-
-CONTENT;
-
-        $this->createTemporaryGitattributesFile($gitattributesContent);
-
-        $artifactFilenames = ['.gitignore', '.gitattributes', 'phpunit.xml.dist'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['.github', 'tests']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--overwrite' => true
-        ]);
-
-
-        $expectedGitattributesContent = <<<CONTENT
-# This file was partly modified by the lean package validator (http://git.io/lean-package-validator).
-
-# These files are always considered text and should use LF.
-# See core.whitespace @ http://git-scm.com/docs/git-config for whitespace flags.
-
-*.php text eol=lf
-
-# Ignore all non production artifacts with an "export-ignore".
-.gitattributes export-ignore
-.github/ export-ignore
-.gitignore export-ignore
-phpunit.xml.dist export-ignore
-tests/ export-ignore
-
-CONTENT;
-
-        $this->assertStringEqualsFile(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes',
-            $expectedGitattributesContent
-        );
-    }
-
-    #[Test]
-    public function addsCreatedHeaderAsExpected(): void
-    {
-        $artifactFilenames = ['phpspec.yml.dist', 'version-increase-command'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--create' => true,
-            '--omit-header' => false,
-        ]);
-
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertFileExists(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
-        $this->assertStringContainsString(
-            GitattributesFileRepository::GENERATED_HEADER,
-            \file_get_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes')
-        );
-    }
-
-    #[Test]
-    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/8')]
-    #[DataProvider('optionProvider')]
-    public function incompleteGitattributesFileIsOverwritten(string $option): void
-    {
-        $gitattributesContent = <<<CONTENT
-* text=auto eol=lf
-
-phpspec.yml.dist export-ignore
-specs/ export-ignore
-version-increase-command export-ignore
-CONTENT;
-
-        $this->assertTrue($this->createTemporaryGitattributesFile($gitattributesContent));
-
-        $artifactFilenames = ['phpspec.yml.dist', 'version-increase-command'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $header = GitattributesFileRepository::MODIFIED_HEADER . PHP_EOL;
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            $option => true,
-            '--omit-header' => true,
-        ]);
-
-        $dedicatedCommand = $option === '--create' ? 'create' : 'update';
-
-        $expectedDisplay = <<<CONTENT
-The {$option} option is deprecated. Please use the dedicated {$dedicatedCommand} command.
-The present .gitattributes file is considered invalid.
-
-Overwrote it with the shown content:
-{$header}
-* text=auto eol=lf
-
-.gitattributes export-ignore
-phpspec.yml.dist export-ignore
-specs/ export-ignore
-version-increase-command export-ignore
-
-CONTENT;
-
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertFileExists(
-            $this->temporaryDirectory . DIRECTORY_SEPARATOR . '.gitattributes'
-        );
-    }
-
-    #[Test]
-    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/8')]
-    #[RunInSeparateProcess]
-    public function failingGitattributesFilesOverwriteReturnsExpectedStatusCode(): void
-    {
-        $gitattributesContent = <<<CONTENT
-* text=auto eol=lf
-
-phpspec.yml.dist export-ignore
-specs/ export-ignore
-CONTENT;
-
-        $this->createTemporaryGitattributesFile($gitattributesContent);
-
-        $artifactFilenames = ['phpspec.yml.dist'];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['specs']
-        );
-
-        $builder = new MockBuilder();
-        $builder->setNamespace('Stolt\LeanPackage\Gitattributes')
-            ->setName('file_put_contents')
-            ->setFunctionProvider(new FixedValueFunction(false));
-
-        $mock = $builder->build();
-        $mock->enable();
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--create' => true,
-        ]);
-
-        $expectedDisplay = <<<CONTENT
-The --create option is deprecated. Please use the dedicated create command.
-The present .gitattributes file is considered invalid.
-
-Overwrite of .gitattributes file failed.
-
-CONTENT;
-
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
-
-        $mock->disable();
     }
 
     #[Test]
@@ -2434,17 +1935,6 @@ CONTENT;
 
         $this->assertSame($expectedDisplay, $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
-    }
-
-    /**
-     * @return array
-     */
-    public static function optionProvider(): array
-    {
-        return [
-            ['--overwrite'],
-            ['--create']
-        ];
     }
 
     /**

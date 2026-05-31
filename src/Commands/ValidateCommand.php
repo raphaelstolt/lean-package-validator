@@ -13,7 +13,6 @@ use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Commands\Concerns\GeneratesGitattributesOptions;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
 use Stolt\LeanPackage\Exceptions\GitArchiveNotValidatedYet;
-use Stolt\LeanPackage\Exceptions\GitattributesCreationFailed;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\InvalidGlobPattern;
@@ -84,15 +83,11 @@ final class ValidateCommand extends Command
             $this->exportIgnoreAnalyser->getDirectory()
         );
 
-        $createDescription = 'Create a .gitattributes file if not present';
         $enforceStrictOrderDescription = 'Enforce a strict order comparison of '
             . 'export-ignores in the .gitattributes file';
         $enforceExportIgnoreAlignmentDescription = 'Enforce a strict alignment of '
             . 'export-ignores in the .gitattributes file';
-        $overwriteDescription = 'Overwrite existing .gitattributes file '
-            . 'with missing export-ignores';
         $validateArchiveDescription = 'Validate Git archive against current HEAD';
-        $omitHeaderDescription = 'Omit adding a header to created or modified .gitattributes file';
         $diffDescription = 'Show difference between expected and actual .gitattributes content';
         $reportStaleExportIgnoresDescription = 'Filter stale export-ignores referencing non existent artifacts. Requires --diff option to be set';
 
@@ -109,11 +104,9 @@ final class ValidateCommand extends Command
         $keepGlobPatternDescription = 'Do not export-ignore matching glob pattern e.g. <comment>{LICENSE.*,README.*,docs*}</comment>';
         $sortDescription = 'Sort from directories to files';
 
-        $alignExportIgnoresDescription = 'Align export-ignores on create or overwrite';
         $stdinInputDescription = "Read .gitattributes content from standard input";
 
         $this->addOption('stdin-input', null, InputOption::VALUE_NONE, $stdinInputDescription);
-        $this->addOption('create', 'c', InputOption::VALUE_NONE, $createDescription);
         $this->addOption(
             'enforce-strict-order',
             null,
@@ -127,7 +120,6 @@ final class ValidateCommand extends Command
             $enforceExportIgnoreAlignmentDescription
         );
 
-        $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, $overwriteDescription);
         $this->addOption(
             'validate-git-archive',
             null,
@@ -173,22 +165,10 @@ final class ValidateCommand extends Command
             $keepGlobPatternDescription
         );
         $this->addOption(
-            'align-export-ignores',
-            'a',
-            InputOption::VALUE_NONE,
-            $alignExportIgnoresDescription
-        );
-        $this->addOption(
             'sort-from-directories-to-files',
             's',
             InputOption::VALUE_NONE,
             $sortDescription
-        );
-        $this->addOption(
-            'omit-header',
-            null,
-            InputOption::VALUE_NONE,
-            $omitHeaderDescription
         );
         $this->addOption(
             'diff',
@@ -255,7 +235,7 @@ final class ValidateCommand extends Command
             }
 
             // Apply generation-related options (e.g. --enforce-strict-order, --enforce-alignment, keep-*)
-            if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser)) {
+            if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser, $this->getName())) {
                 return Command::FAILURE;
             }
 
@@ -282,25 +262,14 @@ final class ValidateCommand extends Command
         $verboseOutput = '+ Scanning directory ' . \realpath($directory) . '.';
         $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-        // Print deprecation notices for legacy options but do NOT change the exit code.
-        if ($input->hasOption('create') && (bool) $input->getOption('create')) {
-            $output->writeln('<comment>The --create option is deprecated. Please use the dedicated <info>create</info> command.</comment>');
-        }
-        if ($input->hasOption('overwrite') && (bool) $input->getOption('overwrite')) {
-            $output->writeln('<comment>The --overwrite option is deprecated. Please use the dedicated <info>update</info> command.</comment>');
-        }
-
         // Apply shared generation-related options via the trait (glob/preset/keep/alignment/order)
-        if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser)) {
+        if (!$this->applyGenerationOptions($input, $output, $this->exportIgnoreAnalyser, $this->getName())) {
             return Command::FAILURE;
         }
 
-        $createGitattributesFile = $input->getOption('create');
-        $overwriteGitattributesFile = $input->getOption('overwrite');
         $validateArchive = $input->getOption('validate-git-archive');
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
-        $omitHeader = (bool) $input->getOption('omit-header');
         $showDifference = $input->getOption('diff');
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
 
@@ -374,15 +343,6 @@ final class ValidateCommand extends Command
             }
         }
 
-        $alignExportIgnores = $input->getOption('align-export-ignores');
-
-        if ($alignExportIgnores) {
-            $verboseOutput = '+ Aligning the export-ignores.';
-            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-
-            $this->exportIgnoreAnalyser->alignExportIgnores();
-        }
-
         if ($globPattern || $globPattern === '') {
             try {
                 $verboseOutput = "+ Using glob pattern <info>{$globPattern}</info>.";
@@ -448,10 +408,10 @@ final class ValidateCommand extends Command
         $outputContent = '';
 
         if (!$this->exportIgnoreAnalyser->hasGitattributesFile()) {
-            if ($createGitattributesFile === false) {
-                $warning = 'Warning: There is no .gitattributes file present in '
-                    . $this->exportIgnoreAnalyser->getDirectory() . '.';
-                $outputContent.= '<error>' . $warning . '</error>';
+            $warning = 'Warning: There is no .gitattributes file present in '
+                . $this->exportIgnoreAnalyser->getDirectory() . '.';
+            if (!$isAgenticRun) {
+                $output->write('<error>' . $warning . '</error>');
             }
 
             $verboseOutput = '+ Getting expected .gitattributes file content.';
@@ -460,47 +420,26 @@ final class ValidateCommand extends Command
             $expectedGitattributesFileContent = $this->analyser->getExpectedGitattributesContent();
 
             if ($expectedGitattributesFileContent !== '') {
+                $verboseOutput = '+ Suggesting .gitattributes file content.';
+                $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-                if ($createGitattributesFile || $overwriteGitattributesFile) {
-                    try {
-                        $creationOutput = $this->gitattributesFileRepository->createGitattributesFile(
-                            $expectedGitattributesFileContent,
-                            $omitHeader === true ? false : true
-                        );
-                        if ($isAgenticRun) {
-                            $gitattributesPath = $this->exportIgnoreAnalyser->getGitattributesFilePath();
-                            $this->writeAgenticOutput($output, $this->getName(), true, 'Created a .gitattributes file with expected content.', ['gitattributes_file_path' => $gitattributesPath]);
-                        } else {
-                            $output->writeln($outputContent . $creationOutput);
-                        }
-                        return Command::SUCCESS;
-                    } catch (GitattributesCreationFailed $e) {
-                        if ($isAgenticRun) {
-                            $this->writeAgenticOutput($output, $this->getName(), false, $e->getMessage());
-                        } else {
-                            $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
-                            $output->writeln($outputContent);
-                        }
-                        $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
-
-                        return Command::FAILURE;
-                    }
+                if ($isAgenticRun) {
+                    $warningMessage = 'Warning: There is no .gitattributes file present in ' . $this->exportIgnoreAnalyser->getDirectory() . '.';
+                    $this->writeAgenticOutput(
+                        $output,
+                        $this->getName(),
+                        false,
+                        $warningMessage,
+                        ['valid' => false, 'expected_gitattributes_content' => $expectedGitattributesFileContent]
+                    );
                 } else {
-                    $verboseOutput = '+ Suggesting .gitattributes file content.';
-                    $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-
-                    if ($isAgenticRun) {
-                        $warningMessage = 'Warning: There is no .gitattributes file present in ' . $this->exportIgnoreAnalyser->getDirectory() . '.';
-                        $this->writeAgenticOutput($output, $this->getName(), false, $warningMessage, ['valid' => false, 'expected_gitattributes_content' => $expectedGitattributesFileContent]);
-                    } else {
-                        $outputContent .= $this->getSuggestGitattributesFileCreationOptionOutput(
-                            $expectedGitattributesFileContent
-                        );
-                        $output->writeln($outputContent);
-                    }
-
-                    return Command::FAILURE;
+                    $outputContent .= $this->getSuggestGitattributesFileCreationOptionOutput(
+                        $expectedGitattributesFileContent
+                    );
+                    $output->writeln($outputContent);
                 }
+
+                return Command::FAILURE;
             }
 
             if ($isAgenticRun) {
@@ -582,41 +521,6 @@ final class ValidateCommand extends Command
                     return Command::SUCCESS;
                 }
 
-                if ($createGitattributesFile || $overwriteGitattributesFile) {
-                    try {
-                        $verboseOutput = "+ Trying to create expected .gitattributes file.";
-                        if ($overwriteGitattributesFile) {
-                            $verboseOutput = "+ Trying to overwrite existing .gitattributes file with expected content.";
-                        }
-                        $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
-
-                        $overwriteOutput = $this->gitattributesFileRepository->overwriteGitattributesFile(
-                            $expectedGitattributesFileContent
-                        );
-
-                        if ($isAgenticRun) {
-                            $gitattributesPath = $this->exportIgnoreAnalyser->getGitattributesFilePath();
-                            $this->writeAgenticOutput($output, $this->getName(), true, 'Overwrote .gitattributes file with expected content.', ['gitattributes_file_path' => $gitattributesPath]);
-                        } else {
-                            $outputContent = 'The present .gitattributes file is considered <error>invalid</error>.';
-                            $outputContent .= $overwriteOutput;
-                            $output->writeln($outputContent);
-                        }
-                        return Command::SUCCESS;
-                    } catch (GitattributesCreationFailed $e) {
-                        if ($isAgenticRun) {
-                            $this->writeAgenticOutput($output, $this->getName(), false, $e->getMessage());
-                        } else {
-                            $outputContent = 'The present .gitattributes file is considered <error>invalid</error>.';
-                            $outputContent .= PHP_EOL . PHP_EOL . $e->getMessage();
-                            $output->writeln($outputContent);
-                        }
-                        $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
-
-                        return Command::FAILURE;
-                    }
-                }
-
                 if ($showDifference) {
                     $actual = $this->exportIgnoreAnalyser->getPresentGitAttributesContent();
                     $builder = new UnifiedDiffOutputBuilder(
@@ -659,7 +563,13 @@ final class ValidateCommand extends Command
                 if ($validationWarnings !== []) {
                     $extra['warnings'] = $validationWarnings;
                 }
-                $this->writeAgenticOutput($output, $this->getName(), true, 'The present .gitattributes file is considered valid.', $extra);
+                $this->writeAgenticOutput(
+                    $output,
+                    $this->getName(),
+                    true,
+                    'The present .gitattributes file is considered valid.',
+                    $extra
+                );
             } else {
                 $output->writeln('The present .gitattributes file is considered <info>valid</info>.');
                 foreach ($validationWarnings as $warning) {
@@ -756,7 +666,7 @@ final class ValidateCommand extends Command
     ): string {
         $content = 'Would expect the following .gitattributes file content:' . PHP_EOL
             . '<info>' . $expectedGitattributesFileContent . '</info>' . PHP_EOL
-            . 'Use the <info>--create|-c</info> option to create a '
+            . 'Use the <info>create</info> command to create a '
             . '.gitattributes file with the shown content.';
 
         return PHP_EOL . PHP_EOL . $content;

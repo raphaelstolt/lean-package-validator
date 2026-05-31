@@ -75,7 +75,7 @@ Run the lean package validator CLI within or against a project/micro-package
 directory, and it will validate the [export-ignore](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Exporting-Your-Repository) entries present in
 a `.gitattributes` file against a set of common repository artefacts.
 
-It can handle __"normal"__ export-ignore directives as well as __negated__ export-ignore directives.
+It can handle _classic_ export-ignore directives as well as _negated_ export-ignore directives.
 
 If no `.gitattributes` file is present it will suggest creating one.
 
@@ -91,23 +91,6 @@ file and fail validation if the order differs. Per __default__ the order compari
 ``` bash
 lean-package-validator validate --enforce-strict-order [<directory>]
 ```
-
-The `--create|-c` option creates an `.gitattributes` file if nonexistent.
-
-``` bash
-lean-package-validator validate --create [<directory>]
-```
-
-The `--overwrite|-o` option overwrites an existing `.gitattributes` file when
-there are any `export-ignore` entries missing. Using this option on a directory
-with a nonexistent `.gitattributes` file implicates the `--create` option.
-
-``` bash
-lean-package-validator validate --overwrite [<directory>]
-```
-> [!WARNING]
-> As of release `v5.0` the `--create` and `--overwrite` options are deprecated and will be removed in the next major 
-> release. Please migrate to the dedicated commands `create` and `update`.
 
 The `--glob-pattern` option allows you to overwrite the default pattern used to match common repository artefacts. The
 number of patterns in the grouping braces is expected to be `>1`. As shown next, this utility could thereby also be used
@@ -148,27 +131,21 @@ The `--keep-glob-pattern` option allows keeping matching files in the release/di
 lean-package-validator validate --keep-glob-pattern '{LICENSE.*,README.*,docs*}' [<directory>]
 ```
 
-The `--align-export-ignores|-a` option will align the created or overwritten export-ignores for better readability.
-
-``` bash
-lean-package-validator validate --align-export-ignores --create [<directory>]
-```
-
 The `--sort-from-directories-to-files|-s` option will order the export-ignores from directories to files for better readability.
 
 ``` bash
-lean-package-validator validate --sort-from-directories-to-files --create [<directory>]
+lean-package-validator validate --sort-from-directories-to-files [<directory>]
 ```
 
 The `--enforce-alignment` option will enforce a strict alignment of export-ignores
 in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__,
 no alignment is enforced.
 
-The `--preset=[<preset>]` option will use a predefined set of glob pattern.
-Available presets are `PHP`, `Python`, `Rust`, `JavaScript`, and `Go`. With `PHP` being the default.
+The `--preset=[<preset>]` option will use a predefined set of glob pattern. Available presets are `PHP`, `Python`,
+`Rust`, `JavaScript`, and `Go`. With `PHP` being the default.
 
 The `--validate-git-archive` option will validate that no common repository artefacts slip
-into the release/dist archive file. It will do so by creating a `temporary archive` from the
+into the release/dist archive file. It will do so by creating a `temporary` archive from the
 current Git `HEAD` and inspecting its content. With a set `--keep-license` option a license
 file becomes mandatory and will fail the archive validation if not present.
 
@@ -198,8 +175,8 @@ Would expect the following .gitattributes file content:
  bin/release-version export-ignore
 ```
 
-The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing non-existent
-repository artefacts. In combination with the `--diff` option these will be shown in the output.
+The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing 
+non-existent repository artefacts. In combination with the `--diff` option these will be shown in the output.
 
 The `--stdin-input` option allows the validate command to read from `STDIN`, so that the following piped output 
 can be used for validation. It currently only does a strict comparison.
@@ -212,14 +189,12 @@ cat .gitattributes | lean-package-validator validate --stdin-input
 
 #### Create command
 
-The `create` command will create a `.gitattributes` file in the given directory. This command replaces the `--create` 
-option of the `validate` command. Please migrate to the dedicated commands.
+The `create` command will create a `.gitattributes` file in the given directory.
 
 #### Update command
 
-The `update` command will update a present `.gitattributes` file in the given directory. This command replaces the `--overwrite`
-option of the `validate` command. Please migrate to the dedicated commands. Like the above-mentioned `create` command it 
-provides a `--dry-run` option to see what the `.gitattributes` content would look like.
+The `update` command will update a present `.gitattributes` file in the given directory. Like the above-mentioned `create` 
+command it provides a `--dry-run` option to see what the `.gitattributes` content would look like.
 
 #### Reformat command
 

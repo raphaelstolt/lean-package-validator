@@ -46,7 +46,7 @@ trait GeneratesGitattributesOptions
     /**
      * Apply generation-related options to the analyser.
      */
-    protected function applyGenerationOptions(InputInterface $input, OutputInterface $output, AbstractExportIgnoreAnalyser $analyser): bool
+    protected function applyGenerationOptions(InputInterface $input, OutputInterface $output, AbstractExportIgnoreAnalyser $analyser, string $commandName): bool
     {
         $globPattern = $input->getOption('glob-pattern');
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
@@ -56,7 +56,12 @@ trait GeneratesGitattributesOptions
         $keepReadme = (bool) $input->getOption('keep-readme');
         $keepGlobPattern = (string) ($input->getOption('keep-glob-pattern') ?? '');
 
-        $alignExportIgnores = (bool) $input->getOption('align-export-ignores');
+        $alignExportIgnores = false;
+
+        if ($commandName !== 'validate') {
+            $alignExportIgnores = (bool) $input->getOption('align-export-ignores');
+        }
+
         $sortFromDirectoriesToFiles = (bool) $input->getOption('sort-from-directories-to-files');
         $enforceStrictOrderComparison = (bool) $input->getOption('enforce-strict-order');
 
