@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [v6.0.0] - 2026-06-XX
+## [v6.0.0] - 2026-06-01
 
 ### Added
 - Expanded the `validation` to also validate _negated_ export-ignore directives. Closes [#70](https://github.com/raphaelstolt/lean-package-validator/issues/70).
@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 - Removed the explicit `--agentic-run` option as agent detection is now done automatically per default.
-- Removed the `--create` and `--overwrite` options of the validate command. Closes [#68](https://github.com/raphaelstolt/lean-package-validator/issues/68).
+- Removed the deprecated `--create` and `--overwrite` options of the validate command. Closes [#68](https://github.com/raphaelstolt/lean-package-validator/issues/68).
 
 ## [v5.9.1] - 2026-05-17
 
