@@ -46,6 +46,10 @@ class Analyser
             $postfixLessExportIgnores[] = '.gitattributes';
         }
 
+        if ($this->usesNegatedExportIgnoreStrategy($this->getActualGitattributesContent())) {
+            $flavour = NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED;
+        }
+
         \sort($postfixLessExportIgnores, SORT_STRING | SORT_FLAG_CASE);
 
         if ($flavour === NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED) {
