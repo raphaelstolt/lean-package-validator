@@ -9,6 +9,7 @@ use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Analysers\NegatedExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\Concerns\GeneratesGitattributesOptions;
 use Stolt\LeanPackage\Commands\Concerns\OutputOptions;
+use Stolt\LeanPackage\Configuration\Factory;
 use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -71,14 +72,11 @@ final class CreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = (string) $input->getArgument('directory') ?: \getcwd();
-        $forceCreation = (bool) $input->getOption('force');
+        $configuration = (new Factory())->createCreateConfig($input);
 
-        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($directory);
+        $this->analyser->getActualExportIgnoreAnalyser()->setDirectory($configuration->directory);
 
-        $isAgenticRun = $this->isAgenticRun();
-
-        $generationFlavour = $input->getOption('flavour') ?: ClassicExportIgnoreAnalyser::EXPORT_IGNORE_CLASSIC;
+        $generationFlavour = $configuration->flavour ?: ClassicExportIgnoreAnalyser::EXPORT_IGNORE_CLASSIC;
 
         if (!\in_array($generationFlavour, [ClassicExportIgnoreAnalyser::EXPORT_IGNORE_CLASSIC, NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED], true)) {
             $output->writeln('<error>Invalid flavour specified. Use <info>classic</info> or <info>negated</info>.</error>');
@@ -92,9 +90,9 @@ final class CreateCommand extends Command
 
         $gitattributesPath = $this->analyser->getActualExportIgnoreAnalyser()->getGitattributesFilePath();
 
-        if (\file_exists($gitattributesPath) && $forceCreation === false && $this->isDryRun($input) !== true) {
-            $message = 'A .gitattributes file already exists. Use the update command to modify it.';
-            if ($isAgenticRun) {
+        if (\file_exists($gitattributesPath) && $configuration->forceOverwrite === false && $this->isDryRun($input) !== true) {
+            $message = 'A .gitattributes file already exists. Use the update command or --force option to modify it.';
+            if ($configuration->isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
@@ -106,7 +104,7 @@ final class CreateCommand extends Command
 
         if ($expected === '') {
             $message = 'Unable to determine expected .gitattributes content for the given directory.';
-            if ($isAgenticRun) {
+            if ($configuration->isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
@@ -124,7 +122,7 @@ final class CreateCommand extends Command
             $this->repository->createGitattributesFile($expected);
         } catch (Throwable $e) {
             $message = 'Creation of .gitattributes file failed.';
-            if ($isAgenticRun) {
+            if ($configuration->isAgenticRun) {
                 $this->writeAgenticOutput($output, $this->getName(), false, $message);
             } else {
                 $output->writeln($message);
@@ -132,10 +130,10 @@ final class CreateCommand extends Command
             return self::FAILURE;
         }
 
-        $directory = \realpath($directory);
-        $message = "A .gitattributes file has been created in {$directory}.";
+        $directory = \realpath($configuration->directory);
+        $message = "A .gitattributes file has been created in $directory.";
 
-        if ($isAgenticRun) {
+        if ($configuration->isAgenticRun) {
             $this->writeAgenticOutput($output, $this->getName(), true, $message, ['gitattributes_file_path' => $gitattributesPath]);
         } else {
             $output->writeln($message);

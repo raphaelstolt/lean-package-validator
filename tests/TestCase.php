@@ -6,11 +6,7 @@ namespace Stolt\LeanPackage\Tests;
 
 use Laravel\AgentDetector\AgentDetector;
 use PHPUnit\Framework\TestCase as PHPUnit;
-
-
 use Stolt\LeanPackage\Helpers\Str as OsHelper;
-
-
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 
@@ -45,6 +41,8 @@ class TestCase extends PHPUnit
         $this->temporaryDirectory = \sys_get_temp_dir()
             . DIRECTORY_SEPARATOR
             . 'lpv';
+
+        \define('WORKING_DIRECTORY', $this->temporaryDirectory);
 
         if ((new OsHelper())->isWindows() === false) {
             \ini_set('sys_temp_dir', '/tmp/lpv');

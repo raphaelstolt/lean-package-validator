@@ -50,9 +50,14 @@ final class UpdateCommand extends Command
                 \defined('WORKING_DIRECTORY') ? WORKING_DIRECTORY : \getcwd()
             )->addOption(
                 'reformat-export-ignores',
-                null,
+                'r',
                 InputOption::VALUE_NONE,
                 'Only reformat the export-ignores directives in the .gitattributes file'
+            )->addOption(
+                'migrate-to-negated-export-ignores',
+                'm',
+                InputOption::VALUE_NONE,
+                'Migrate from classic to negated-export-ignores'
             )->addOption(
                 'group',
                 null,
@@ -77,7 +82,7 @@ final class UpdateCommand extends Command
         $this->exportIgnoreAnalyser->setDirectory($directory);
         $isAgenticRun = $this->isAgenticRun();
 
-        if ((bool) $input->getOption('group')) {
+        if ($input->getOption('group')) {
             $this->exportIgnoreAnalyser->setGroupNonExportIgnores(true);
         }
 
