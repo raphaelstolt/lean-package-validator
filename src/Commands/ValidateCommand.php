@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Stolt\LeanPackage\Commands;
 
 use SebastianBergmann\Diff\Differ;
-use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
+use SebastianBergmann\Diff\Output\StrictUnifiedDiffOutputBuilder;
 use SplFileInfo;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Analysers\AbstractExportIgnoreAnalyser;
@@ -523,10 +523,10 @@ final class ValidateCommand extends Command
 
                 if ($showDifference) {
                     $actual = $this->exportIgnoreAnalyser->getPresentGitAttributesContent();
-                    $builder = new UnifiedDiffOutputBuilder(
-                        "--- Original" . PHP_EOL . "+++ Expected" . PHP_EOL,
-                        true
-                    );
+                    $builder = new StrictUnifiedDiffOutputBuilder([
+                        'fromFile' => 'Original',
+                        'toFile' => 'Expected',
+                    ]);
                     $differ = new Differ($builder);
                     $expectedGitattributesFileContent = $differ->diff($actual, $expectedGitattributesFileContent);
                 }
