@@ -12,7 +12,7 @@
     "require": {
         "php": ">=8.2",
         "laravel/agent-detector": "^2.0",
-        "sebastian/diff": "^7.0.0||^6.0.1||^5.0||^4.0.3",
+        "sebastian/diff": "^9.0||^8.0||^7.0.0||^6.0.1||^5.0||^4.0.3",
         "stolt/list-skills-command": "^1.0",
         "symfony/console": "^8.0||^7.2.1||^v5.4.8",
         "symfony/finder": "^8.0||^7.2.1||^v5.4.8"
