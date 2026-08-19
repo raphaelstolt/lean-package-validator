@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.0.1] - 2026-08-19
+
+### Added
+- Added support for `sebastian/diff` versions 8 and 9.
+
 ## [v6.0.0] - 2026-06-01
 
 ### Added
@@ -577,8 +582,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.1...HEAD
 
+[v6.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.1...v6.0.0
 [v5.9.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.0...v5.9.1
 [v5.9.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.8.6...v5.9.0
