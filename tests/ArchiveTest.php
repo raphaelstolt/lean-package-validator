@@ -205,7 +205,7 @@ class ArchiveTest extends TestCase
 
         $mock->shouldReceive('removeArchive')
             ->once()
-            ->withNoArgs([])
+            ->withNoArgs()
             ->andReturn(true);
 
         $foundUnexpectedArtifacts = $mock->getUnexpectedArchiveArtifacts(['foo']);
