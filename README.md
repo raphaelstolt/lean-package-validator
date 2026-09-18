@@ -389,6 +389,26 @@ Each response always includes `command`, `status` (`success` or `failure`), and 
 | `refresh`  | `lpv_file_path`                                                                                                      |
 | `tree`     | `package`, `tree`                                                                                                    |
 
+### Model Context Protocol (MCP) integration
+
+The lean package validator can also be used by AI coding agents through its dedicated [Model Context Protocol (MCP) server](https://github.com/raphaelstolt/lean-package-validator-mcp).
+
+The [`lean-package-validator-mcp`](https://github.com/raphaelstolt/lean-package-validator-mcp) server exposes lean-package-validator
+functionality as MCP tools, allowing MCP-compatible clients and AI coding agents to inspect, create, update, and validate `.gitattributes`
+files and package archives.
+
+Install the MCP server with Composer:
+
+```bash
+composer create-project stolt/lean-package-validator-mcp
+```
+
+The server can then be configured in an MCP-compatible client such as Claude Code, Cursor, or another MCP client.
+
+See the [lean-package-validator-mcp repository](https://github.com/raphaelstolt/lean-package-validator-mcp) for installation
+and client-specific configuration instructions.
+
+
 ### Spreading the word
 You can add the following custom, static [Shields.io](http://shields.io) badge to your repo's `README.md` to mark the package as lean
 and spread the word for this tool. It is also _welcome_ to keep the added headers to the modified `.gitattributes` files.
