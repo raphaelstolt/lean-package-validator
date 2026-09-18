@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- Added suggestion for `stolt/lean-package-validator-mcp`.
+
 ## [v6.0.1] - 2026-08-19
 
 ### Added

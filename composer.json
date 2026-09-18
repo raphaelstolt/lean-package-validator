@@ -30,6 +30,9 @@
     "type": "library",
     "minimum-stability": "stable",
     "bin": ["bin/lean-package-validator"],
+    "suggest": {
+        "stolt/lean-package-validator-mcp": "Allows the usage of the lean package validator via a MCP server."
+    },
     "scripts-descriptions": {
         "lpv:test": "Runs all tests.",
         "lpv:test-with-coverage": "Runs all tests and measures code coverage.",
