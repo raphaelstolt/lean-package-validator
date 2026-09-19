@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.0.2] - 2026-09-19
+
 ### Added
 - Added suggestion for `stolt/lean-package-validator-mcp`.
 
@@ -585,8 +587,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.2...HEAD
 
+[v6.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.1...v6.0.2
 [v6.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.1...v6.0.0
 [v5.9.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.0...v5.9.1
