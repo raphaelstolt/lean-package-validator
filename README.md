@@ -5,6 +5,7 @@
 ![PHP Version](https://img.shields.io/badge/php-8.2+-ff69b4.svg)
 [![Boost ready](https://img.shields.io/badge/boost-ready-purple.svg?style=flat)](./resources/boost/skills)
 ![Laravel 13 ready](https://img.shields.io/badge/laravel_13-ready-f54927.svg?style=flat)
+[![mcp](https://img.shields.io/badge/mcp-available-93C572.svg?style=flat)](https://packagist.org/packages/stolt/lean-package-validator-mcp)
 ![Downloads](https://img.shields.io/packagist/dt/stolt/lean-package-validator)
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
