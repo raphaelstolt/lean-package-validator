@@ -5,6 +5,7 @@
 composer.json              -export-ignore
 bin/                       -export-ignore
 bin/lean-package-validator -export-ignore
+LICENSE.md                 -export-ignore
 resources/                 -export-ignore
 resources/**               -export-ignore
 src/                       -export-ignore
