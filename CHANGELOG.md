@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.0.3] - 2026-09-20
+
 ### Fixed
 - Fixed a bug in the negated export ignore generation when a `src/` directory contained only a single file.
 
@@ -590,8 +592,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.2...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.3...HEAD
 
+[v6.0.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.2...v6.0.3
 [v6.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.1...v6.0.2
 [v6.0.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.0...v6.0.1
 [v6.0.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v5.9.1...v6.0.0
