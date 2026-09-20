@@ -353,14 +353,14 @@ cpx stolt/lean-package-validator validate
 
 For using a dedicated GitHub Action, have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
 
-### Included AI skills
+## Included AI skills
 
 This project [includes](./resources/boost/skills) three AI skills focused on managing the `.gitattributes` file for a package:
 - __validate__: check whether the current `.gitattributes` content matches the expected export-ignore rules.
 - __create__: generate a `.gitattributes` file when it is missing.
 - __update__: reconcile an existing `.gitattributes` file with expected export-ignore rules.
 
-### Agentic-friendly output
+## Agentic-friendly output
 
 All commands auto-detect agentic runs, which switches the output from human-readable text to a structured JSON object.
 This is useful when integrating the tool into AI workflows or automation pipelines where machine-readable output is preferred.
@@ -390,7 +390,7 @@ Each response always includes `command`, `status` (`success` or `failure`), and 
 | `refresh`  | `lpv_file_path`                                                                                                      |
 | `tree`     | `package`, `tree`                                                                                                    |
 
-### Model Context Protocol (MCP) integration
+## Model Context Protocol (MCP) integration
 
 The lean package validator can also be used by AI coding agents through its dedicated
 [Model Context Protocol (MCP) server](https://github.com/raphaelstolt/lean-package-validator-mcp).
@@ -409,26 +409,21 @@ The server can then be configured in an MCP-compatible client such as Claude Cod
 
 See the [lean-package-validator-mcp repository](https://github.com/raphaelstolt/lean-package-validator-mcp) for installation and usage instructions.
 
-### Spreading the word
+## Spreading the word
 You can add the following custom, static [Shields.io](http://shields.io) badge to your repo's `README.md` to mark the package as lean
 and spread the word for this tool. It is also _welcome_ to keep the added headers to the modified `.gitattributes` files.
 
 [![Lean dist package](https://img.shields.io/badge/lean-dist%20package-00ffb6.svg?style=flat)](https://github.com/raphaelstolt/lean-package-validator)
 
-### Running tests
-
-``` bash
-composer lpv:test
-```
-
-### License
+## License
 
 This library and its CLI are licensed under the MIT license. Please see [LICENSE.md](LICENSE.md) for more details.
 
-### Changelog
+## Changelog
 
-Please see [CHANGELOG.md](CHANGELOG.md) for more details.
+All noteworthy changes are documented in the [CHANGELOG.md](CHANGELOG.md).
 
-### Contributing
+## Contributing
 
-Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for more details.
+If you're considering contributing to this project, have a look at this repository's [CONTRIBUTING.md](.github/CONTRIBUTING.md)
+for more advice.
