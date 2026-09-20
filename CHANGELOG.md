@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+- Fixed a bug in the negated export ignore generation when a `src/` directory contained only a single file.
+
 ## [v6.0.2] - 2026-09-19
 
 ### Added

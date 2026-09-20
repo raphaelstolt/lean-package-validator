@@ -204,6 +204,44 @@ CONTENT;
     }
 
     #[Test]
+    public function returnsExpectedNegatedGitattributesContentWhenSrcDirectoryHasOnlyOneFile(): void
+    {
+        $analyser = $this->getAnalyserInstance();
+        $analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
+
+        $artifactFilenames = [
+            'composer.json',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['src']
+        );
+
+        $this->createTemporaryFilesInDirectory($this->temporaryDirectory . '/src', ['Fake.php']);
+
+        $negatedGitattributesContent = $analyser->getExpectedGitattributesContent(
+            [],
+            NegatedExportIgnoreAnalyser::EXPORT_IGNORE_NEGATED
+        );
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+* export-ignore
+
+composer.json -export-ignore
+src/ -export-ignore
+src/** -export-ignore
+CONTENT;
+
+        $this->assertStringContainsStringIgnoringLineEndings(
+            $expectedGitattributesContent,
+            $negatedGitattributesContent
+        );
+    }
+
+    #[Test]
     public function returnsExpectedNegatedGitattributesContentWithAlignmentAndKeptLicense(): void
     {
         $analyser = new Analyser(new NegatedExportIgnoreAnalyser(new Finder(new PhpPreset()), new GitattributesFileRepository($this->temporaryDirectory)));

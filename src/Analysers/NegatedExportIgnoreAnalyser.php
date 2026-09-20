@@ -132,7 +132,11 @@ final class NegatedExportIgnoreAnalyser extends AbstractExportIgnoreAnalyser
             $this->directory . DIRECTORY_SEPARATOR . $entry
         );
 
-        return \iterator_count($iterator) >= 2;
+        if (\str_ends_with($entry, 'bin' . DIRECTORY_SEPARATOR)) {
+            return \iterator_count($iterator) >= 2;
+        }
+
+        return \iterator_count($iterator) > 0;
     }
 
     private function expandBinaryDirectories(array $entries): array
