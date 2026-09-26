@@ -313,6 +313,9 @@ final class ValidateCommand extends Command
             $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
             $this->exportIgnoreAnalyser->keepLicense();
+        } elseif ($this->exportIgnoreAnalyser->isKeepLicenseEnabled()) {
+            $verboseOutput = '+ Keeping the license file. (MIT license auto-detected)';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
         }
 
         $keepReadme = (bool) $input->getOption('keep-readme');
@@ -456,7 +459,7 @@ final class ValidateCommand extends Command
                 $verboseOutput = '+ Validating Git archive.';
                 $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
 
-                if ($this->isValidArchive($keepLicense)) {
+                if ($this->isValidArchive($this->exportIgnoreAnalyser->isKeepLicenseEnabled())) {
                     if ($isAgenticRun) {
                         $this->writeAgenticOutput($output, $this->getName(), true, 'The archive file of the current HEAD is considered lean.', ['archive_valid' => true]);
                     } else {

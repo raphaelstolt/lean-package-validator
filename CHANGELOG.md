@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.1.0] - 2026-09-26
+
+### Changed
+- MIT license files are auto-detected and shipped per default. Closes [#80](https://github.com/raphaelstolt/lean-package-validator/issues/80).
+
 ## [v6.0.3] - 2026-09-20
 
 ### Fixed

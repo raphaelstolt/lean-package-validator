@@ -324,13 +324,51 @@ abstract class AbstractExportIgnoreAnalyser
     }
 
     /**
+     * Whether an MIT license is present.
+     *
+     * @var boolean|null
+     */
+    protected ?bool $isMitLicensePresent = null;
+
+    /**
      * Guard for not export-ignoring a license file.
      *
      * @return boolean
      */
     public function isKeepLicenseEnabled(): bool
     {
-        return $this->keepLicense === true;
+        if ($this->keepLicense === true) {
+            return true;
+        }
+
+        return $this->hasMitLicense();
+    }
+
+    /**
+     * Detect if a MIT license is present in the directory.
+     *
+     * @return boolean
+     */
+    protected function hasMitLicense(): bool
+    {
+        if ($this->isMitLicensePresent !== null) {
+            return $this->isMitLicensePresent;
+        }
+
+        $this->isMitLicensePresent = false;
+
+        $directory = new \DirectoryIterator($this->directory);
+        foreach ($directory as $fileinfo) {
+            if ($fileinfo->isFile() && \preg_match('/^license/i', $fileinfo->getFilename())) {
+                $content = \file_get_contents($fileinfo->getPathname());
+                if ($content !== false && (\stripos($content, 'MIT License') !== false || \stripos($content, 'License: MIT') !== false)) {
+                    $this->isMitLicensePresent = true;
+                    break;
+                }
+            }
+        }
+
+        return $this->isMitLicensePresent;
     }
 
     /**

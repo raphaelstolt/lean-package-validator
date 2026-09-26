@@ -441,6 +441,48 @@ CONTENT;
     }
 
     #[Test]
+    public function licenseIsNotInSuggestedFileContentWhenMitLicenseIsAutoDetected(): void
+    {
+        $artifactFilenames = [
+            'CONDUCT.md',
+            'phpspec.yml.dist',
+            'License.rst',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        \file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'License.rst', 'The MIT License (MIT)');
+
+        $command = $this->application->find('validate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'directory' => $this->temporaryDirectory,
+        ]);
+
+        $expectedDisplay = <<<CONTENT
+Warning: There is no .gitattributes file present in {$this->temporaryDirectory}.
+
+Would expect the following .gitattributes file content:
+* text=auto eol=lf
+
+.gitattributes export-ignore
+CONDUCT.md export-ignore
+phpspec.yml.dist export-ignore
+specs/ export-ignore
+
+Use the create command to create a .gitattributes file with the shown content.
+
+CONTENT;
+
+        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
+        $this->assertTrue($commandTester->getStatusCode() > Command::SUCCESS);
+    }
+
+    #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function licenseIsNotInSuggestedFileContent(): void
     {

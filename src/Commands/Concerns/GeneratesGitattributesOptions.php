@@ -79,6 +79,8 @@ trait GeneratesGitattributesOptions
         if ($keepLicense) {
             $output->writeln('+ Keeping the license file.', OutputInterface::VERBOSITY_VERBOSE);
             $analyser->keepLicense();
+        } elseif ($analyser->isKeepLicenseEnabled()) {
+            $output->writeln('+ Keeping the license file. (MIT license auto-detected)', OutputInterface::VERBOSITY_VERBOSE);
         }
 
         if ($keepReadme) {

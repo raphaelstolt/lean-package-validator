@@ -1344,6 +1344,45 @@ CONTENT;
     }
 
     #[Test]
+    #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/80')]
+    public function licenseFileIsNotExportIgnoredWhenMitLicenseIsAutoDetected(): void
+    {
+        $artifactFilenames = [
+            'LICENSE.txt',
+            'README.md',
+            'phpspec.yml.dist',
+        ];
+
+        $this->createTemporaryFiles(
+            $artifactFilenames,
+            ['specs']
+        );
+
+        \file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'LICENSE.txt', 'The MIT License (MIT)');
+
+        $expectedGitattributesContent = <<<CONTENT
+* text=auto eol=lf
+
+.gitattributes export-ignore
+phpspec.yml.dist export-ignore
+README.md export-ignore
+specs/ export-ignore
+
+CONTENT;
+
+        $analyser = $this->getAnalyserInstance();
+        $analyser->getActualExportIgnoreAnalyser()->setDirectory($this->temporaryDirectory);
+
+        $actualGitattributesContent = $analyser->getExpectedGitattributesContent($artifactFilenames);
+
+        $this->assertTrue($analyser->getActualExportIgnoreAnalyser()->isKeepLicenseEnabled());
+        $this->assertEquals(
+            $expectedGitattributesContent,
+            $actualGitattributesContent
+        );
+    }
+
+    #[Test]
     #[Ticket('https://github.com/raphaelstolt/lean-package-validator/issues/15')]
     public function licenseFileIsNotExportIgnored(): void
     {
