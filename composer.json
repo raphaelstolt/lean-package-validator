@@ -1,6 +1,6 @@
 {
     "name": "stolt/lean-package-validator",
-    "description": "Library and CLI for validating if a project or package has and will have lean releases.",
+    "description": "A library and CLI for validating if a project or package has and will have lean releases.",
     "keywords": ["lpv", "project", "package", "release", "lean", "gitattributes" , "dist", "validation", "cli", "dev"],
     "license": "MIT",
     "authors": [
@@ -30,9 +30,6 @@
     "type": "library",
     "minimum-stability": "stable",
     "bin": ["bin/lean-package-validator"],
-    "suggest": {
-        "stolt/lean-package-validator-mcp": "Allows the usage of the lean package validator via a MCP server."
-    },
     "scripts-descriptions": {
         "lpv:test": "Runs all tests.",
         "lpv:test-with-coverage": "Runs all tests and measures code coverage.",
@@ -44,8 +41,7 @@
         "lpv:static-analyse": "Runs a static code analysis via PHPStan.",
         "lpv:dependency-analyse": "Runs a dependency analysis to find shadowed dependencies.",
         "lpv:validate-gitattributes": "Checks the leanness of this package.",
-        "lpv:pre-commit-check": "Does a final (aggregated) check before committing.",
-        "lpv:version-check": "Checks the application version."
+        "lpv:pre-commit-check": "Does a final (aggregated) check before committing."
     },
     "scripts": {
         "lpv:test": "phpunit",
@@ -59,12 +55,10 @@
         "lpv:static-analyse": "phpstan analyse --configuration phpstan.neon.dist --memory-limit=512M",
         "lpv:validate-gitattributes": "bin/lean-package-validator validate",
         "lpv:spell-check": "./vendor/bin/peck",
-        "lpv:version-check": "version-aligner check",
         "lpv:dependency-analyse": "./vendor/bin/composer-dependency-analyser",
         "lpv:pre-commit-check": [
             "@lpv:test",
             "@lpv:cs-lint",
-            "@lpv:version-check",
             "@lpv:static-analyse",
             "@lpv:dependency-analyse",
             "@lpv:spell-check",
@@ -92,7 +86,6 @@
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^13.0||^12.0||^11.4.4||^10.5.25",
         "shipmonk/composer-dependency-analyser": "^1.8",
-        "stolt/version-aligner": "^1.0",
         "zenstruck/console-test": "^1.7"
     }
 }
