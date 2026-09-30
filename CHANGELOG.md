@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.1.1] - 2026-09-30
+
+### Fixed
+- Peeled release.
+
 ## [v6.1.0] - 2026-09-26
 
 ### Changed
@@ -597,8 +602,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.1...HEAD
 
+[v6.1.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.0...v6.1.1
 [v6.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.3...v6.1.0
 [v6.0.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.2...v6.0.3
 [v6.0.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.1...v6.0.2
