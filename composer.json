@@ -1,6 +1,6 @@
 {
     "name": "stolt/lean-package-validator",
-    "description": "A library and CLI for validating if a project or package has and will have lean releases.",
+    "description": "A library and CLI for validating and managing package release contents in lean distribution archives.",
     "keywords": [
         "lpv",
         "project",
