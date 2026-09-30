@@ -45,7 +45,9 @@
     },
     "type": "library",
     "minimum-stability": "stable",
-    "bin": ["bin/lean-package-validator"],
+    "bin": [
+        "bin/lean-package-validator"
+    ],
     "scripts-descriptions": {
         "lpv:test": "Runs all tests.",
         "lpv:test-with-coverage": "Runs all tests and measures code coverage.",
