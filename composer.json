@@ -1,7 +1,18 @@
 {
     "name": "stolt/lean-package-validator",
     "description": "A library and CLI for validating if a project or package has and will have lean releases.",
-    "keywords": ["lpv", "project", "package", "release", "lean", "gitattributes" , "dist", "validation", "cli", "dev"],
+    "keywords": [
+        "lpv",
+        "project",
+        "package",
+        "release",
+        "lean",
+        "gitattributes",
+        "dist",
+        "validation",
+        "cli",
+        "dev"
+    ],
     "license": "MIT",
     "authors": [
         {
