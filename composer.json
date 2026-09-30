@@ -10,6 +10,11 @@
         "gitattributes",
         "dist",
         "validation",
+        "creation",
+        "formatting",
+        "negated",
+        "classic",
+        "export-ignore",
         "cli",
         "dev"
     ],
