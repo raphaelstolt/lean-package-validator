@@ -72,6 +72,7 @@
         "lpv:application-phar-version-guard": "php bin/application-version --verify-tag-match=phar",
         "lpv:static-analyse": "phpstan analyse --configuration phpstan.neon.dist --memory-limit=512M",
         "lpv:validate-gitattributes": "bin/lean-package-validator validate",
+        "lpv:version-check": "version-aligner check",
         "lpv:spell-check": "./vendor/bin/peck",
         "lpv:dependency-analyse": "./vendor/bin/composer-dependency-analyser",
         "lpv:pre-commit-check": [
@@ -80,7 +81,7 @@
             "@lpv:static-analyse",
             "@lpv:dependency-analyse",
             "@lpv:spell-check",
-            "@lpv:application-version-guard"
+            "@lpv:version-check"
         ]
     },
     "config": {
@@ -105,6 +106,7 @@
         "phpunit/phpunit": "^13.0||^12.0||^11.4.4||^10.5.25",
         "shipmonk/composer-dependency-analyser": "^1.8",
         "stolt/composer-peel": "^2.0",
+        "stolt/version-aligner": "^1.1",
         "zenstruck/console-test": "^1.7"
     }
 }
