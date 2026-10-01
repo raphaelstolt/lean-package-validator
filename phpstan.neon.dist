@@ -21,3 +21,4 @@ parameters:
         - '#set_error_handler expects#'
         - '#getPresetByLanguageName#'
         - '#null might not exist on string#'
+        - '#str_contains\(\) with string and#'

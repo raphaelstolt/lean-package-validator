@@ -43,7 +43,9 @@
             "reformats",
             "artefacts",
             "analysers",
-            "reformatter"
+            "reformatter",
+            "cloner",
+            "filesystem"
         ],
         "paths": []
     }

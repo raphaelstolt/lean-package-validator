@@ -46,6 +46,7 @@ refresh     Refresh a present .lpv file
 tree        Display the source structure of a given project/micro-package repository or it's dist package
 update      Update an existing .gitattributes file for a project/micro-package repository
 validate    Validate the .gitattributes file of a given project/micro-package repository
+validate-remote  Validate the .gitattributes file of a remote GitHub repository and create or update it in a local clone
 
 ## Project Structure
 

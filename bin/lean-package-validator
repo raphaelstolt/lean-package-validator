@@ -33,10 +33,12 @@ use Stolt\LeanPackage\Commands\RefreshCommand;
 use Stolt\LeanPackage\Commands\TreeCommand;
 use Stolt\LeanPackage\Commands\UpdateCommand;
 use Stolt\LeanPackage\Commands\ValidateCommand;
+use Stolt\LeanPackage\Commands\ValidateRemoteCommand;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
 use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
+use Stolt\LeanPackage\Git\GitRepositoryCloner;
 use Stolt\LeanPackage\Helpers\PhpInputReader;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
@@ -64,6 +66,7 @@ $validateCommand = new ValidateCommand(
 );
 $createCommand = new CreateCommand($analyser, $gitattributesFileRepository);
 $updateCommand = new UpdateCommand($analyser, $gitattributesFileRepository);
+$validateRemoteCommand = new ValidateRemoteCommand($analyser, $gitattributesFileRepository, new GitRepositoryCloner());
 $reformatCommand = new ReformatCommand($analyser, $gitattributesFileRepository);
 $treeCommand = new TreeCommand(new Tree(new Archive(WORKING_DIRECTORY,'tree-temp')));
 $listSkillsCommand = new ListSkillsCommand();
@@ -74,6 +77,7 @@ $application->addCommands([
     $initCommand,
     $refreshCommand,
     $validateCommand,
+    $validateRemoteCommand,
     $createCommand,
     $updateCommand,
     $reformatCommand,

@@ -243,6 +243,24 @@ It is possible to influence the reformatting by providing the `--sort-alphabetic
 options. Via the `--group` option it is possible to group the export-ignores and non-export-ignores entries of the given
 `.gitattributes` file.
 
+#### Validate remote command
+
+The `validate-remote` command will clone the given GitHub repository and validate its `.gitattributes` file. If no
+`.gitattributes` file is present in the repository, one will be created in the clone. If an invalid `.gitattributes`
+file is present, it will be updated in the clone with the expected content.
+
+``` bash
+lean-package-validator validate-remote https://github.com/<owner>/<repository>
+```
+
+Per default the repository is shallow cloned into a unique temporary directory, which is removed again when no
+`.gitattributes` file has been written into it. Via the `--clone-directory` option it is possible to define the
+directory to clone into, it has to be either non-existent or empty. A `.lpv` file present in the cloned repository is
+used for the glob patterns, unless the `--glob-pattern` or `--glob-pattern-file` option is set.
+
+Like the `create` and `update` commands it provides a `--dry-run` option to see what the `.gitattributes` content would
+look like without writing it into the clone.
+
 #### Configuration init command
 
 The `init` command will create an initial `.lpv` file with the default patterns used to match common repository artefacts.

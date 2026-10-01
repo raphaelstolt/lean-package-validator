@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- New `validate-remote` command to validate, create, or update the `.gitattributes` file of a cloned GitHub repository.
+
 ## [v6.1.1] - 2026-09-30
 
 ### Fixed
