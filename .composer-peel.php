@@ -17,11 +17,13 @@ return [
             'enabled' => true,
             'path' => '.composer-unpeeled.json',
         ],
-    ],
-    'git' => [
-        'commit_messages' => [
-            'before_tag' => 'Prepares Composer manifest for release',
-            'after_tag' => 'Restores development Composer manifest',
+        'files' => [
+            'CHANGELOG.md',
+            'bin/',
         ],
+        'commit_message' => 'Release {{version}}',
+    ],
+    'rollback' => [
+        'commit_message' => 'Restores development Composer manifest',
     ],
 ];
