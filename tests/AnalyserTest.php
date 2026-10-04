@@ -1945,6 +1945,7 @@ CONTENT;
             'renovate.json',
             'sonar*',
             'vendor*',
+            'version-bumper.php',
             '{A,a}rt*',
             '{A,a}sset*',
             '{B,b}enchmark*',

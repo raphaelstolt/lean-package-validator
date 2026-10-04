@@ -33,6 +33,7 @@ final class PhpPreset extends CommonPreset implements Preset
             'RMT',
             '{{M,m}ake,{B,b}ox,{V,v}agrant,{P,p}hulp}file',
             'vendor*',
+            'version-bumper.php',
         ]));
     }
 }
