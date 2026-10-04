@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+- The `--force` option of the `create` command doesn't expect a value anymore.
+
 ### Added
 - New `validate-remote` command to validate, create, or update the `.gitattributes` file of a cloned GitHub repository.
 

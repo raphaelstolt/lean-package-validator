@@ -339,7 +339,7 @@ CONTENT;
 
         TestCommand::for($this->getCommandInstance())
             ->addArgument($this->temporaryDirectory)
-            ->addOption('force', true)
+            ->addOption('force')
             ->execute()
             ->assertSuccessful()
             ->assertOutputContains('A .gitattributes file has been created in ' . (\realpath($this->temporaryDirectory) ?: $this->temporaryDirectory) . '.');

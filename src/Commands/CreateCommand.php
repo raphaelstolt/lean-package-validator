@@ -53,9 +53,8 @@ final class CreateCommand extends Command
         $this->addOption(
             'force',
             null,
-            InputOption::VALUE_REQUIRED,
-            'Force the creation of the .gitattributes file even if one already exists',
-            false
+            InputOption::VALUE_NONE,
+            'Force the creation of the .gitattributes file even if one already exists'
         );
 
         $flavourDescription = 'Generate the .gitattributes file with the given flavour';
