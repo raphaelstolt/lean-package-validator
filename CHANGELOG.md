@@ -7,8 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.2.0] - 2026-10-05
+
 ### Fixed
-- The `--force` option of the `create` command doesn't expect a value anymore.
+- The `--force` option of the `create` command doesn't expect a value any more.
 
 ### Added
 - New `validate-remote` command to validate, create, or update the `.gitattributes` file of a cloned GitHub repository.
@@ -608,8 +610,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.2.0...HEAD
 
+[v6.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.1...v6.2.0
 [v6.1.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.0...v6.1.1
 [v6.1.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.3...v6.1.0
 [v6.0.3]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.0.2...v6.0.3
