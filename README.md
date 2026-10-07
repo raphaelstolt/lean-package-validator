@@ -9,7 +9,6 @@
 ![Downloads](https://img.shields.io/packagist/dt/stolt/lean-package-validator)
 [![composer.lock available](https://poser.pugx.org/stolt/lean-package-validator/composerlock)](https://packagist.org/packages/stolt/lean-package-validator)
 [![PDS Skeleton](https://img.shields.io/badge/pds-skeleton-blue.svg?style=flat)](https://github.com/php-pds/skeleton)
-![llms.txt](https://img.shields.io/badge/llms.txt-available-blue.svg?style=flat)
 [![Lean dist package](https://img.shields.io/badge/lean-dist%20package-00ffb6.svg?style=flat)](https://github.com/raphaelstolt/lean-package-validator)
 
 <p align="center">
@@ -86,7 +85,6 @@ Classic export-ignore directives are defined as follows:
 ...
 
 LICENSE.md                  export-ignore
-llms.txt                    export-ignore
 mago.toml                   export-ignore
 peck.json                   export-ignore
 phpstan.neon.dist           export-ignore
@@ -326,7 +324,6 @@ Package: stolt/lean-package-validator
 ├── box.json.dist
 ├── composer.json
 ├── composer.lock
-├── llms.txt
 ├── lpv-logo.png
 ├── peck.json
 ├── phpstan.neon.dist
