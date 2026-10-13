@@ -35,7 +35,7 @@ final class GitRepositoryClonerTest extends TestCase
     private function createOriginRepository(): void
     {
         \mkdir($this->originDirectory);
-        \file_put_contents($this->originDirectory . DIRECTORY_SEPARATOR . 'README.md', data: '# Origin');
+        file_put_contents($this->originDirectory . DIRECTORY_SEPARATOR . 'README.md', data: '# Origin');
 
         $commands = [
             'git init --quiet',

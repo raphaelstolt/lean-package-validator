@@ -359,12 +359,14 @@ abstract class AbstractExportIgnoreAnalyser
 
         $directory = new \DirectoryIterator($this->directory);
         foreach ($directory as $fileinfo) {
-            if ($fileinfo->isFile() && \preg_match('/^license/i', $fileinfo->getFilename())) {
-                $content = \file_get_contents($fileinfo->getPathname());
-                if ($content !== false && (\stripos($content, 'MIT License') !== false || \stripos($content, 'License: MIT') !== false)) {
-                    $this->isMitLicensePresent = true;
-                    break;
-                }
+            if (!($fileinfo->isFile() && \preg_match('/^license/i', $fileinfo->getFilename()))) {
+                continue;
+            }
+
+            $content = \file_get_contents($fileinfo->getPathname());
+            if ($content !== false && (\stripos($content, 'MIT License') !== false || \stripos($content, 'License: MIT') !== false)) {
+                $this->isMitLicensePresent = true;
+                break;
             }
         }
 

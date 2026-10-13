@@ -1358,7 +1358,7 @@ CONTENT;
             ['specs']
         );
 
-        \file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'LICENSE.txt', 'The MIT License (MIT)');
+        file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'LICENSE.txt', 'The MIT License (MIT)');
 
         $expectedGitattributesContent = <<<CONTENT
 * text=auto eol=lf

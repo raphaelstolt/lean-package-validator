@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- New `--report-impact` option for the `validate` command.
+
 ## [v6.2.0] - 2026-10-05
 
 ### Fixed

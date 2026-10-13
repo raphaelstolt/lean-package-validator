@@ -197,7 +197,7 @@ CONTENT;
             ['tests', 'src', 'bin', 'vendor']
         );
 
-        \file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'LICENSE.md', 'The MIT License (MIT)');
+        file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'LICENSE.md', 'The MIT License (MIT)');
 
         $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'bin', ['lpv']);
         $this->createTemporaryFilesInDirectory($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'src', ['Fake.php', 'AnotherFake.php']);

@@ -22,6 +22,7 @@ use Stolt\LeanPackage\Exceptions\NonExistentGlobPatternFile;
 use Stolt\LeanPackage\Exceptions\PresetNotAvailable;
 use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Helpers\InputReaderInterface;
+use Stolt\LeanPackage\ImpactReport;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,12 +50,14 @@ final class ValidateCommand extends Command
      * @param Validator $archiveValidator
      * @param InputReaderInterface $inputReader
      * @param GitattributesFileRepository $gitattributesFileRepository
+     * @param ImpactReport|null $impactReport
      */
     public function __construct(
         private readonly Analyser $analyser,
         private readonly Validator $archiveValidator,
         private readonly InputReaderInterface $inputReader,
-        private readonly GitattributesFileRepository $gitattributesFileRepository
+        private readonly GitattributesFileRepository $gitattributesFileRepository,
+        private readonly ?ImpactReport $impactReport = null
     ) {
         $this->exportIgnoreAnalyser = $analyser->getActualExportIgnoreAnalyser();
         $this->defaultLpvFile = \getcwd() . DIRECTORY_SEPARATOR . '.lpv';
@@ -90,6 +93,7 @@ final class ValidateCommand extends Command
         $validateArchiveDescription = 'Validate Git archive against current HEAD';
         $diffDescription = 'Show difference between expected and actual .gitattributes content';
         $reportStaleExportIgnoresDescription = 'Filter stale export-ignores referencing non existent artifacts. Requires --diff option to be set';
+        $reportImpactDescription = 'Display the distribution impact report showing archive size reduction and estimated CO₂ savings';
 
         $exampleGlobPattern = '{.*,*.md}';
         $globPatternDescription = 'Use this glob pattern e.g. <comment>'
@@ -182,6 +186,12 @@ final class ValidateCommand extends Command
             InputOption::VALUE_NONE,
             $reportStaleExportIgnoresDescription
         );
+        $this->addOption(
+            'report-impact',
+            null,
+            InputOption::VALUE_NONE,
+            $reportImpactDescription
+        );
     }
 
     /**
@@ -272,6 +282,33 @@ final class ValidateCommand extends Command
         $globPatternFile = (string) $input->getOption('glob-pattern-file');
         $showDifference = $input->getOption('diff');
         $reportStaleExportIgnores = $input->getOption('report-stale-export-ignores');
+        $reportImpact = $input->getOption('report-impact');
+
+        // Handle --report-impact option
+        if ($reportImpact) {
+            $verboseOutput = '+ Generating distribution impact report.';
+            $output->writeln($verboseOutput, OutputInterface::VERBOSITY_VERBOSE);
+
+            $impactReport = $this->impactReport ?? new ImpactReport($directory);
+
+            try {
+                $impactReport->createOriginalArchive();
+                $impactReport->createOptimizedArchive();
+                $output->writeln('');
+                $output->writeln($impactReport->generateReport());
+                $impactReport->removeArchives();
+            } catch (GitNotAvailable $e) {
+                $output->writeln('<error>' . $e->getMessage() . '</error>');
+                $impactReport->removeArchives();
+                return Command::FAILURE;
+            } catch (GitHeadNotAvailable $e) {
+                $output->writeln('<error>' . $e->getMessage() . '</error>');
+                $impactReport->removeArchives();
+                return Command::FAILURE;
+            }
+
+            return Command::SUCCESS;
+        }
 
         $enforceStrictOrderComparison = $input->getOption('enforce-strict-order');
         $sortFromDirectoriesToFiles = $input->getOption('sort-from-directories-to-files');

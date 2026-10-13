@@ -6,10 +6,10 @@ namespace Stolt\LeanPackage\Tests\Commands;
 
 use Mockery;
 use Mockery\MockInterface;
-use phpmock\functions\FixedValueFunction;
-use phpmock\MockBuilder;
+
+
 use phpmock\phpunit\PHPMock;
-use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
@@ -454,7 +454,7 @@ CONTENT;
             ['specs']
         );
 
-        \file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'License.rst', 'The MIT License (MIT)');
+        file_put_contents($this->temporaryDirectory . DIRECTORY_SEPARATOR . 'License.rst', 'The MIT License (MIT)');
 
         $command = $this->application->find('validate');
         $commandTester = new CommandTester($command);

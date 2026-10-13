@@ -44,7 +44,7 @@ final class Reformatter
 
         $longestPattern = \max(\array_map('strlen', $exportIgnorePatterns));
 
-        $alignedLines = \array_map(function (string $line) use ($analyser, $longestPattern): string {
+        $alignedLines = \array_map(static function (string $line) use ($analyser, $longestPattern): string {
             if ($analyser->isAlignableExportIgnoreLine($line) === false) {
                 return $line;
             }

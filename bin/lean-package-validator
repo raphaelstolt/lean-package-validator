@@ -37,6 +37,7 @@ use Stolt\LeanPackage\Commands\ValidateRemoteCommand;
 use Stolt\LeanPackage\Analyser;
 use Stolt\LeanPackage\Archive;
 use Stolt\LeanPackage\Archive\Validator;
+use Stolt\LeanPackage\ImpactReport;
 use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Git\GitRepositoryCloner;
 use Stolt\LeanPackage\Helpers\PhpInputReader;
@@ -62,7 +63,8 @@ $validateCommand = new ValidateCommand(
     $analyser,
     new Validator($archive),
     new PhpInputReader(),
-    $gitattributesFileRepository
+    $gitattributesFileRepository,
+    new ImpactReport(WORKING_DIRECTORY)
 );
 $createCommand = new CreateCommand($analyser, $gitattributesFileRepository);
 $updateCommand = new UpdateCommand($analyser, $gitattributesFileRepository);

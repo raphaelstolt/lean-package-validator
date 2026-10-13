@@ -11,8 +11,8 @@ use Stolt\LeanPackage\Analysers\ClassicExportIgnoreAnalyser;
 use Stolt\LeanPackage\Commands\ValidateRemoteCommand;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 use Stolt\LeanPackage\Exceptions\RepositoryCloneFailed;
-use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Git\RepositoryCloner;
+use Stolt\LeanPackage\Gitattributes\FileRepository as GitattributesFileRepository;
 use Stolt\LeanPackage\Presets\Finder;
 use Stolt\LeanPackage\Presets\PhpPreset;
 use Stolt\LeanPackage\Tests\TestCase;
@@ -63,9 +63,11 @@ CONTENT;
     protected function tearDown(): void
     {
         foreach ($this->clonedTargetDirectories as $clonedTargetDirectory) {
-            if (\is_dir($clonedTargetDirectory)) {
-                $this->removeDirectory($clonedTargetDirectory);
+            if (!(\is_dir($clonedTargetDirectory))) {
+                continue;
             }
+
+            $this->removeDirectory($clonedTargetDirectory);
         }
 
         if (\is_dir($this->temporaryDirectory)) {
@@ -95,7 +97,7 @@ CONTENT;
     {
         $clonedTargetDirectories = &$this->clonedTargetDirectories;
 
-        return new class ($files, $clonedTargetDirectories) implements RepositoryCloner {
+        return new class($files, $clonedTargetDirectories) implements RepositoryCloner {
             /**
              * @param array<string, string> $files
              * @param string[] $clonedTargetDirectories
@@ -117,7 +119,7 @@ CONTENT;
                     if (!\is_dir(\dirname($path))) {
                         \mkdir(\dirname($path), permissions: 0o777, recursive: true);
                     }
-                    \file_put_contents($path, $content);
+                    file_put_contents($path, $content);
                 }
             }
         };
@@ -199,7 +201,7 @@ CONTENT;
     #[Test]
     public function failsWhenCloningFails(): void
     {
-        $failingCloner = new class () implements RepositoryCloner {
+        $failingCloner = new class() implements RepositoryCloner {
             public function clone(string $repositoryUrl, string $targetDirectory): void
             {
                 throw new RepositoryCloneFailed('fatal: repository not found');
@@ -217,7 +219,7 @@ CONTENT;
     #[Test]
     public function failsWhenGitIsNotAvailable(): void
     {
-        $gitlessCloner = new class () implements RepositoryCloner {
+        $gitlessCloner = new class() implements RepositoryCloner {
             public function clone(string $repositoryUrl, string $targetDirectory): void
             {
                 throw new GitNotAvailable('The Git command is not available.');
@@ -398,7 +400,7 @@ CONTENT;
     #[Test]
     public function ignoresTheLpvFileOfTheWorkingDirectory(): void
     {
-        \file_put_contents(WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv', 'phpunit*' . PHP_EOL . '.gitignore' . PHP_EOL);
+        file_put_contents(WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv', 'phpunit*' . PHP_EOL . '.gitignore' . PHP_EOL);
 
         TestCommand::for($this->getCommandInstance($this->getRepositoryFiles()))
             ->addArgument(self::REPOSITORY_URL)
@@ -416,7 +418,7 @@ CONTENT;
     public function usesAnExplicitlyProvidedWorkingDirectoryLpvFile(): void
     {
         $workingDirectoryLpvFile = WORKING_DIRECTORY . DIRECTORY_SEPARATOR . '.lpv';
-        \file_put_contents($workingDirectoryLpvFile, 'phpunit*' . PHP_EOL . '.gitignore' . PHP_EOL);
+        file_put_contents($workingDirectoryLpvFile, 'phpunit*' . PHP_EOL . '.gitignore' . PHP_EOL);
 
         $files = $this->getRepositoryFiles();
         $files['.lpv'] = 'README*' . PHP_EOL . '.gitignore' . PHP_EOL;
