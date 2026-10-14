@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+- Removed the `symfony/finder` dependency.
+
 ## [v6.3.0] - 2026-10-14
 
 ### Added
