@@ -12,12 +12,14 @@ final class PhpPreset extends CommonPreset implements Preset
     {
         return \array_unique(\array_merge($this->getCommonGlob(), [
             '*.lock',
+            'castor.php',
             'phpunit*',
             'appveyor.yml',
             'box.json',
             'composer-dependency-analyser*',
             'collision-detector*',
             'captainhook.json',
+            'extension.neon',
             'peck.json',
             'infection*',
             'phpstan*',
