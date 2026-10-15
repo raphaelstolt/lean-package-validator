@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.3.1] - 2026-10-15
+
 ### Fixed
 - The `--report-impact` option output is now formatted correctly.
 
@@ -621,8 +623,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.0...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.1...HEAD
 
+[v6.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.0...v6.3.1
 [v6.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.2.0...v6.3.0
 [v6.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.1...v6.2.0
 [v6.1.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.0...v6.1.1
