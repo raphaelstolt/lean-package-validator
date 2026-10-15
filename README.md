@@ -210,7 +210,24 @@ Would expect the following .gitattributes file content:
 The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing 
 non-existent repository artefacts. In combination with the `--diff` option these will be shown in the output.
 
-The `--stdin-input` option allows the validate command to read from `STDIN`, so that the following piped output 
+The `--report-impact` option displays a distribution impact report that compares the project archive with and without
+`.gitattributes` filtering. It shows the archive size reduction, data saved per download, and estimated monthly data
+savings and CO₂ emission avoided based on a typical download volume.
+
+``` bash
+lean-package-validator validate --report-impact [<directory>]
+
+Distribution impact
+────────────────────────────────
+Original archive:               1.25 MB
+Optimized archive:              0.45 MB
+Size reduction:                 64.0%
+Data saved/download:            0.80 MB
+Estimated data saved:           80 MB
+Estimated CO₂ emission avoided: 20.00 g CO₂
+```
+
+The `--stdin-input` option allows the validate command to read from `STDIN`, so that the following piped output
 can be used for validation. It currently only does a strict comparison.
 
 ```bash
