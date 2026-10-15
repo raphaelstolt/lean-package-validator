@@ -93,9 +93,13 @@ class ImpactReport
 
             // Write a new tree object without .gitattributes
             $writeTreeCommand = \sprintf('cd %s && git write-tree 2>&1', \escapeshellarg($this->directory));
-            $treeHash = \trim(\shell_exec($writeTreeCommand));
+            $rawOutput = \shell_exec($writeTreeCommand);
+            if ($rawOutput === null) {
+                return false;
+            }
+            $treeHash = \trim($rawOutput);
 
-            if ($treeHash === '' || $treeHash === false) {
+            if ($treeHash === '') {
                 return false;
             }
 

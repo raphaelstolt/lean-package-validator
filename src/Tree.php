@@ -3,6 +3,7 @@
 namespace Stolt\LeanPackage;
 
 use FilesystemIterator;
+use SplFileInfo;
 use Stolt\LeanPackage\Exceptions\GitHeadNotAvailable;
 use Stolt\LeanPackage\Exceptions\GitNotAvailable;
 
@@ -59,10 +60,15 @@ final class Tree
     {
         $gitignorePatterns = $this->getGitignorePatterns($directory . DIRECTORY_SEPARATOR . '.gitignore');
 
+        /** @var SplFileInfo[] $entries */
         $entries = [];
         $iterator = new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS);
 
         foreach ($iterator as $file) {
+            if (!$file instanceof SplFileInfo) {
+                continue;
+            }
+
             $filename = $file->getFilename();
 
             // Skip entries that match .gitignore patterns
@@ -74,7 +80,7 @@ final class Tree
         }
 
         // Sort by type (directories first, then files), then by name
-        \usort($entries, static function ($a, $b): int {
+        \usort($entries, static function (SplFileInfo $a, SplFileInfo $b): int {
             $aIsDir = $a->isDir() ? 0 : 1;
             $bIsDir = $b->isDir() ? 0 : 1;
             if ($aIsDir !== $bIsDir) {
@@ -91,6 +97,10 @@ final class Tree
         $totalCount = \count($entries);
 
         foreach ($entries as $file) {
+            if (!$file instanceof SplFileInfo) {
+                continue;
+            }
+
             $index++;
             $filename = $file->getFilename();
             if ($file->isDir()) {
