@@ -295,6 +295,23 @@ class ImpactReport
     }
 
     /**
+     * Pad a string to a specified display width (handles multi-byte characters).
+     *
+     * @param string $string
+     * @param int $width
+     * @return string
+     */
+    private static function strPadDisplayWidth(string $string, int $width): string
+    {
+        $currentWidth = \mb_strwidth($string);
+        if ($currentWidth >= $width) {
+            return $string;
+        }
+
+        return $string . \str_repeat(' ', $width - $currentWidth);
+    }
+
+    /**
      * Generate the formatted impact report string.
      *
      * @return string
@@ -308,17 +325,19 @@ class ImpactReport
         $estimatedDataSaved = self::formatBytesToGb($this->getEstimatedDataSavedBytes());
         $co2Avoided = self::formatCo2($this->getEstimatedCo2Avoided());
 
-        // Label column width for alignment
+        // Label column display width for alignment
         $labelWidth = 32;
+        // Separator width
+        $separatorWidth = 43;
 
         $report = "Distribution impact" . PHP_EOL;
-        $report .= \str_repeat('─', $labelWidth) . PHP_EOL;
-        $report .= \str_pad('Original archive:', $labelWidth) . ' ' . $originalSize . PHP_EOL;
-        $report .= \str_pad('Optimized archive:', $labelWidth) . ' ' . $optimizedSize . PHP_EOL;
-        $report .= \str_pad('Size reduction:', $labelWidth) . ' ' . $reduction . PHP_EOL;
-        $report .= \str_pad('Data saved/download:', $labelWidth) . ' ' . $dataSaved . PHP_EOL;
-        $report .= \str_pad('Estimated data saved:', $labelWidth) . ' ' . $estimatedDataSaved . PHP_EOL;
-        $report .= \str_pad('Estimated CO₂ emission avoided:', $labelWidth) . ' ' . $co2Avoided . PHP_EOL;
+        $report .= \str_repeat('─', $separatorWidth) . PHP_EOL;
+        $report .= self::strPadDisplayWidth('Original archive:', $labelWidth) . $originalSize . PHP_EOL;
+        $report .= self::strPadDisplayWidth('Optimized archive:', $labelWidth) . $optimizedSize . PHP_EOL;
+        $report .= self::strPadDisplayWidth('Size reduction:', $labelWidth) . $reduction . PHP_EOL;
+        $report .= self::strPadDisplayWidth('Data saved/download:', $labelWidth) . $dataSaved . PHP_EOL;
+        $report .= self::strPadDisplayWidth('Estimated data saved:', $labelWidth) . $estimatedDataSaved . PHP_EOL;
+        $report .= self::strPadDisplayWidth('Estimated CO₂ emission avoided:', $labelWidth) . $co2Avoided . PHP_EOL;
 
         return $report;
     }

@@ -207,7 +207,7 @@ Would expect the following .gitattributes file content:
  bin/release-version export-ignore
 ```
 
-The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing 
+The `--report-stale-export-ignores` option extends the validation to look for export-ignore statements referencing
 non-existent repository artefacts. In combination with the `--diff` option these will be shown in the output.
 
 The `--report-impact` option displays a distribution impact report that compares the project archive with and without
@@ -218,7 +218,7 @@ savings and CO₂ emission avoided based on a typical download volume.
 lean-package-validator validate --report-impact [<directory>]
 
 Distribution impact
-────────────────────────────────
+───────────────────────────────────────────
 Original archive:               1.25 MB
 Optimized archive:              0.45 MB
 Size reduction:                 64.0%

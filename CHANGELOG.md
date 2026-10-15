@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+- The `--report-impact` option output is now formatted correctly.
+
 ### Changed
 - Removed the `symfony/finder` dependency.
 
