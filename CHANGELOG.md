@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v6.3.2] - 2026-10-16
+
 ### Added
 - Expanded the PHP preset patterns.
 
@@ -626,8 +628,9 @@ Closes [#63](https://github.com/raphaelstolt/lean-package-validator/issues/63).
 
 - Initial release.
 
-[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.1...HEAD
+[Unreleased]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.2...HEAD
 
+[v6.3.2]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.1...v6.3.2
 [v6.3.1]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.3.0...v6.3.1
 [v6.3.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.2.0...v6.3.0
 [v6.2.0]: https://github.com/raphaelstolt/lean-package-validator/compare/v6.1.1...v6.2.0
