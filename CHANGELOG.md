@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+- The `Go`, `Python`, and `Rust` presets are removed as their packaging doesn't operate on a `.gitattributes` file.
+Closes [#81](https://github.com/raphaelstolt/lean-package-validator/issues/81).
+
 ## [v6.3.2] - 2026-10-16
 
 ### Added

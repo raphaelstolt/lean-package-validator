@@ -126,10 +126,10 @@ lean-package-validator validate --enforce-strict-order [<directory>]
 
 The `--glob-pattern` option allows you to overwrite the default pattern used to match common repository artefacts. The
 number of patterns in the grouping braces is expected to be `>1`. As shown next, this utility could thereby also be used
-for projects (i.e. Python) outside the PHP ecosystem.
+for projects outside the PHP ecosystem.
 
 ``` bash
-lean-package-validator validate --glob-pattern '{.*,*.rst,*.py[cod],dist/}' [<directory>]
+lean-package-validator validate --glob-pattern '{.*,*.md,docs/}' [<directory>]
 ```
 
 The default pattern is defined in the PHP preset [file](./src/Presets/PhpPreset.php).
@@ -173,8 +173,8 @@ The `--enforce-alignment` option will enforce a strict alignment of export-ignor
 in the `.gitattributes` file and fail validation if they aren't aligned. Per __default__,
 no alignment is enforced.
 
-The `--preset=[<preset>]` option will use a predefined set of glob pattern. Available presets are `PHP`, `Python`,
-`Rust`, `JavaScript`, and `Go`. With `PHP` being the default.
+The `--preset=[<preset>]` option will use a predefined set of glob pattern. Available presets are `PHP` and `JavaScript`.
+With `PHP` being the default.
 
 The `--validate-git-archive` option will validate that no common repository artefacts slip
 into the release/dist archive file. It will do so by creating a `temporary` archive from the
@@ -286,8 +286,8 @@ lean-package-validator init [<directory>]
 
 The `--overwrite|-o` option overwrites an existing `.lpv` file. Also, see the [refresh](https://github.com/raphaelstolt/lean-package-validator?tab=readme-ov-file#configuration-refresh-command) command.
 
-The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
-`JavaScript`, and `Go`. With `PHP` being the default.
+The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP` and `JavaScript`.
+With `PHP` being the default.
 
 The `--dry-run` option will show the content of the `.lpv` file that would be created.
 
@@ -302,8 +302,8 @@ lean-package-validator refresh [<directory>]
 
 The command expects a present `.lpv` file in the target directory and will fail if none is existent.
 
-The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP`, `Python`, `Rust`,
-`JavaScript`, and `Go`. With `PHP` being the default.
+The `--preset` option allows choosing from a predefined set of glob pattern. Available presets are `PHP` and `JavaScript`.
+With `PHP` being the default.
 
 The `--dry-run` option shows the refreshed `.lpv` content without writing any changes to disk.
 

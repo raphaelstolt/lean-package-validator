@@ -1934,50 +1934,6 @@ CONTENT;
             ->assertSuccessful();
     }
 
-    #[Test]
-    #[RunInSeparateProcess]
-    public function usesTheRustPresetIfRequested(): void
-    {
-        $artifactFilenames = [
-            'CODE_OF_CONDUCT.md',
-            '.rustfmt.toml',
-            '.clippy.toml',
-            'LICENSE.md',
-        ];
-
-        $this->createTemporaryFiles(
-            $artifactFilenames,
-            ['src']
-        );
-
-        $gitattributesContent = <<<CONTENT
-*    text=auto eol=lf
-
-.clippy.toml export-ignore
-.gitattributes export-ignore
-.rustfmt.toml export-ignore
-CODE_OF_CONDUCT.md export-ignore
-LICENSE.md export-ignore
-CONTENT;
-
-        $expectedDisplay = <<<CONTENT
-The present .gitattributes file is considered valid.
-
-CONTENT;
-
-        $this->createTemporaryGitattributesFile($gitattributesContent);
-
-        $command = $this->application->find('validate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'directory' => $this->temporaryDirectory,
-            '--preset' => 'Rust',
-        ]);
-
-        $this->assertSame($expectedDisplay, $commandTester->getDisplay());
-        $commandTester->assertCommandIsSuccessful();
-    }
 
     /**
      * @param MockInterface $mockedAnalyser
