@@ -470,3 +470,8 @@ All noteworthy changes are documented in the [CHANGELOG.md](CHANGELOG.md).
 
 If you're considering contributing to this project, have a look at this repository's [CONTRIBUTING.md](.github/CONTRIBUTING.md)
 for more advice.
+
+## Related projects
+
+- [cargo-lean](https://github.com/raphaelstolt/cargo-lean) — The `Rust` equivalent.
+- [py-lean](https://github.com/raphaelstolt/py-lean) — The `Python` equivalent.
