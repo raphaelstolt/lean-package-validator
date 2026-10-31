@@ -1,0 +1,41 @@
+name: "Lean Package Validator"
+description: "Validate the .gitattributes file using the `validate` command from lean-package-validator"
+
+inputs:
+  php-version:
+    description: "PHP version to use"
+    required: false
+    default: "8.3"
+  options:
+    description: "Additional options/flags passed to the validate command"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: "${{ inputs.php-version }}"
+
+    - name: Get Composer cache directory
+      id: composer-cache
+      shell: bash
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: dependencies-php-${{ inputs.php-version }}-composer-${{ hashFiles('composer.json') }}
+        restore-keys: dependencies-php-${{ inputs.php-version }}-composer-
+
+    - name: Install Composer dependencies
+      shell: bash
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Validate .gitattributes
+      shell: bash
+      run: bin/lean-package-validator validate ${{ inputs.options }}

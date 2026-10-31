@@ -383,7 +383,28 @@ Another option to use the lean package validator is via [cpx](https://cpx.dev/).
 cpx stolt/lean-package-validator validate
 ```
 
-For using a dedicated GitHub Action, have a look at the documentation over [here](https://github.com/raphaelstolt/lean-package-validator-action).
+### GitHub Action
+
+A reusable GitHub Action is provided out of the box to validate `.gitattributes` files in CI workflows.
+It is located in the `.github/actions/validate` directory and can be used as a local composite action.
+
+Basic usage:
+
+```yaml
+- name: Validate .gitattributes
+  uses: ./.github/actions/validate
+```
+
+With additional options:
+
+```yaml
+- name: Validate .gitattributes
+  uses: ./.github/actions/validate
+  with:
+    options: '--enforce-strict-order --enforce-alignment --diff'
+```
+
+See the [action documentation](.github/actions/validate/README.md) for more details.
 
 ## Included AI skills
 
